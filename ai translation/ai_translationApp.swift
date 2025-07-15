@@ -9,8 +9,24 @@ struct ai_translationApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environmentObject(sessionManager) // 將 sessionManager 注入到環境中
+            // 使用 TabView 來建立分頁介面
+            TabView {
+                // 第一個分頁：題目列表
+                ContentView()
+                    .tabItem {
+                        Image(systemName: "list.bullet.rectangle.portrait")
+                        Text("學習")
+                    }
+                
+                // 第二個分頁：新的儀表板
+                DashboardView()
+                    .tabItem {
+                        Image(systemName: "chart.bar.xaxis")
+                        Text("儀表板")
+                    }
+            }
+            // 將 sessionManager 注入到所有分頁的環境中
+            .environmentObject(sessionManager)
         }
     }
 }
