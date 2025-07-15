@@ -73,11 +73,13 @@ struct ContentView: View {
         isLoading = true
         errorMessage = nil
 
-        // 【修改】從 SettingsManager 讀取使用者設定
+        // 1. 從 SettingsManager 讀取所有使用者設定
         let reviewCount = SettingsManager.shared.reviewCount
         let newCount = SettingsManager.shared.newCount
+        let difficulty = SettingsManager.shared.difficulty
+        let length = SettingsManager.shared.length.rawValue // 注意要傳送 rawValue ("short", "medium", "long")
         
-        // 【修改】將設定值作為 URL 查詢參數附加
+        // 2. 建立 URL 並附加所有參數
         guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/start_session") else {
             errorMessage = "無效的網址"
             isLoading = false
@@ -86,7 +88,9 @@ struct ContentView: View {
         
         urlComponents.queryItems = [
             URLQueryItem(name: "num_review", value: String(reviewCount)),
-            URLQueryItem(name: "num_new", value: String(newCount))
+            URLQueryItem(name: "num_new", value: String(newCount)),
+            URLQueryItem(name: "difficulty", value: String(difficulty)),
+            URLQueryItem(name: "length", value: length)
         ]
         
         guard let url = urlComponents.url else {
@@ -95,10 +99,14 @@ struct ContentView: View {
             return
         }
         
+        print("Requesting URL: \(url.absoluteString)") // 方便偵錯
+        
+        // 3. 發送網路請求 (後續不變)
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             let decodedResponse = try JSONDecoder().decode(QuestionsResponse.self, from: data)
             
+            // 將獲取到的題目交給 sessionManager 去建立新的學習回合
             sessionManager.startNewSession(questions: decodedResponse.questions)
             
         } catch {
