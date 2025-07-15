@@ -2,47 +2,62 @@
 
 import SwiftUI
 
+// 【新增】定義儀表板的兩種顯示模式
+enum DashboardMode: String, CaseIterable, Identifiable {
+    case byCategory = "分類檢視"
+    case bySchedule = "複習排程"
+    var id: Self { self }
+}
+
 struct DashboardView: View {
     
     @State private var knowledgePoints: [KnowledgePoint] = []
     @State private var isLoading = false
     @State private var errorMessage: String?
     
+    // 【新增】用來控制當前顯示模式的狀態變數
+    @State private var selectedMode: DashboardMode = .byCategory
+    
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 0) {
+                // 【新增】模式切換選單
+                Picker("檢視模式", selection: $selectedMode) {
+                    ForEach(DashboardMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+
+                // 根據選擇的模式，顯示對應的內容
                 if isLoading {
+                    Spacer()
                     ProgressView("正在載入儀表板數據...")
+                    Spacer()
                 } else if let errorMessage = errorMessage {
+                    Spacer()
                     Text("錯誤：\(errorMessage)")
                         .foregroundColor(.red)
                         .padding()
+                    Spacer()
                 } else if knowledgePoints.isEmpty {
+                    Spacer()
                     Text("太棒了！目前沒有任何弱點紀錄。\n開始練習來建立您的分析報告吧！")
                         .multilineTextAlignment(.center)
                         .padding()
+                    Spacer()
                 } else {
-                    // 【核心修改處】: 將原來的長列表改為顯示分類列表
-                    List {
-                        ForEach(groupedPoints.keys.sorted(), id: \.self) { category in
-                            // 每個分類都是一個導航連結，點擊後進入雙欄網格頁面
-                            NavigationLink(destination: KnowledgePointGridView(points: groupedPoints[category]!, categoryTitle: category)) {
-                                HStack {
-                                    Text(category)
-                                        .font(.headline)
-                                    Spacer()
-                                    // 顯示該分類下有多少個知識點
-                                    Text("\(groupedPoints[category]!.count)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding(.vertical, 8)
-                            }
-                        }
+                    // 【新增】使用 switch 來切換視圖
+                    switch selectedMode {
+                    case .byCategory:
+                        CategoryListView(points: knowledgePoints)
+                    case .bySchedule:
+                        ReviewScheduleView(points: knowledgePoints)
                     }
                 }
             }
-            .navigationTitle("知識點儀表板")
+            .navigationTitle("🧠 知識點儀表板")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -54,32 +69,18 @@ struct DashboardView: View {
                     }
                 }
             }
-            // 讓頁面出現時自動載入一次數據
             .onAppear {
-                Task {
-                    await fetchDashboardData()
+                // 只有在資料為空時才自動載入，避免每次切換分頁都刷新
+                if knowledgePoints.isEmpty {
+                    Task {
+                        await fetchDashboardData()
+                    }
                 }
             }
         }
     }
     
-    // 【新增】一個計算屬性，用來將扁平的知識點陣列，轉換為按 category 分組的字典
-    private var groupedPoints: [String: [KnowledgePoint]] {
-        Dictionary(grouping: knowledgePoints, by: { $0.category })
-    }
-    
-    // 根據熟練度決定進度條顏色 (此函式在 GridView 中也會用到)
-    private func masteryColor(level: Double) -> Color {
-        if level < 1.5 {
-            return .red
-        } else if level < 3.5 {
-            return .orange
-        } else {
-            return .green
-        }
-    }
-    
-    // 獲取儀表板數據的網路請求函式
+    // 網路請求函式 (維持不變)
     func fetchDashboardData() async {
         isLoading = true
         errorMessage = nil
@@ -103,6 +104,84 @@ struct DashboardView: View {
     }
 }
 
-#Preview {
-    DashboardView()
+// 【新增】將原本的「分類列表」邏輯，封裝成獨立的子視圖
+struct CategoryListView: View {
+    let points: [KnowledgePoint]
+    
+    private var groupedPoints: [String: [KnowledgePoint]] {
+        Dictionary(grouping: points, by: { $0.category })
+    }
+    
+    var body: some View {
+        List {
+            ForEach(groupedPoints.keys.sorted(), id: \.self) { category in
+                NavigationLink(destination: KnowledgePointGridView(points: groupedPoints[category]!, categoryTitle: category)) {
+                    HStack {
+                        Text(category)
+                            .font(.headline)
+                        Spacer()
+                        Text("\(groupedPoints[category]!.count)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+        }
+    }
+}
+
+// 【新增】全新的「複習排程」子視圖
+struct ReviewScheduleView: View {
+    let points: [KnowledgePoint]
+    
+    // 將知識點按日期排序
+    private var scheduledPoints: [KnowledgePoint] {
+        points.filter { $0.next_review_date != nil }
+              .sorted { $0.next_review_date! < $1.next_review_date! }
+    }
+    
+    // 日期格式化工具
+    private func formatDate(_ dateString: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        if let date = formatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "yyyy 年 M 月 d 日"
+            return outputFormatter.string(from: date)
+        }
+        return dateString
+    }
+    
+    var body: some View {
+        List {
+            ForEach(scheduledPoints) { point in
+                NavigationLink(destination: KnowledgePointDetailView(point: point)) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(point.key_point_summary ?? "核心觀念")
+                                .font(.headline)
+                                .lineLimit(1)
+                            Text(point.correct_phrase)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                        
+                        Spacer()
+                        
+                        // 標註複習日期
+                        Text(formatDate(point.next_review_date ?? ""))
+                            .font(.subheadline)
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+                    .padding(.vertical, 6)
+                }
+            }
+        }
+    }
 }

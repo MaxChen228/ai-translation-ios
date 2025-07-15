@@ -48,16 +48,18 @@ struct KnowledgePoint: Codable, Identifiable {
     let explanation: String?
     let user_context_sentence: String?
     let incorrect_phrase_in_context: String?
-    let key_point_summary: String? // 新增
+    let key_point_summary: String?
     let mastery_level: Double
     let mistake_count: Int
     let correct_count: Int
-    
+    let next_review_date: String? // 【新增】
+
     private enum CodingKeys: String, CodingKey {
         case category, subcategory, correct_phrase, explanation
         case user_context_sentence, incorrect_phrase_in_context
-        case key_point_summary // 新增
+        case key_point_summary
         case mastery_level, mistake_count, correct_count
+        case next_review_date // 【新增】
     }
 }
 

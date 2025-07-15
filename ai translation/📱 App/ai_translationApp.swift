@@ -23,7 +23,7 @@ struct ai_translationApp: App {
                         Text("儀表板")
                     }
                 
-                // 【新增】學習日曆分頁
+                // 學習日曆分頁
                 LearningCalendarView()
                     .tabItem {
                         Image(systemName: "calendar")
