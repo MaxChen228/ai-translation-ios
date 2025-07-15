@@ -4,28 +4,34 @@ import SwiftUI
 
 @main
 struct ai_translationApp: App {
-    // 建立一個 SessionManager，讓整個 App 共享
     @StateObject private var sessionManager = SessionManager()
 
     var body: some Scene {
         WindowGroup {
-            // 使用 TabView 來建立分頁介面
             TabView {
-                // 第一個分頁：題目列表
+                // 第一個分頁：學習
                 ContentView()
                     .tabItem {
                         Image(systemName: "list.bullet.rectangle.portrait")
                         Text("學習")
                     }
                 
-                // 第二個分頁：新的儀表板
+                // 第二個分頁：儀表板
                 DashboardView()
                     .tabItem {
                         Image(systemName: "chart.bar.xaxis")
                         Text("儀表板")
                     }
+                
+                // --- 新增開始 ---
+                // 第三個分頁：新的單字卡功能
+                DeckSelectionView()
+                    .tabItem {
+                        Image(systemName: "square.stack.3d.up.fill")
+                        Text("單字卡")
+                    }
+                // --- 新增結束 ---
             }
-            // 將 sessionManager 注入到所有分頁的環境中
             .environmentObject(sessionManager)
         }
     }

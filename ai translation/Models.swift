@@ -61,3 +61,21 @@ struct KnowledgePoint: Codable, Identifiable {
 struct DashboardResponse: Codable {
     let knowledge_points: [KnowledgePoint]
 }
+
+struct Flashcard: Codable, Identifiable {
+    let id = UUID()
+    let front: String
+    let back_correction: String
+    let back_explanation: String
+    let category: String
+    
+    // 告訴解碼器 JSON 中的 key 和我們變數的對應關係
+    private enum CodingKeys: String, CodingKey {
+        case front, back_correction, back_explanation, category
+    }
+}
+
+// 用來定義整個單字卡 API 回應的結構
+struct FlashcardsResponse: Codable {
+    let flashcards: [Flashcard]
+}
