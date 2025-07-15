@@ -69,13 +69,28 @@ struct ContentView: View {
         }
     }
     
-    // 網路請求函式
     func fetchQuestions() async {
         isLoading = true
         errorMessage = nil
 
-        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/start_session") else {
+        // 【修改】從 SettingsManager 讀取使用者設定
+        let reviewCount = SettingsManager.shared.reviewCount
+        let newCount = SettingsManager.shared.newCount
+        
+        // 【修改】將設定值作為 URL 查詢參數附加
+        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/start_session") else {
             errorMessage = "無效的網址"
+            isLoading = false
+            return
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "num_review", value: String(reviewCount)),
+            URLQueryItem(name: "num_new", value: String(newCount))
+        ]
+        
+        guard let url = urlComponents.url else {
+            errorMessage = "無法建立 URL"
             isLoading = false
             return
         }
@@ -84,7 +99,6 @@ struct ContentView: View {
             let (data, _) = try await URLSession.shared.data(from: url)
             let decodedResponse = try JSONDecoder().decode(QuestionsResponse.self, from: data)
             
-            // 將獲取到的題目交給 sessionManager 去建立新的學習回合
             sessionManager.startNewSession(questions: decodedResponse.questions)
             
         } catch {

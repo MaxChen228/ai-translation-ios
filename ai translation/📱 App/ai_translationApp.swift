@@ -30,6 +30,12 @@ struct ai_translationApp: App {
                         Image(systemName: "square.stack.3d.up.fill")
                         Text("單字卡")
                     }
+                // 【新增】設定分頁
+                SettingsView()
+                    .tabItem {
+                        Image(systemName: "gearshape.fill")
+                        Text("設定")
+                    }
                 // --- 新增結束 ---
             }
             .environmentObject(sessionManager)
