@@ -46,18 +46,17 @@ struct KnowledgePoint: Codable, Identifiable {
     let subcategory: String
     let correct_phrase: String
     let explanation: String?
-    // 【新增】對應後端的新欄位
     let user_context_sentence: String?
     let incorrect_phrase_in_context: String?
+    let key_point_summary: String? // 新增
     let mastery_level: Double
     let mistake_count: Int
     let correct_count: Int
     
-    // 【修改】告訴解碼器新的對應關係
     private enum CodingKeys: String, CodingKey {
         case category, subcategory, correct_phrase, explanation
-        case user_context_sentence // 新增
-        case incorrect_phrase_in_context // 新增
+        case user_context_sentence, incorrect_phrase_in_context
+        case key_point_summary // 新增
         case mastery_level, mistake_count, correct_count
     }
 }
