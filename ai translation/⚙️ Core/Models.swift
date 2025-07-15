@@ -41,19 +41,24 @@ struct FeedbackResponse: Codable {
 
 // 用來定義儀表板中，單一知識點的結構
 struct KnowledgePoint: Codable, Identifiable {
-    let id = UUID() // 同樣地，為了讓 List 能辨識，我們自己產生一個 ID
+    let id = UUID()
     let category: String
     let subcategory: String
+    let correct_phrase: String
+    let explanation: String?
+    // 【新增】對應後端的新欄位
+    let user_context_sentence: String?
+    let incorrect_phrase_in_context: String?
     let mastery_level: Double
     let mistake_count: Int
     let correct_count: Int
     
-    // 告訴解碼器 JSON 中的 key 和我們變數的對應關係
+    // 【修改】告訴解碼器新的對應關係
     private enum CodingKeys: String, CodingKey {
-        case category, subcategory
-        case mastery_level
-        case mistake_count
-        case correct_count
+        case category, subcategory, correct_phrase, explanation
+        case user_context_sentence // 新增
+        case incorrect_phrase_in_context // 新增
+        case mastery_level, mistake_count, correct_count
     }
 }
 

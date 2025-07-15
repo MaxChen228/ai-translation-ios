@@ -22,41 +22,27 @@ struct DashboardView: View {
                         .multilineTextAlignment(.center)
                         .padding()
                 } else {
+                    // 【核心修改處】: 將原來的長列表改為顯示分類列表
                     List {
-                        // 表頭
-                        HStack {
-                            Text("熟練度").frame(width: 120, alignment: .leading)
-                            Spacer()
-                            Text("錯誤").frame(width: 50)
-                            Text("答對").frame(width: 50)
-                        }
-                        .font(.caption.bold())
-                        .foregroundColor(.secondary)
-                        
-                        // 知識點列表
-                        ForEach(knowledgePoints) { point in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("\(point.category) → \(point.subcategory)")
-                                    .font(.headline)
-                                
+                        ForEach(groupedPoints.keys.sorted(), id: \.self) { category in
+                            // 每個分類都是一個導航連結，點擊後進入雙欄網格頁面
+                            NavigationLink(destination: KnowledgePointGridView(points: groupedPoints[category]!, categoryTitle: category)) {
                                 HStack {
-                                    // 使用 ProgressView 作為熟練度進度條
-                                    ProgressView(value: point.mastery_level, total: 5.0)
-                                        .frame(width: 120)
-                                        .tint(masteryColor(level: point.mastery_level))
-                                    
+                                    Text(category)
+                                        .font(.headline)
                                     Spacer()
-                                    
-                                    Text("\(point.mistake_count)").frame(width: 50)
-                                    Text("\(point.correct_count)").frame(width: 50)
+                                    // 顯示該分類下有多少個知識點
+                                    Text("\(groupedPoints[category]!.count)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
                                 }
+                                .padding(.vertical, 8)
                             }
-                            .padding(.vertical, 5)
                         }
                     }
                 }
             }
-            .navigationTitle("🧠 知識點儀表板")
+            .navigationTitle("知識點儀表板")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
@@ -77,7 +63,12 @@ struct DashboardView: View {
         }
     }
     
-    // 根據熟練度決定進度條顏色
+    // 【新增】一個計算屬性，用來將扁平的知識點陣列，轉換為按 category 分組的字典
+    private var groupedPoints: [String: [KnowledgePoint]] {
+        Dictionary(grouping: knowledgePoints, by: { $0.category })
+    }
+    
+    // 根據熟練度決定進度條顏色 (此函式在 GridView 中也會用到)
     private func masteryColor(level: Double) -> Color {
         if level < 1.5 {
             return .red
