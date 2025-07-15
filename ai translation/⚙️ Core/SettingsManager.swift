@@ -74,6 +74,16 @@ class SettingsManager {
             UserDefaults.standard.set(newValue.rawValue, forKey: lengthKey)
         }
     }
+    // 【新增】每日目標設定
+    var dailyGoal: Int {
+        get {
+            // 如果從未設定過，預設為 10 題
+            UserDefaults.standard.object(forKey: "dailyGoal") as? Int ?? 10
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "dailyGoal")
+        }
+    }
     
     private init() {}
 }

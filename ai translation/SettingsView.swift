@@ -8,51 +8,66 @@ struct SettingsView: View {
     @State private var newCount: Int = SettingsManager.shared.newCount
     @State private var difficulty: Int = SettingsManager.shared.difficulty
     @State private var length: SettingsManager.SentenceLength = SettingsManager.shared.length
+    // 【核心修正】: 補上這個被遺漏的狀態變數宣告
+    @State private var dailyGoal: Int = SettingsManager.shared.dailyGoal
 
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("每輪學習題數設定")) {
-                    // 使用 Stepper 讓使用者可以方便地增減數量
-                    Stepper("智慧複習題：\(reviewCount) 題", value: $reviewCount, in: 0...10)
-                    Stepper("全新挑戰題：\(newCount) 題", value: $newCount, in: 0...10)
-                }
-                
-                // 【新增】新的設定區塊
-                Section(header: Text("新題目客製化設定")) {
-                    // 難度滑桿
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("題目難度：\(difficulty)")
-                        Slider(value: Binding(get: { Double(difficulty) }, set: { difficulty = Int($0) }), in: 1...5, step: 1)
+            NavigationView {
+                Form {
+                    Section(header: Text("每輪學習題數設定")) {
+                        Stepper("智慧複習題：\(reviewCount) 題", value: $reviewCount, in: 0...10)
+                        Stepper("全新挑戰題：\(newCount) 題", value: $newCount, in: 0...10)
                     }
-                    .padding(.vertical, 5)
                     
-                    // 長度選擇器
-                    Picker("句子長度", selection: $length) {
-                        ForEach(SettingsManager.SentenceLength.allCases) { len in
-                            Text(len.rawValue).tag(len)
+                    Section(header: Text("新題目客製化設定")) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("題目難度：\(difficulty)")
+                            Slider(value: Binding(get: { Double(difficulty) }, set: { difficulty = Int($0) }), in: 1...5, step: 1)
                         }
+                        .padding(.vertical, 5)
+                        
+                        Picker("句子長度", selection: $length) {
+                            ForEach(SettingsManager.SentenceLength.allCases) { len in
+                                Text(len.displayName).tag(len)
+                            }
+                        }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
+
+                    // 【新增】每日學習目標設定區塊
+                    Section(header: Text("學習目標設定")) {
+                        Stepper("每日目標：\(dailyGoal) 題", value: $dailyGoal, in: 1...50)
+                    }
+                    
+                    Section(footer: Text("設定將在下一次請求新題目時生效。")) {
+                        EmptyView()
+                    }
                 }
-                
-                Section(footer: Text("設定將在下一次請求新題目時生效。")) {
-                    EmptyView()
+                .navigationTitle("⚙️ 個人化設定")
+                .onAppear {
+                    // 當頁面出現時，從管理器同步一次最新的值
+                    self.reviewCount = SettingsManager.shared.reviewCount
+                    self.newCount = SettingsManager.shared.newCount
+                    self.difficulty = SettingsManager.shared.difficulty
+                    self.length = SettingsManager.shared.length
+                    self.dailyGoal = SettingsManager.shared.dailyGoal
                 }
-            }
-            .navigationTitle("⚙️ 個人化設定")
-            .onChange(of: reviewCount) { _, newValue in
-                SettingsManager.shared.reviewCount = newValue
-            }
-            .onChange(of: newCount) { _, newValue in
-                SettingsManager.shared.newCount = newValue
-            }
-            .onChange(of: difficulty) { _, newDifficulty in
-                SettingsManager.shared.difficulty = newDifficulty
-            }
-            .onChange(of: length) { _, newLength in
-                SettingsManager.shared.length = newLength
+                .onChange(of: reviewCount) { _, newValue in
+                    SettingsManager.shared.reviewCount = newValue
+                }
+                .onChange(of: newCount) { _, newValue in
+                    SettingsManager.shared.newCount = newValue
+                }
+                .onChange(of: difficulty) { _, newDifficulty in
+                    SettingsManager.shared.difficulty = newDifficulty
+                }
+                .onChange(of: length) { _, newLength in
+                    SettingsManager.shared.length = newLength
+                }
+                // 【新增】監聽並儲存每日目標的變更
+                .onChange(of: dailyGoal) { _, newGoal in
+                    SettingsManager.shared.dailyGoal = newGoal
+                }
             }
         }
-    }
 }
