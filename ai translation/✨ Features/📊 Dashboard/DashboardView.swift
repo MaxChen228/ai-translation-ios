@@ -2,10 +2,11 @@
 
 import SwiftUI
 
-// 定義儀表板的兩種顯示模式
+// 【修改】新增 .allPoints 模式
 enum DashboardMode: String, CaseIterable, Identifiable {
     case byCategory = "分類檢視"
     case bySchedule = "複習排程"
+    case allPoints = "全部列表" // <-- 新增此行
     var id: Self { self }
 }
 
@@ -48,12 +49,23 @@ struct DashboardView: View {
                         .padding()
                     Spacer()
                 } else {
-                    // 使用 switch 來切換視圖
+                    // 【修改】使用 switch 來切換視圖
                     switch selectedMode {
                     case .byCategory:
                         CategoryListView(points: knowledgePoints)
                     case .bySchedule:
                         ReviewScheduleView(points: knowledgePoints)
+                    case .allPoints: // <-- 新增這個 case
+                        // 我們將在這裡放入新的 AllKnowledgePointsListView
+                        // 並且傳入一個可以重新載入資料的閉包
+                        AllKnowledgePointsListView(
+                            points: knowledgePoints,
+                            onDataNeedsRefresh: {
+                                Task {
+                                    await fetchDashboardData()
+                                }
+                            }
+                        )
                     }
                 }
             }

@@ -76,6 +76,26 @@ struct KnowledgePointAPIService {
             throw APIError.decodingError(error)
         }
     }
+    
+    static func batchArchivePoints(ids: [Int]) async throws {
+        let urlString = "\(baseURL)/api/knowledge_points/batch_action"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: Any] = [
+            "action": "archive",
+            "ids": ids
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        try await performRequest(request: request)
+    }
 
     // 內部輔助函式，用於執行不需要回傳資料的請求 (如 POST, DELETE)
     private static func performRequest(request: URLRequest) async throws {
