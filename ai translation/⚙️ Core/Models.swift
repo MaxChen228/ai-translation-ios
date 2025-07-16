@@ -5,15 +5,17 @@ struct Question: Codable, Identifiable {
     let id = UUID()
     let new_sentence: String
     let type: String
+    let hint_text: String? // 【新增】
     let knowledge_point_id: Int?
-    let mastery_level: Double? // 【確保此行存在且為可選 Double】
+    let mastery_level: Double?
 
     private enum CodingKeys: String, CodingKey {
-        case new_sentence, type
-        case knowledge_point_id
-        case mastery_level // 【確保此行存在】
+        case new_sentence, type, hint_text // 【新增 hint_text】
+        case knowledge_point_id, mastery_level
     }
 }
+
+
 // 整個 API 回應的結構
 struct QuestionsResponse: Codable {
     let questions: [Question]
