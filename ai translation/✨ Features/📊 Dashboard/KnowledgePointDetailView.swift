@@ -5,6 +5,11 @@ import SwiftUI
 struct KnowledgePointDetailView: View {
     let point: KnowledgePoint
     
+    // 【新增】用於控制 Alert 的狀態
+    @State private var showingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -16,7 +21,6 @@ struct KnowledgePointDetailView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         
-                        // 呼叫最終修正版的螢光筆函式
                         highlightedText(for: sentence, highlight: point.incorrect_phrase_in_context ?? "")
                             .font(.system(.title3, design: .serif))
                             .padding()
@@ -79,9 +83,48 @@ struct KnowledgePointDetailView: View {
         }
         .navigationTitle("知識點詳情")
         .navigationBarTitleDisplayMode(.inline)
+        // 【新增】工具列項目
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        // TODO: 實作編輯功能
+                        alertTitle = "尚未開放"
+                        alertMessage = "編輯功能將在未來版本中提供。"
+                        showingAlert = true
+                    }) {
+                        Label("編輯內容", systemImage: "pencil")
+                    }
+                    
+                    Button(action: {
+                        // TODO: 實作封存功能
+                        alertTitle = "尚未開放"
+                        alertMessage = "封存功能將在未來版本中提供。"
+                        showingAlert = true
+                    }) {
+                        Label("封存此點", systemImage: "archivebox")
+                    }
+                    
+                    Divider()
+                    
+                    Button(role: .destructive, action: {
+                        // TODO: 實作刪除功能
+                        alertTitle = "尚未開放"
+                        alertMessage = "刪除功能將在未來版本中提供。"
+                        showingAlert = true
+                    }) {
+                        Label("永久刪除", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("好")))
+        }
     }
     
-    // 【最終修正】移除 @ViewBuilder，因為函式內部包含變數宣告等非 View 邏輯
     private func highlightedText(for fullText: String, highlight target: String) -> Text {
         var attributedString = AttributedString(fullText)
         

@@ -1,20 +1,21 @@
-// ContentView.swift (要被剪下的部分)
+// Models.swift
+
 import Foundation
+
 // 單一一題的結構
 struct Question: Codable, Identifiable {
     let id = UUID()
     let new_sentence: String
     let type: String
-    let hint_text: String? // 【新增】
+    let hint_text: String?
     let knowledge_point_id: Int?
     let mastery_level: Double?
 
     private enum CodingKeys: String, CodingKey {
-        case new_sentence, type, hint_text // 【新增 hint_text】
+        case new_sentence, type, hint_text
         case knowledge_point_id, mastery_level
     }
 }
-
 
 // 整個 API 回應的結構
 struct QuestionsResponse: Codable {
@@ -30,7 +31,6 @@ struct ErrorAnalysis: Codable, Identifiable {
     let explanation: String
     let severity: String
 
-    // 自訂 CodingKeys，因為 JSON key 跟我們的變數名一樣
     private enum CodingKeys: String, CodingKey {
         case error_type, error_subtype, original_phrase, correction, explanation, severity
     }
@@ -45,7 +45,8 @@ struct FeedbackResponse: Codable {
 
 // 用來定義儀表板中，單一知識點的結構
 struct KnowledgePoint: Codable, Identifiable {
-    let id = UUID()
+    let identifiableId = UUID() // 用於 SwiftUI 的 Identifiable 協議
+    let id: Int // 【新增】資料庫中的 Primary Key
     let category: String
     let subcategory: String
     let correct_phrase: String
@@ -56,14 +57,15 @@ struct KnowledgePoint: Codable, Identifiable {
     let mastery_level: Double
     let mistake_count: Int
     let correct_count: Int
-    let next_review_date: String? // 【新增】
+    let next_review_date: String?
+    let is_archived: Bool? // 【新增】
 
+    // 【修改】更新 CodingKeys 以對應新的欄位
     private enum CodingKeys: String, CodingKey {
-        case category, subcategory, correct_phrase, explanation
+        case id, category, subcategory, correct_phrase, explanation
         case user_context_sentence, incorrect_phrase_in_context
-        case key_point_summary
-        case mastery_level, mistake_count, correct_count
-        case next_review_date // 【新增】
+        case key_point_summary, mastery_level, mistake_count, correct_count
+        case next_review_date, is_archived
     }
 }
 
@@ -79,7 +81,6 @@ struct Flashcard: Codable, Identifiable {
     let back_explanation: String
     let category: String
     
-    // 告訴解碼器 JSON 中的 key 和我們變數的對應關係
     private enum CodingKeys: String, CodingKey {
         case front, back_correction, back_explanation, category
     }
@@ -90,18 +91,18 @@ struct FlashcardsResponse: Codable {
     let flashcards: [Flashcard]
 }
 
-// 【v5.15.1 改造】用於解析單日詳情 API 回應的結構
+// 用於解析單日詳情 API 回應的結構
 struct DailyDetailResponse: Codable {
     let total_learning_time_seconds: Int
-    let reviewed_knowledge_points: [LearnedPoint] // 修改
-    let new_knowledge_points: [LearnedPoint]      // 新增
+    let reviewed_knowledge_points: [LearnedPoint]
+    let new_knowledge_points: [LearnedPoint]
 }
+
 struct LearnedPoint: Codable, Identifiable {
     let id = UUID()
     let summary: String
     let count: Int
     
-    // 【新增】自訂 CodingKeys，並故意不把 id 加進去
     private enum CodingKeys: String, CodingKey {
         case summary, count
     }

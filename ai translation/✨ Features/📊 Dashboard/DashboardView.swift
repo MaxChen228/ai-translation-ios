@@ -59,7 +59,9 @@ struct DashboardView: View {
             }
             .navigationTitle("🧠 知識點儀表板")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                // 【新增】ToolbarItemGroup 來放置多個按鈕
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // 原有的刷新按鈕
                     Button(action: {
                         Task {
                             await fetchDashboardData()
@@ -67,10 +69,16 @@ struct DashboardView: View {
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }
+                    
+                    // 新增的封存區按鈕
+                    Button(action: {
+                        // TODO: 導航到封存區視圖
+                    }) {
+                        Image(systemName: "archivebox")
+                    }
                 }
             }
             .onAppear {
-                // 只有在資料為空時才自動載入，避免每次切換分頁都刷新
                 if knowledgePoints.isEmpty {
                     Task {
                         await fetchDashboardData()
@@ -79,6 +87,7 @@ struct DashboardView: View {
             }
         }
     }
+
     
     // 網路請求函式 (維持不變)
     func fetchDashboardData() async {
