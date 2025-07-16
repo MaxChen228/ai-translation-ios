@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-// 【新增】定義儀表板的兩種顯示模式
+// 定義儀表板的兩種顯示模式
 enum DashboardMode: String, CaseIterable, Identifiable {
     case byCategory = "分類檢視"
     case bySchedule = "複習排程"
@@ -15,13 +15,13 @@ struct DashboardView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     
-    // 【新增】用來控制當前顯示模式的狀態變數
+    // 用來控制當前顯示模式的狀態變數
     @State private var selectedMode: DashboardMode = .byCategory
     
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // 【新增】模式切換選單
+                // 模式切換選單
                 Picker("檢視模式", selection: $selectedMode) {
                     ForEach(DashboardMode.allCases) { mode in
                         Text(mode.rawValue).tag(mode)
@@ -48,7 +48,7 @@ struct DashboardView: View {
                         .padding()
                     Spacer()
                 } else {
-                    // 【新增】使用 switch 來切換視圖
+                    // 使用 switch 來切換視圖
                     switch selectedMode {
                     case .byCategory:
                         CategoryListView(points: knowledgePoints)
@@ -59,7 +59,6 @@ struct DashboardView: View {
             }
             .navigationTitle("🧠 知識點儀表板")
             .toolbar {
-                // 【新增】ToolbarItemGroup 來放置多個按鈕
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     // 原有的刷新按鈕
                     Button(action: {
@@ -70,31 +69,27 @@ struct DashboardView: View {
                         Image(systemName: "arrow.clockwise")
                     }
                     
-                    // 新增的封存區按鈕
-                    Button(action: {
-                        // TODO: 導航到封存區視圖
-                    }) {
+                    // 前往封存區的按鈕
+                    NavigationLink(destination: ArchivedPointsView()) {
                         Image(systemName: "archivebox")
                     }
                 }
             }
             .onAppear {
-                if knowledgePoints.isEmpty {
-                    Task {
-                        await fetchDashboardData()
-                    }
+                // 【重要修正】每次畫面出現時都刷新，以便反應封存/刪除的變更
+                Task {
+                    await fetchDashboardData()
                 }
             }
         }
     }
-
     
-    // 網路請求函式 (維持不變)
+    // 網路請求函式
     func fetchDashboardData() async {
         isLoading = true
         errorMessage = nil
         
-        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/get_dashboard") else {
+        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/api/get_dashboard") else {
             errorMessage = "無效的網址"
             isLoading = false
             return
@@ -113,7 +108,7 @@ struct DashboardView: View {
     }
 }
 
-// 【新增】將原本的「分類列表」邏輯，封裝成獨立的子視圖
+// 分類列表的子視圖 (維持不變)
 struct CategoryListView: View {
     let points: [KnowledgePoint]
     
@@ -140,7 +135,7 @@ struct CategoryListView: View {
     }
 }
 
-// 【新增】全新的「複習排程」子視圖
+// 複習排程的子視圖 (維持不變)
 struct ReviewScheduleView: View {
     let points: [KnowledgePoint]
     
