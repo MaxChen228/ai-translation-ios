@@ -14,7 +14,8 @@ struct AnswerView: View {
         // 使用 guard 來安全地解包，如果找不到就回傳一個預設值避免閃退
         guard let question = sessionManager.sessionQuestions.first(where: { $0.id == sessionQuestionId }) else {
             // 這種情況理論上不應該發生，但作為一個保護措施
-            return SessionQuestion(id: UUID(), question: Question(new_sentence: "錯誤：找不到題目", type: "error"))
+            // 【核心修正】: 在建立備用的 Question 時，補上 mastery_level: nil
+            return SessionQuestion(id: UUID(), question: Question(new_sentence: "錯誤：找不到題目", type: "error", knowledge_point_id: nil, mastery_level: nil))
         }
         return question
     }
@@ -133,43 +134,52 @@ struct AnswerView: View {
     }
     
     // 呼叫後端 API 的網路請求函式
-    func submitAnswer() async {
-        isLoading = true
-        errorMessage = nil
+        func submitAnswer() async {
+            isLoading = true
+            errorMessage = nil
 
-        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/submit_answer") else {
-            errorMessage = "無效的網址"
-            isLoading = false
-            return
-        }
+            guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/submit_answer") else {
+                errorMessage = "無效的網址"
+                isLoading = false
+                return
+            }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: Any] = [
-            "question_data": [
+            // 【核心修正】: 動態建立 question_data，確保包含所有需要的資訊
+            var questionDataDict: [String: Any] = [
                 "new_sentence": sessionQuestion.question.new_sentence,
                 "type": sessionQuestion.question.type
-            ],
-            "user_answer": userAnswer
-        ]
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            ]
             
-            let (data, _) = try await URLSession.shared.data(for: request)
+            // 如果是複習題，就把 knowledge_point_id 和 mastery_level 都加進去
+            if sessionQuestion.question.type == "review" {
+                questionDataDict["knowledge_point_id"] = sessionQuestion.question.knowledge_point_id
+                questionDataDict["mastery_level"] = sessionQuestion.question.mastery_level
+            }
             
-            let feedback = try JSONDecoder().decode(FeedbackResponse.self, from: data)
+            let body: [String: Any] = [
+                "question_data": questionDataDict,
+                "user_answer": userAnswer
+            ]
             
-            // 將使用者剛輸入的答案和 AI 的批改結果，一起更新回共享的 sessionManager
-            sessionManager.updateQuestion(id: sessionQuestionId, userAnswer: userAnswer, feedback: feedback)
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+                
+                let (data, _) = try await URLSession.shared.data(for: request)
+                
+                let feedback = try JSONDecoder().decode(FeedbackResponse.self, from: data)
+                
+                // 將使用者剛輸入的答案和 AI 的批改結果，一起更新回共享的 sessionManager
+                sessionManager.updateQuestion(id: sessionQuestionId, userAnswer: userAnswer, feedback: feedback)
 
-        } catch {
-            self.errorMessage = "提交失敗，請檢查網路或稍後再試。\n(\(error.localizedDescription))"
-            print("提交答案時發生錯誤: \(error)")
+            } catch {
+                self.errorMessage = "提交失敗，請檢查網路或稍後再試。\n(\(error.localizedDescription))"
+                print("提交答案時發生錯誤: \(error)")
+            }
+            
+            isLoading = false
         }
-        
-        isLoading = false
-    }
 }

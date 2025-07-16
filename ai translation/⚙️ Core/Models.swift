@@ -2,16 +2,18 @@
 import Foundation
 // 單一一題的結構
 struct Question: Codable, Identifiable {
-    let id = UUID() // 這個屬性讓 SwiftUI 的 List 可以辨識每一題
+    let id = UUID()
     let new_sentence: String
     let type: String
+    let knowledge_point_id: Int?
+    let mastery_level: Double? // 【確保此行存在且為可選 Double】
 
-    // 我們需要自訂 CodingKeys 來告訴解碼器，JSON 中只有以下這些 key
     private enum CodingKeys: String, CodingKey {
         case new_sentence, type
+        case knowledge_point_id
+        case mastery_level // 【確保此行存在】
     }
 }
-
 // 整個 API 回應的結構
 struct QuestionsResponse: Codable {
     let questions: [Question]
@@ -84,4 +86,21 @@ struct Flashcard: Codable, Identifiable {
 // 用來定義整個單字卡 API 回應的結構
 struct FlashcardsResponse: Codable {
     let flashcards: [Flashcard]
+}
+
+// 【v5.15.1 改造】用於解析單日詳情 API 回應的結構
+struct DailyDetailResponse: Codable {
+    let total_learning_time_seconds: Int
+    let reviewed_knowledge_points: [LearnedPoint] // 修改
+    let new_knowledge_points: [LearnedPoint]      // 新增
+}
+struct LearnedPoint: Codable, Identifiable {
+    let id = UUID()
+    let summary: String
+    let count: Int
+    
+    // 【新增】自訂 CodingKeys，並故意不把 id 加進去
+    private enum CodingKeys: String, CodingKey {
+        case summary, count
+    }
 }
