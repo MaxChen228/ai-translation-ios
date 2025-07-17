@@ -148,3 +148,9 @@ struct LearnedPoint: Codable, Identifiable {
         case summary, count
     }
 }
+
+struct SmartHintResponse: Codable {
+    let smart_hint: String
+    let thinking_questions: [String]
+    let encouragement: String
+}

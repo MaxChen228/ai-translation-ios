@@ -25,7 +25,8 @@ struct AnswerView: View {
                 ClaudeQuestionCard(
                     question: sessionQuestion.question,
                     questionNumber: getQuestionNumber(),
-                    totalQuestions: sessionManager.sessionQuestions.count
+                    totalQuestions: sessionManager.sessionQuestions.count,
+                    userAnswer: $userAnswer  // 加入這個參數
                 )
                 
                 // Claude 風格的作答卡片
@@ -117,14 +118,16 @@ struct AnswerView: View {
 
 // MARK: - Claude 風格組件
 
+// 修改 ClaudeQuestionCard 結構，加入 userAnswer 參數
 struct ClaudeQuestionCard: View {
     let question: Question
     let questionNumber: Int
     let totalQuestions: Int
+    @Binding var userAnswer: String  // 新增這一行
     
     var body: some View {
         VStack(spacing: 20) {
-            // 標題區域
+            // 標題區域 (保持不變)
             HStack {
                 HStack(spacing: 12) {
                     ZStack {
@@ -153,7 +156,7 @@ struct ClaudeQuestionCard: View {
                 ClaudeQuestionTypeTag(type: question.type)
             }
             
-            // 題目內容
+            // 題目內容 (保持不變)
             VStack(alignment: .leading, spacing: 16) {
                 Text("請翻譯以下句子：")
                     .font(.system(size: 16, weight: .semibold))
@@ -175,9 +178,13 @@ struct ClaudeQuestionCard: View {
                     }
             }
             
-            // 提示區域
+            // 提示區域 - 修改這裡，現在可以正確傳遞 userAnswer
             if let hint = question.hint_text, !hint.isEmpty {
-                ClaudeHintCard(hintText: hint)
+                ClaudeHintCard(
+                    hintText: hint,
+                    chineseSentence: question.new_sentence,
+                    userAnswer: $userAnswer  // 現在這個參數可以正確傳遞了
+                )
             }
         }
         .padding(24)
@@ -221,11 +228,83 @@ struct ClaudeQuestionTypeTag: View {
 
 struct ClaudeHintCard: View {
     let hintText: String
-    @State private var showHint = false
+    let chineseSentence: String
+    @Binding var userAnswer: String
+    
+    @State private var showBasicHint = false
+    @State private var showSmartHint = false
+    @State private var smartHintData: SmartHintResponse?
+    @State private var isLoadingSmartHint = false
+    @State private var smartHintError: String?
     
     var body: some View {
-        VStack(spacing: 0) {
-            if showHint {
+        VStack(spacing: 16) {
+            // 基本提示按鈕
+            if !showBasicHint && !showSmartHint {
+                HStack(spacing: 12) {
+                    // 基本提示按鈕
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showBasicHint = true
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lightbulb")
+                                .font(.system(size: 14, weight: .medium))
+                            
+                            Text("基本提示")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundStyle(Color.orange)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background {
+                            Capsule()
+                                .fill(Color.orange.opacity(0.1))
+                                .overlay {
+                                    Capsule()
+                                        .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                                }
+                        }
+                    }
+                    
+                    // AI智慧提示按鈕
+                    Button(action: {
+                        Task {
+                            await fetchSmartHint()
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            if isLoadingSmartHint {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .tint(Color.blue)
+                            } else {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            
+                            Text(isLoadingSmartHint ? "思考中..." : "AI智慧提示")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundStyle(Color.blue)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background {
+                            Capsule()
+                                .fill(Color.blue.opacity(0.1))
+                                .overlay {
+                                    Capsule()
+                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                }
+                        }
+                    }
+                    .disabled(isLoadingSmartHint)
+                }
+            }
+            
+            // 基本提示內容
+            if showBasicHint {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 8) {
                         Image(systemName: "lightbulb.fill")
@@ -240,7 +319,7 @@ struct ClaudeHintCard: View {
                         
                         Button(action: {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                showHint = false
+                                showBasicHint = false
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
@@ -267,30 +346,88 @@ struct ClaudeHintCard: View {
                     insertion: .scale(scale: 0.9).combined(with: .opacity),
                     removal: .scale(scale: 0.9).combined(with: .opacity)
                 ))
-            } else {
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showHint = true
-                    }
-                }) {
+            }
+            
+            // AI智慧提示內容
+            if showSmartHint {
+                VStack(alignment: .leading, spacing: 16) {
                     HStack(spacing: 8) {
-                        Image(systemName: "lightbulb")
-                            .font(.system(size: 14, weight: .medium))
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.blue)
                         
-                        Text("需要一點提示嗎？")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundStyle(Color.orange)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background {
-                        Capsule()
-                            .fill(Color.orange.opacity(0.1))
-                            .overlay {
-                                Capsule()
-                                    .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                        Text("AI 智慧引導")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                showSmartHint = false
                             }
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                    
+                    if let error = smartHintError {
+                        ClaudeErrorMessage(message: error)
+                    } else if let smartHint = smartHintData {
+                        VStack(alignment: .leading, spacing: 16) {
+                            // 主要引導提示
+                            Text(smartHint.smart_hint)
+                                .font(.system(size: 15))
+                                .foregroundStyle(.primary)
+                                .lineSpacing(2)
+                            
+                            // 思考問題
+                            if !smartHint.thinking_questions.isEmpty {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("🤔 思考一下：")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundStyle(.blue)
+                                    
+                                    ForEach(Array(smartHint.thinking_questions.enumerated()), id: \.offset) { index, question in
+                                        HStack(alignment: .top, spacing: 8) {
+                                            Text("\(index + 1).")
+                                                .font(.system(size: 13, weight: .medium))
+                                                .foregroundStyle(.blue)
+                                            
+                                            Text(question)
+                                                .font(.system(size: 13))
+                                                .foregroundStyle(.primary)
+                                                .lineSpacing(1)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // 鼓勵話語
+                            if !smartHint.encouragement.isEmpty {
+                                Text("💪 " + smartHint.encouragement)
+                                    .font(.system(size: 13, weight: .medium, design: .serif))
+                                    .foregroundStyle(.secondary)
+                                    .italic()
+                                    .padding(10)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue.opacity(0.08))
+                                    }
+                            }
+                        }
+                    }
+                }
+                .padding(16)
+                .background {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.blue.opacity(0.1))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.blue.opacity(0.3), lineWidth: 1)
+                        }
                 }
                 .transition(.asymmetric(
                     insertion: .scale(scale: 0.9).combined(with: .opacity),
@@ -298,6 +435,50 @@ struct ClaudeHintCard: View {
                 ))
             }
         }
+    }
+    
+    private func fetchSmartHint() async {
+        isLoadingSmartHint = true
+        smartHintError = nil
+        
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/get_smart_hint") else {
+            smartHintError = "無效的網址"
+            isLoadingSmartHint = false
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: Any] = [
+            "chinese_sentence": chineseSentence,
+            "user_current_input": userAnswer,
+            "original_hint": hintText,
+            "model_name": SettingsManager.shared.generationModel.rawValue
+        ]
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            let response = try JSONDecoder().decode(SmartHintResponse.self, from: data)
+            
+            await MainActor.run {
+                self.smartHintData = response
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self.showSmartHint = true
+                }
+            }
+            
+        } catch {
+            await MainActor.run {
+                self.smartHintError = "獲取智慧提示失敗：\(error.localizedDescription)"
+            }
+        }
+        
+        isLoadingSmartHint = false
     }
 }
 
