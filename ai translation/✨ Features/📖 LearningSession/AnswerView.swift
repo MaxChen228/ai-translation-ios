@@ -69,7 +69,11 @@ struct AnswerView: View {
                 
                 // 如果有回饋，就顯示回饋區塊
                 if let feedback = sessionQuestion.feedback {
-                    FeedbackDisplayView(feedback: feedback)
+                    FeedbackDisplayView(
+                        feedback: feedback,
+                        questionData: sessionQuestion.question,
+                        userAnswer: userAnswer
+                    )
                 }
             }
         }
@@ -134,16 +138,53 @@ struct AnswerView: View {
     }
 }
 
-// --- 【計畫一修改】將批改回饋的 UI 拆分成獨立的子視圖 ---
+// --- 【大幅修改】支援編輯、刪除、合併的批改回饋視圖 ---
 struct FeedbackDisplayView: View {
     let feedback: FeedbackResponse
+    let questionData: Question
+    let userAnswer: String
+    
+    // 【新增】使用 @State 來追蹤可編輯的錯誤列表
+    @State private var editableErrors: [ErrorAnalysis] = []
+    @State private var isEditMode: Bool = false
+    
+    // 【新增】用於追蹤正在合併的項目
+    @State private var selectedForMerge: Set<UUID> = []
+    @State private var isMerging: Bool = false
+    @State private var mergeError: String?
+    
+    // 【新增】用於追蹤儲存狀態
+    @State private var isSaving: Bool = false
+    @State private var saveMessage: String?
+    @State private var showSaveAlert: Bool = false
     
     var body: some View {
         Divider().padding(.vertical, 10)
         
         VStack(alignment: .leading, spacing: 18) {
-            Text("🎓 AI 家教點評")
-                .font(.title2).bold()
+            HStack {
+                Text("🎓 AI 家教點評")
+                    .font(.title2).bold()
+                
+                Spacer()
+                
+                // 【新增】編輯模式切換按鈕
+                if !editableErrors.isEmpty {
+                    Button(action: {
+                        withAnimation {
+                            isEditMode.toggle()
+                            if !isEditMode {
+                                // 退出編輯模式時清空選擇
+                                selectedForMerge.removeAll()
+                            }
+                        }
+                    }) {
+                        Text(isEditMode ? "完成" : "編輯")
+                            .font(.body)
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
             
             // 區塊一：整體評分
             VStack(alignment: .leading, spacing: 8) {
@@ -166,14 +207,108 @@ struct FeedbackDisplayView: View {
             .cornerRadius(10)
             
             // 區塊二：錯誤分析列表
-            if !feedback.error_analysis.isEmpty {
-                Text("詳細錯誤分析")
-                    .font(.headline)
-                    .padding(.top, 5)
-                
-                ForEach(feedback.error_analysis) { error in
-                    ErrorAnalysisCard(error: error)
+            if !editableErrors.isEmpty {
+                HStack {
+                    Text("詳細錯誤分析")
+                        .font(.headline)
+                    
+                    Spacer()
+                    
+                    // 【新增】合併按鈕（只在編輯模式且選了2個項目時顯示）
+                    if isEditMode && selectedForMerge.count == 2 {
+                        Button(action: {
+                            Task {
+                                await performMerge()
+                            }
+                        }) {
+                            if isMerging {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Label("合併", systemImage: "arrow.triangle.merge")
+                                    .font(.caption)
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(isMerging)
+                    }
                 }
+                .padding(.top, 5)
+                
+                if let mergeError = mergeError {
+                    Text("合併失敗：\(mergeError)")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                }
+                
+                if isEditMode {
+                    // 【修改】編輯模式下的可刪除、可選擇列表
+                    List {
+                        ForEach(editableErrors) { error in
+                            ErrorAnalysisEditableCard(
+                                error: error,
+                                isSelected: selectedForMerge.contains(error.id),
+                                onTap: {
+                                    toggleSelection(for: error.id)
+                                }
+                            )
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    removeError(error)
+                                } label: {
+                                    Label("刪除", systemImage: "trash")
+                                }
+                            }
+                        }
+                        .onMove(perform: moveError)
+                    }
+                    .listStyle(PlainListStyle())
+                    .frame(minHeight: CGFloat(editableErrors.count * 180))
+                    .scrollDisabled(true)
+                    
+                } else {
+                    // 非編輯模式下的靜態顯示
+                    ForEach(editableErrors) { error in
+                        ErrorAnalysisCard(error: error)
+                    }
+                }
+                
+                // 【新增】確認儲存按鈕
+                if !editableErrors.isEmpty {
+                    Button(action: {
+                        showSaveAlert = true
+                    }) {
+                        HStack {
+                            if isSaving {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                Text("儲存中...")
+                            } else {
+                                Image(systemName: "checkmark.circle.fill")
+                                Text("確認儲存到知識庫")
+                            }
+                        }
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(editableErrors.isEmpty ? Color.gray : Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .disabled(editableErrors.isEmpty || isSaving)
+                    .padding(.top)
+                }
+                
+                if let saveMessage = saveMessage {
+                    Text(saveMessage)
+                        .font(.caption)
+                        .foregroundColor(.green)
+                        .padding(.horizontal)
+                }
+                
             } else {
                 Text("🎉 恭喜！AI沒有發現任何錯誤。")
                     .font(.headline)
@@ -183,10 +318,136 @@ struct FeedbackDisplayView: View {
                     .cornerRadius(10)
             }
         }
+        .onAppear {
+            // 初始化可編輯的錯誤列表
+            editableErrors = feedback.error_analysis
+        }
+        .alert("確認儲存", isPresented: $showSaveAlert) {
+            Button("取消", role: .cancel) { }
+            Button("確認") {
+                Task {
+                    await saveToKnowledgeBase()
+                }
+            }
+        } message: {
+            Text("確定要將這 \(editableErrors.count) 個錯誤分析儲存為知識點嗎？")
+        }
+    }
+    
+    // 【新增】處理拖動排序的函數
+    private func moveError(from source: IndexSet, to destination: Int) {
+        editableErrors.move(fromOffsets: source, toOffset: destination)
+    }
+    
+    // 【新增】刪除錯誤
+    private func removeError(_ error: ErrorAnalysis) {
+        withAnimation {
+            editableErrors.removeAll { $0.id == error.id }
+            selectedForMerge.remove(error.id)
+        }
+    }
+    
+    // 【新增】切換選擇狀態
+    private func toggleSelection(for errorId: UUID) {
+        if selectedForMerge.contains(errorId) {
+            selectedForMerge.remove(errorId)
+        } else {
+            // 最多只能選擇2個
+            if selectedForMerge.count < 2 {
+                selectedForMerge.insert(errorId)
+            }
+        }
+    }
+    
+    // 【新增】執行合併
+    private func performMerge() async {
+        guard selectedForMerge.count == 2 else { return }
+        
+        isMerging = true
+        mergeError = nil
+        
+        let selectedIds = Array(selectedForMerge)
+        guard let error1 = editableErrors.first(where: { $0.id == selectedIds[0] }),
+              let error2 = editableErrors.first(where: { $0.id == selectedIds[1] }) else {
+            isMerging = false
+            return
+        }
+        
+        do {
+            // 呼叫後端 API 進行合併
+            let mergedError = try await KnowledgePointAPIService.mergeErrors(error1: error1, error2: error2)
+            
+            // 更新列表：移除原本的兩個，加入合併後的結果
+            withAnimation {
+                editableErrors.removeAll { selectedForMerge.contains($0.id) }
+                editableErrors.append(mergedError)
+                selectedForMerge.removeAll()
+            }
+        } catch {
+            mergeError = "無法合併錯誤：\(error.localizedDescription)"
+        }
+        
+        isMerging = false
+    }
+    
+    // 【新增】儲存到知識庫
+    private func saveToKnowledgeBase() async {
+        isSaving = true
+        saveMessage = nil
+        
+        // 準備要傳送的資料
+        let questionDataDict: [String: Any?] = [
+            "new_sentence": questionData.new_sentence,
+            "type": questionData.type,
+            "hint_text": questionData.hint_text,
+            "knowledge_point_id": questionData.knowledge_point_id,
+            "mastery_level": questionData.mastery_level
+        ]
+        
+        do {
+            let savedCount = try await KnowledgePointAPIService.finalizeKnowledgePoints(
+                errors: editableErrors,
+                questionData: questionDataDict,
+                userAnswer: userAnswer
+            )
+            
+            saveMessage = "✅ 成功儲存 \(savedCount) 個知識點"
+            
+            // 清空錯誤列表，表示已經處理完成
+            withAnimation {
+                editableErrors.removeAll()
+            }
+        } catch {
+            saveMessage = "❌ 儲存失敗：\(error.localizedDescription)"
+        }
+        
+        isSaving = false
     }
 }
 
-// --- 【計畫一新增】專門用來顯示單一錯誤分析的卡片 ---
+// 【新增】可編輯模式的錯誤卡片
+struct ErrorAnalysisEditableCard: View {
+    let error: ErrorAnalysis
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 15) {
+            // 選擇圓圈
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .foregroundColor(isSelected ? .blue : .gray)
+                .font(.title2)
+                .onTapGesture {
+                    onTap()
+                }
+            
+            // 原本的錯誤卡片內容
+            ErrorAnalysisCard(error: error)
+        }
+    }
+}
+
+// --- 錯誤分析卡片（維持原樣）---
 struct ErrorAnalysisCard: View {
     let error: ErrorAnalysis
     
@@ -237,7 +498,6 @@ struct ErrorAnalysisCard: View {
         .cornerRadius(10)
     }
 }
-
 
 // 提示的子視圖 (不變)
 struct HintView: View {

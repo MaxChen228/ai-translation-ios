@@ -97,6 +97,102 @@ struct KnowledgePointAPIService {
 
         try await performRequest(request: request)
     }
+    
+    static func mergeErrors(error1: ErrorAnalysis, error2: ErrorAnalysis) async throws -> ErrorAnalysis {
+        let urlString = "\(baseURL)/merge_errors"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 將 ErrorAnalysis 轉換為字典
+        let encoder = JSONEncoder()
+        let error1Data = try encoder.encode(error1)
+        let error2Data = try encoder.encode(error2)
+        
+        let error1Dict = try JSONSerialization.jsonObject(with: error1Data) as? [String: Any] ?? [:]
+        let error2Dict = try JSONSerialization.jsonObject(with: error2Data) as? [String: Any] ?? [:]
+        
+        let body: [String: Any] = [
+            "error1": error1Dict,
+            "error2": error2Dict
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
+               let message = errorBody["error"] {
+                throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)
+            }
+            throw APIError.serverError(statusCode: httpResponse.statusCode, message: "合併失敗")
+        }
+        
+        // 解析回應
+        struct MergeResponse: Decodable {
+            let merged_error: ErrorAnalysis
+        }
+        
+        let mergeResponse = try JSONDecoder().decode(MergeResponse.self, from: data)
+        return mergeResponse.merged_error
+    }
+
+    /// 將最終確認的錯誤列表儲存為知識點
+    static func finalizeKnowledgePoints(errors: [ErrorAnalysis], questionData: [String: Any?], userAnswer: String) async throws -> Int {
+        let urlString = "\(baseURL)/knowledge_points/finalize"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // 將 ErrorAnalysis 陣列轉換為字典陣列
+        let encoder = JSONEncoder()
+        var errorDicts: [[String: Any]] = []
+        
+        for error in errors {
+            let errorData = try encoder.encode(error)
+            if let errorDict = try JSONSerialization.jsonObject(with: errorData) as? [String: Any] {
+                errorDicts.append(errorDict)
+            }
+        }
+        
+        let body: [String: Any] = [
+            "errors": errorDicts,
+            "question_data": questionData,
+            "user_answer": userAnswer
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
+               let message = errorBody["error"] {
+                throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)
+            }
+            throw APIError.serverError(statusCode: httpResponse.statusCode, message: "儲存失敗")
+        }
+        
+        // 回傳儲存的數量
+        return errors.count
+    }
 
 
     // 內部輔助函式，用於執行不需要回傳資料的請求 (如 POST, DELETE)
