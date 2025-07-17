@@ -2,7 +2,6 @@
 
 import Foundation
 
-// 定義一個錯誤類型，方便處理 API 錯誤
 enum APIError: Error {
     case invalidURL
     case requestFailed(Error)
@@ -13,9 +12,84 @@ enum APIError: Error {
 }
 
 struct KnowledgePointAPIService {
-    // 您的後端 API 基礎 URL
-    // 請根據您在 Render 或本地運行的位址修改
     private static let baseURL = "\(APIConfig.apiBaseURL)/api"
+
+    /// 獲取單一知識點的詳細資料
+    static func fetchKnowledgePoint(id: Int) async throws -> KnowledgePoint {
+        let urlString = "\(baseURL)/knowledge_point/\(id)"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.invalidResponse
+        }
+        
+        do {
+            let knowledgePoint = try JSONDecoder().decode(KnowledgePoint.self, from: data)
+            return knowledgePoint
+        } catch {
+            throw APIError.decodingError(error)
+        }
+    }
+
+    /// 更新知識點資料
+    static func updateKnowledgePoint(id: Int, updates: [String: Any]) async throws {
+        let urlString = "\(baseURL)/knowledge_point/\(id)"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: updates)
+        
+        try await performRequest(request: request)
+    }
+
+    /// AI 重新審閱知識點
+    static func aiReviewKnowledgePoint(id: Int, modelName: String? = nil) async throws -> AIReviewResult {
+        let urlString = "\(baseURL)/knowledge_point/\(id)/ai_review"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        var body: [String: Any] = [:]
+        if let modelName = modelName {
+            body["model_name"] = modelName
+        }
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
+               let message = errorBody["error"] {
+                throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)
+            }
+            throw APIError.serverError(statusCode: httpResponse.statusCode, message: "AI 審閱失敗")
+        }
+        
+        struct AIReviewResponse: Decodable {
+            let review_result: AIReviewResult
+        }
+        
+        let reviewResponse = try JSONDecoder().decode(AIReviewResponse.self, from: data)
+        return reviewResponse.review_result
+    }
 
     /// 封存一個知識點
     static func archivePoint(id: Int) async throws {
@@ -78,7 +152,6 @@ struct KnowledgePointAPIService {
     }
     
     static func batchArchivePoints(ids: [Int]) async throws {
-        // 【修改】移除此處多餘的 /api，因為 baseURL 中已經包含了
         let urlString = "\(baseURL)/knowledge_points/batch_action"
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
@@ -108,7 +181,6 @@ struct KnowledgePointAPIService {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // 將 ErrorAnalysis 轉換為字典
         let encoder = JSONEncoder()
         let error1Data = try encoder.encode(error1)
         let error2Data = try encoder.encode(error2)
@@ -137,7 +209,6 @@ struct KnowledgePointAPIService {
             throw APIError.serverError(statusCode: httpResponse.statusCode, message: "合併失敗")
         }
         
-        // 解析回應
         struct MergeResponse: Decodable {
             let merged_error: ErrorAnalysis
         }
@@ -157,7 +228,6 @@ struct KnowledgePointAPIService {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // 將 ErrorAnalysis 陣列轉換為字典陣列
         let encoder = JSONEncoder()
         var errorDicts: [[String: Any]] = []
         
@@ -190,12 +260,10 @@ struct KnowledgePointAPIService {
             throw APIError.serverError(statusCode: httpResponse.statusCode, message: "儲存失敗")
         }
         
-        // 回傳儲存的數量
         return errors.count
     }
 
-
-    // 內部輔助函式，用於執行不需要回傳資料的請求 (如 POST, DELETE)
+    // 內部輔助函式
     private static func performRequest(request: URLRequest) async throws {
         let (data, response) = try await URLSession.shared.data(for: request)
         
@@ -203,9 +271,7 @@ struct KnowledgePointAPIService {
             throw APIError.invalidResponse
         }
         
-        // 檢查狀態碼是否在成功範圍內
         guard (200...299).contains(httpResponse.statusCode) else {
-            // 嘗試解析後端回傳的錯誤訊息
             if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
                let message = errorBody["error"] ?? errorBody["message"] {
                 throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)

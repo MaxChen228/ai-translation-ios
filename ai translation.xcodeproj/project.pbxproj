@@ -29,9 +29,22 @@
 		507B28FB2E25561C005DAD5B /* ai translationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ai translationUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		50B6D9B22E29AB4D00D88F55 /* Exceptions for "ai translation" folder in "ai translation" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"✨ Features/📊 Dashboard/Untitled.swift",
+			);
+			target = 507B28E32E25561A005DAD5B /* ai translation */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		507B28E62E25561A005DAD5B /* ai translation */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				50B6D9B22E29AB4D00D88F55 /* Exceptions for "ai translation" folder in "ai translation" target */,
+			);
 			path = "ai translation";
 			sourceTree = "<group>";
 		};
