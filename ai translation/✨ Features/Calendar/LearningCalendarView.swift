@@ -1,92 +1,61 @@
-// LearningCalendarView.swift
+// LearningCalendarView.swift - Claude風格重新設計
 
 import SwiftUI
 
 struct LearningCalendarView: View {
-    // 【核心修正 1】: 將 monthData 的 Key 從 Date 改為 DateComponents
     @State private var monthData: [DateComponents: Int] = [:]
-    
     @State private var selectedDate = Date()
     @State private var isLoading = false
     
     private var dailyGoal: Int {
         SettingsManager.shared.dailyGoal
     }
+    
+    // Claude風格的月份名稱格式化
+    private var monthYearText: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy年M月"
+        return formatter.string(from: selectedDate)
+    }
+    
+    // 當月統計
+    private var monthStats: MonthStats {
+        MonthStats(from: monthData, goal: dailyGoal)
+    }
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // 月份切換器和星期標頭... (此處省略以保持簡潔，您的原碼無誤)
-                HStack {
-                    Button(action: { changeMonth(by: -1) }) { Image(systemName: "chevron.left.circle.fill") }.font(.title2)
-                    Text(selectedDate, style: .date).font(.title2.bold()).frame(maxWidth: .infinity)
-                    Button(action: { changeMonth(by: 1) }) { Image(systemName: "chevron.right.circle.fill") }.font(.title2)
-                }.padding()
-                HStack {
-                    ForEach(["日", "一", "二", "三", "四", "五", "六"], id: \.self) { day in
-                        Text(day).frame(maxWidth: .infinity).font(.headline).foregroundColor(.secondary)
-                    }
-                }.padding(.horizontal)
-
-                // 月曆網格
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 10) {
-                    ForEach(fetchDaysInMonth(), id: \.self) { date in
-                        if let date = date {
-                            dayCell(for: date)
-                        } else {
-                            Rectangle().fill(Color.clear)
-                        }
+            ScrollView {
+                LazyVStack(spacing: 24) {
+                    // Claude風格頂部統計卡片
+                    ClaudeMonthStatsCard(stats: monthStats, monthText: monthYearText)
+                    
+                    // Claude風格月曆主體
+                    ClaudeCalendarCard(
+                        selectedDate: $selectedDate,
+                        monthData: monthData,
+                        dailyGoal: dailyGoal,
+                        onMonthChange: loadDataForCurrentMonth
+                    )
+                }
+                .padding(20)
+            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("📅 學習日曆")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: loadDataForCurrentMonth) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(Color.orange)
                     }
                 }
-                .padding(10)
-                
-                Spacer()
             }
-            .navigationTitle("🗓️ 學習日曆")
             .onAppear(perform: loadDataForCurrentMonth)
             .onChange(of: selectedDate) { _, _ in loadDataForCurrentMonth() }
         }
     }
     
-    @ViewBuilder
-    private func dayCell(for date: Date) -> some View {
-        // 【第 1 處】: 將 Date 轉換為 DateComponents
-        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
-        // 【第 2 處】: 用 DateComponents 作為 Key 來查詢，現在類型匹配了
-        let count = monthData[components] ?? 0
-        
-        let intensity = min(1.0, Double(count) / Double(dailyGoal))
-        let isToday = Calendar.current.isDateInToday(date)
-
-        NavigationLink(destination: DailyDetailView(selectedDate: date)) {
-            VStack(spacing: 4) {
-                Text("\(dayNumber(from: date))")
-                    .font(.system(size: 14))
-                    .fontWeight(isToday ? .bold : .regular)
-                    .frame(width: 24, height: 24)
-                    .background(isToday ? Color.blue.opacity(0.3) : Color.clear)
-                    .clipShape(Circle())
-                    .foregroundColor(.primary)
-
-                if count > 0 {
-                    Text("\(count)")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .frame(width: 45, height: 50)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.green.opacity(intensity))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            )
-        }
-        .disabled(count == 0)
-    }
-
     private func loadDataForCurrentMonth() {
         isLoading = true
         let components = Calendar.current.dateComponents([.year, .month], from: selectedDate)
@@ -113,7 +82,6 @@ struct LearningCalendarView: View {
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withFullDate]
             
-            // 【核心修正 3】: 將 API 回傳的資料轉換為 [DateComponents: Int] 字典
             var newMonthData: [DateComponents: Int] = [:]
             for (dateString, count) in response.heatmap_data {
                 if let date = formatter.date(from: dateString) {
@@ -123,41 +91,353 @@ struct LearningCalendarView: View {
             }
             
             await MainActor.run {
-                self.monthData = newMonthData
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self.monthData = newMonthData
+                }
             }
         } catch {
             print("無法載入熱力圖數據: \(error)")
         }
     }
+}
+
+// MARK: - Claude風格組件
+
+struct MonthStats {
+    let totalDays: Int
+    let activeDays: Int
+    let totalQuestions: Int
+    let averagePerDay: Double
+    let goalAchievedDays: Int
+    let currentStreak: Int
+    
+    init(from data: [DateComponents: Int], goal: Int) {
+        let counts = Array(data.values)
+        totalDays = data.count
+        activeDays = counts.filter { $0 > 0 }.count
+        totalQuestions = counts.reduce(0, +)
+        averagePerDay = activeDays > 0 ? Double(totalQuestions) / Double(activeDays) : 0
+        goalAchievedDays = counts.filter { $0 >= goal }.count
+        
+        // 計算連續學習天數（簡化版）
+        currentStreak = activeDays // 這裡可以改為更精確的連續天數計算
+    }
+}
+
+struct ClaudeMonthStatsCard: View {
+    let stats: MonthStats
+    let monthText: String
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 月份標題
+            HStack {
+                Text(monthText)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(.primary)
+                Spacer()
+                
+                // 達成率指示器
+                ClaudeGoalIndicator(
+                    achieved: stats.goalAchievedDays,
+                    total: max(1, stats.activeDays)
+                )
+            }
+            
+            // 統計網格
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                ClaudeStatMini(title: "學習天數", value: "\(stats.activeDays)", icon: "calendar.badge.checkmark")
+                ClaudeStatMini(title: "總題數", value: "\(stats.totalQuestions)", icon: "list.number")
+                ClaudeStatMini(title: "日均題數", value: String(format: "%.1f", stats.averagePerDay), icon: "chart.line.uptrend.xyaxis")
+                ClaudeStatMini(title: "達標天數", value: "\(stats.goalAchievedDays)", icon: "target")
+            }
+        }
+        .padding(20)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+}
+
+struct ClaudeStatMini: View {
+    let title: String
+    let value: String
+    let icon: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Color.orange)
+                .frame(width: 20)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
+struct ClaudeGoalIndicator: View {
+    let achieved: Int
+    let total: Int
+    
+    private var percentage: Double {
+        total == 0 ? 0 : Double(achieved) / Double(total)
+    }
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(Color(.systemGray5), lineWidth: 3)
+                    .frame(width: 32, height: 32)
+                
+                Circle()
+                    .trim(from: 0, to: percentage)
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .frame(width: 32, height: 32)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeInOut(duration: 0.5), value: percentage)
+            }
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text("\(Int(percentage * 100))%")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Text("達標率")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+struct ClaudeCalendarCard: View {
+    @Binding var selectedDate: Date
+    let monthData: [DateComponents: Int]
+    let dailyGoal: Int
+    let onMonthChange: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 月份導航
+            ClaudeMonthNavigation(selectedDate: $selectedDate, onMonthChange: onMonthChange)
+            
+            // 星期標頭
+            ClaudeWeekdayHeader()
+            
+            // 日期網格
+            ClaudeDateGrid(
+                selectedDate: selectedDate,
+                monthData: monthData,
+                dailyGoal: dailyGoal
+            )
+        }
+        .padding(20)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+}
+
+struct ClaudeMonthNavigation: View {
+    @Binding var selectedDate: Date
+    let onMonthChange: () -> Void
+    
+    private var monthYearText: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M月"
+        return formatter.string(from: selectedDate)
+    }
+    
+    var body: some View {
+        HStack {
+            Button(action: { changeMonth(by: -1) }) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 32, height: 32)
+                    .background {
+                        Circle()
+                            .fill(Color(.systemGray6))
+                    }
+            }
+            
+            Spacer()
+            
+            Text(monthYearText)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.primary)
+            
+            Spacer()
+            
+            Button(action: { changeMonth(by: 1) }) {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 32, height: 32)
+                    .background {
+                        Circle()
+                            .fill(Color(.systemGray6))
+                    }
+            }
+        }
+    }
+    
+    private func changeMonth(by amount: Int) {
+        if let newDate = Calendar.current.date(byAdding: .month, value: amount, to: selectedDate) {
+            selectedDate = newDate
+            onMonthChange()
+        }
+    }
+}
+
+struct ClaudeWeekdayHeader: View {
+    private let weekdays = ["日", "一", "二", "三", "四", "五", "六"]
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(weekdays, id: \.self) { day in
+                Text(day)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+    }
+}
+
+struct ClaudeDateGrid: View {
+    let selectedDate: Date
+    let monthData: [DateComponents: Int]
+    let dailyGoal: Int
+    
+    private var dateRange: [Date?] {
+        fetchDaysInMonth()
+    }
+    
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+            ForEach(0..<dateRange.count, id: \.self) { index in
+                if let date = dateRange[index] {
+                    ClaudeDateCell(
+                        date: date,
+                        count: getCountForDate(date),
+                        dailyGoal: dailyGoal
+                    )
+                } else {
+                    Color.clear
+                        .frame(height: 48)
+                }
+            }
+        }
+    }
+    
+    private func getCountForDate(_ date: Date) -> Int {
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return monthData[components] ?? 0
+    }
     
     private func fetchDaysInMonth() -> [Date?] {
-        guard let _ = Calendar.current.dateInterval(of: .month, for: selectedDate),
+        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: selectedDate),
               let firstDayOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: selectedDate))
         else { return [] }
 
         let firstWeekday = Calendar.current.component(.weekday, from: firstDayOfMonth)
         var days: [Date?] = []
+        
+        // 前置空白
         for _ in 0..<(firstWeekday - 1) {
             days.append(nil)
         }
         
+        // 當月日期
         let numberOfDays = Calendar.current.range(of: .day, in: .month, for: selectedDate)!.count
         for dayOffset in 0..<numberOfDays {
             if let date = Calendar.current.date(byAdding: .day, value: dayOffset, to: firstDayOfMonth) {
                 days.append(date)
             }
         }
+        
         return days
     }
+}
+
+struct ClaudeDateCell: View {
+    let date: Date
+    let count: Int
+    let dailyGoal: Int
     
-    private func dayNumber(from date: Date) -> Int {
-        Calendar.current.component(.day, from: date)
+    private var dayNumber: String {
+        String(Calendar.current.component(.day, from: date))
     }
     
-    private func changeMonth(by amount: Int) {
-        if let newDate = Calendar.current.date(byAdding: .month, value: amount, to: selectedDate) {
-            selectedDate = newDate
+    private var isToday: Bool {
+        Calendar.current.isDateInToday(date)
+    }
+    
+    private var intensity: Double {
+        dailyGoal > 0 ? min(1.0, Double(count) / Double(dailyGoal)) : 0
+    }
+    
+    private var backgroundOpacity: Double {
+        if count == 0 { return 0 }
+        return 0.15 + (intensity * 0.85) // 0.15 到 1.0 的範圍
+    }
+    
+    var body: some View {
+        NavigationLink(destination: DailyDetailView(selectedDate: date)) {
+            VStack(spacing: 4) {
+                Text(dayNumber)
+                    .font(.system(size: 14, weight: isToday ? .bold : .medium))
+                    .foregroundStyle(isToday ? Color.orange : .primary)
+                
+                if count > 0 {
+                    Text("\(count)")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Color.orange)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background {
+                            Capsule()
+                                .fill(Color.orange.opacity(0.15))
+                        }
+                }
+            }
+            .frame(height: 48)
+            .frame(maxWidth: .infinity)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(count > 0 ? Color.orange.opacity(backgroundOpacity) : Color.clear)
+                    .overlay {
+                        if isToday {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.orange, lineWidth: 2)
+                        }
+                    }
+            }
         }
+        .disabled(count == 0)
+        .buttonStyle(.plain)
     }
 }
 
