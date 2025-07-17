@@ -9,7 +9,14 @@ struct ai_translationApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                // 學習分頁
+                // 學習日曆分頁（改為第一個）
+                LearningCalendarView()
+                    .tabItem {
+                        Image(systemName: "calendar")
+                        Text("日曆")
+                    }
+                
+                // 學習分頁（改為第二個）
                 ContentView()
                     .tabItem {
                         Image(systemName: "list.bullet.rectangle.portrait")
@@ -21,13 +28,6 @@ struct ai_translationApp: App {
                     .tabItem {
                         Image(systemName: "chart.bar.xaxis")
                         Text("儀表板")
-                    }
-                
-                // 學習日曆分頁
-                LearningCalendarView()
-                    .tabItem {
-                        Image(systemName: "calendar")
-                        Text("日曆")
                     }
                 
                 // 設定分頁

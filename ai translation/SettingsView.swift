@@ -3,88 +3,476 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // 從儲存中讀取數值，並讓 UI 可以與之綁定
     @State private var reviewCount: Int = SettingsManager.shared.reviewCount
     @State private var newCount: Int = SettingsManager.shared.newCount
     @State private var difficulty: Int = SettingsManager.shared.difficulty
     @State private var length: SettingsManager.SentenceLength = SettingsManager.shared.length
     @State private var dailyGoal: Int = SettingsManager.shared.dailyGoal
-    // 【vNext 新增】綁定模型選擇的狀態
     @State private var generationModel: SettingsManager.AIModel = SettingsManager.shared.generationModel
     @State private var gradingModel: SettingsManager.AIModel = SettingsManager.shared.gradingModel
 
-
     var body: some View {
-            NavigationView {
-                Form {
-                    Section(header: Text("每輪學習題數設定")) {
-                        Stepper("智慧複習題：\(reviewCount) 題", value: $reviewCount, in: 0...10)
-                        Stepper("全新挑戰題：\(newCount) 題", value: $newCount, in: 0...10)
+        NavigationView {
+            ScrollView {
+                LazyVStack(spacing: 24) {
+                    // 學習題數設定
+                    ClaudeSettingsCard(title: "學習題數設定", icon: "list.number") {
+                        VStack(spacing: 20) {
+                            ClaudeStepperSetting(
+                                title: "智慧複習題",
+                                description: "根據您的錯誤記錄安排的複習題目",
+                                value: $reviewCount,
+                                range: 0...10
+                            )
+                            
+                            ClaudeStepperSetting(
+                                title: "全新挑戰題",
+                                description: "基於文法句型生成的新題目",
+                                value: $newCount,
+                                range: 0...10
+                            )
+                        }
                     }
                     
-                    Section(header: Text("新題目客製化設定")) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("題目難度：\(difficulty)")
-                            Slider(value: Binding(get: { Double(difficulty) }, set: { difficulty = Int($0) }), in: 1...5, step: 1)
+                    // 新題目設定
+                    ClaudeSettingsCard(title: "新題目客製化", icon: "sparkles") {
+                        VStack(spacing: 20) {
+                            ClaudeSliderSetting(
+                                title: "題目難度",
+                                description: "數字越高，題目越具挑戰性",
+                                value: $difficulty,
+                                range: 1...5
+                            )
+                            
+                            ClaudePickerSetting(
+                                title: "句子長度",
+                                description: "選擇您偏好的練習句子類型",
+                                value: $length
+                            )
                         }
-                        .padding(.vertical, 5)
-                        
-                        Picker("句子長度", selection: $length) {
-                            ForEach(SettingsManager.SentenceLength.allCases) { len in
-                                Text(len.displayName).tag(len)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-
-                    // 【vNext 新增】AI 模型設定區塊
-                    Section(header: Text("AI 模型設定"), footer: Text("更強的模型通常更準確，但回應速度可能較慢。")) {
-                        Picker("出題模型", selection: $generationModel) {
-                            ForEach(SettingsManager.AIModel.allCases) { model in
-                                Text(model.displayName).tag(model)
-                            }
-                        }
-                        
-                        Picker("批改模型", selection: $gradingModel) {
-                            ForEach(SettingsManager.AIModel.allCases) { model in
-                                Text(model.displayName).tag(model)
-                            }
-                        }
-                    }
-
-                    Section(header: Text("學習目標設定")) {
-                        Stepper("每日目標：\(dailyGoal) 題", value: $dailyGoal, in: 1...50)
                     }
                     
-                    Section(footer: Text("設定將在下一次請求新題目時生效。")) {
-                        EmptyView()
+                    // AI 模型設定
+                    ClaudeSettingsCard(title: "AI 模型設定", icon: "cpu") {
+                        VStack(spacing: 20) {
+                            ClaudeAIModelSetting(
+                                title: "出題模型",
+                                description: "負責生成練習題目的 AI 模型",
+                                value: $generationModel
+                            )
+                            
+                            ClaudeAIModelSetting(
+                                title: "批改模型",
+                                description: "負責評分和提供建議的 AI 模型",
+                                value: $gradingModel
+                            )
+                        }
+                        
+                        ClaudeInfoBox(text: "更強的模型通常更準確，但回應速度可能較慢。")
                     }
+                    
+                    // 學習目標設定
+                    ClaudeSettingsCard(title: "學習目標", icon: "target") {
+                        ClaudeStepperSetting(
+                            title: "每日目標",
+                            description: "設定您每天想要完成的題目數量",
+                            value: $dailyGoal,
+                            range: 1...50
+                        )
+                    }
+                    
+                    // 說明區塊
+                    ClaudeInfoCard()
                 }
-                .navigationTitle("⚙️ 個人化設定")
-                .onAppear {
-                    // 當頁面出現時，從管理器同步一次最新的值
-                    self.reviewCount = SettingsManager.shared.reviewCount
-                    self.newCount = SettingsManager.shared.newCount
-                    self.difficulty = SettingsManager.shared.difficulty
-                    self.length = SettingsManager.shared.length
-                    self.dailyGoal = SettingsManager.shared.dailyGoal
-                    // 【vNext 新增】同步模型選擇
-                    self.generationModel = SettingsManager.shared.generationModel
-                    self.gradingModel = SettingsManager.shared.gradingModel
+                .padding(20)
+            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("⚙️ 個人化設定")
+            .navigationBarTitleDisplayMode(.large)
+            .onAppear {
+                syncSettings()
+            }
+            .onChange(of: reviewCount) { _, newValue in SettingsManager.shared.reviewCount = newValue }
+            .onChange(of: newCount) { _, newValue in SettingsManager.shared.newCount = newValue }
+            .onChange(of: difficulty) { _, newValue in SettingsManager.shared.difficulty = newValue }
+            .onChange(of: length) { _, newValue in SettingsManager.shared.length = newValue }
+            .onChange(of: dailyGoal) { _, newValue in SettingsManager.shared.dailyGoal = newValue }
+            .onChange(of: generationModel) { _, newValue in SettingsManager.shared.generationModel = newValue }
+            .onChange(of: gradingModel) { _, newValue in SettingsManager.shared.gradingModel = newValue }
+        }
+    }
+    
+    private func syncSettings() {
+        self.reviewCount = SettingsManager.shared.reviewCount
+        self.newCount = SettingsManager.shared.newCount
+        self.difficulty = SettingsManager.shared.difficulty
+        self.length = SettingsManager.shared.length
+        self.dailyGoal = SettingsManager.shared.dailyGoal
+        self.generationModel = SettingsManager.shared.generationModel
+        self.gradingModel = SettingsManager.shared.gradingModel
+    }
+}
+
+// MARK: - Claude 風格設定組件
+
+struct ClaudeSettingsCard<Content: View>: View {
+    let title: String
+    let icon: String
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Color.orange)
+                
+                Text(title)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.primary)
+            }
+            
+            content
+        }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+}
+
+struct ClaudeStepperSetting: View {
+    let title: String
+    let description: String
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                
+                Text(description)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(1)
+            }
+            
+            HStack {
+                Spacer()
+                
+                HStack(spacing: 20) {
+                    Button(action: {
+                        if value > range.lowerBound {
+                            value -= 1
+                        }
+                    }) {
+                        Image(systemName: "minus")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(value > range.lowerBound ? Color.orange : .secondary)
+                            .frame(width: 32, height: 32)
+                            .background {
+                                Circle()
+                                    .fill(Color(.systemGray6))
+                            }
+                    }
+                    .disabled(value <= range.lowerBound)
+                    
+                    Text("\(value)")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.primary)
+                        .frame(minWidth: 30)
+                    
+                    Button(action: {
+                        if value < range.upperBound {
+                            value += 1
+                        }
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(value < range.upperBound ? Color.orange : .secondary)
+                            .frame(width: 32, height: 32)
+                            .background {
+                                Circle()
+                                    .fill(Color(.systemGray6))
+                            }
+                    }
+                    .disabled(value >= range.upperBound)
                 }
-                // onChange 事件綁定 (此處省略未變動部分)
-                .onChange(of: reviewCount) { _, newValue in SettingsManager.shared.reviewCount = newValue }
-                .onChange(of: newCount) { _, newValue in SettingsManager.shared.newCount = newValue }
-                .onChange(of: difficulty) { _, newDifficulty in SettingsManager.shared.difficulty = newDifficulty }
-                .onChange(of: length) { _, newLength in SettingsManager.shared.length = newLength }
-                .onChange(of: dailyGoal) { _, newGoal in SettingsManager.shared.dailyGoal = newGoal }
-                // 【vNext 新增】監聽並儲存模型的變更
-                .onChange(of: generationModel) { _, newModel in
-                    SettingsManager.shared.generationModel = newModel
+                
+                Spacer()
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
+struct ClaudeSliderSetting: View {
+    let title: String
+    let description: String
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(title)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.primary)
+                    
+                    Spacer()
+                    
+                    Text("\(value)")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Color.orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
+                        .background {
+                            Capsule()
+                                .fill(Color.orange.opacity(0.15))
+                        }
                 }
-                .onChange(of: gradingModel) { _, newModel in
-                    SettingsManager.shared.gradingModel = newModel
+                
+                Text(description)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(1)
+            }
+            
+            HStack(spacing: 12) {
+                Text("\(range.lowerBound)")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.tertiary)
+                
+                Slider(
+                    value: Binding(
+                        get: { Double(value) },
+                        set: { value = Int($0) }
+                    ),
+                    in: Double(range.lowerBound)...Double(range.upperBound),
+                    step: 1
+                ) {
+                    Text(title)
+                } minimumValueLabel: {
+                    EmptyView()
+                } maximumValueLabel: {
+                    EmptyView()
+                }
+                .tint(Color.orange)
+                
+                Text("\(range.upperBound)")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
+struct ClaudePickerSetting: View {
+    let title: String
+    let description: String
+    @Binding var value: SettingsManager.SentenceLength
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                
+                Text(description)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(1)
+            }
+            
+            HStack(spacing: 8) {
+                ForEach(SettingsManager.SentenceLength.allCases) { option in
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            value = option
+                        }
+                    }) {
+                        Text(option.displayName)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(value == option ? .white : .primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(value == option ? Color.orange : Color(.systemBackground))
+                            }
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
+struct ClaudeAIModelSetting: View {
+    let title: String
+    let description: String
+    @Binding var value: SettingsManager.AIModel
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
+                
+                Text(description)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(1)
+            }
+            
+            VStack(spacing: 8) {
+                ForEach(SettingsManager.AIModel.allCases) { model in
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            value = model
+                        }
+                    }) {
+                        HStack {
+                            Text(model.displayName)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(.primary)
+                            
+                            Spacer()
+                            
+                            if value == model {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(Color.orange)
+                            } else {
+                                Image(systemName: "circle")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.tertiary)
+                            }
+                        }
+                        .padding(12)
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(value == model ? Color.orange.opacity(0.1) : Color(.systemBackground))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(value == model ? Color.orange.opacity(0.3) : Color.clear, lineWidth: 1)
+                                }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
+struct ClaudeInfoBox: View {
+    let text: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "info.circle.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(Color.blue)
+            
+            Text(text)
+                .font(.system(size: 13))
+                .foregroundStyle(.secondary)
+                .lineSpacing(1)
+        }
+        .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.blue.opacity(0.1))
+        }
+    }
+}
+
+struct ClaudeInfoCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(.yellow)
+                
+                Text("使用提示")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.primary)
+            }
+            
+            VStack(alignment: .leading, spacing: 12) {
+                ClaudeInfoTip(
+                    icon: "1.circle.fill",
+                    text: "設定將在下一次生成新題目時生效"
+                )
+                
+                ClaudeInfoTip(
+                    icon: "2.circle.fill",
+                    text: "建議複習題數量保持在 3-5 題，以達到最佳學習效果"
+                )
+                
+                ClaudeInfoTip(
+                    icon: "3.circle.fill",
+                    text: "較強的 AI 模型（如 Gemini 2.5 Pro）會提供更準確的分析"
+                )
+            }
+        }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+}
+
+struct ClaudeInfoTip: View {
+    let icon: String
+    let text: String
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color.orange)
+                .padding(.top, 1)
+            
+            Text(text)
+                .font(.system(size: 14))
+                .foregroundStyle(.secondary)
+                .lineSpacing(1)
+        }
+    }
+}
+
+#Preview {
+    SettingsView()
 }
