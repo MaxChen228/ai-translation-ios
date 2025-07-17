@@ -88,7 +88,7 @@ struct DeckSelectionView: View {
         let typesString = selectedTypes.joined(separator: ",")
         
         // 使用 URLComponents 來安全地建立包含查詢參數的 URL
-        var components = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/get_flashcards")!
+        var components = URLComponents(string: "\(APIConfig.apiBaseURL)/get_flashcards")!
         components.queryItems = [
             URLQueryItem(name: "types", value: typesString)
         ]

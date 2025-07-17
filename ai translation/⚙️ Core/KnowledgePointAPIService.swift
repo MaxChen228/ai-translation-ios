@@ -15,7 +15,7 @@ enum APIError: Error {
 struct KnowledgePointAPIService {
     // 您的後端 API 基礎 URL
     // 請根據您在 Render 或本地運行的位址修改
-    private static let baseURL = "https://ai-tutor-ikjn.onrender.com/api"
+    private static let baseURL = "\(APIConfig.apiBaseURL)/api"
 
     /// 封存一個知識點
     static func archivePoint(id: Int) async throws {

@@ -82,7 +82,7 @@ struct ContentView: View {
         let generationModel = SettingsManager.shared.generationModel.rawValue
 
         // 2. 建立 URL 並附加所有參數
-        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/api/start_session") else {
+        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/start_session") else {
             errorMessage = "無效的網址"
             isLoading = false
             return

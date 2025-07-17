@@ -88,7 +88,7 @@ struct AnswerView: View {
         isLoading = true
         errorMessage = nil
 
-        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/api/submit_answer") else {
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/submit_answer") else {
             errorMessage = "無效的網址"
             isLoading = false
             return

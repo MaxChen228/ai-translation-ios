@@ -101,7 +101,7 @@ struct DashboardView: View {
         isLoading = true
         errorMessage = nil
         
-        guard let url = URL(string: "https://ai-tutor-ikjn.onrender.com/api/get_dashboard") else {
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/get_dashboard") else {
             errorMessage = "無效的網址"
             isLoading = false
             return
