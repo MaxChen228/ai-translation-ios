@@ -1,8 +1,8 @@
-//  DashboardView.swift - Claude 風格現代化設計
+//  DashboardView.swift - Claude 風格簡約設計
 
 import SwiftUI
 
-// 【新增】現代化的檢視模式
+// 【重新設計】簡約的檢視模式
 enum ModernDashboardMode: String, CaseIterable, Identifiable {
     case overview = "概覽"
     case categories = "分類"
@@ -13,24 +13,16 @@ enum ModernDashboardMode: String, CaseIterable, Identifiable {
     
     var icon: String {
         switch self {
-        case .overview: return "chart.pie.fill"
-        case .categories: return "folder.fill"
-        case .progress: return "chart.bar.fill"
-        case .schedule: return "calendar.circle.fill"
+        case .overview: return "chart.pie"
+        case .categories: return "folder"
+        case .progress: return "chart.bar"
+        case .schedule: return "calendar"
         }
     }
     
-    var gradient: LinearGradient {
-        switch self {
-        case .overview:
-            return LinearGradient(colors: [Color.blue, Color.purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case .categories:
-            return LinearGradient(colors: [Color.green, Color.teal], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case .progress:
-            return LinearGradient(colors: [Color.orange, Color.red], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case .schedule:
-            return LinearGradient(colors: [Color.indigo, Color.blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
+    // 【改為】簡約的主題色
+    var accentColor: Color {
+        return Color.orange // Claude 風格的橙色重點色
     }
 }
 
@@ -40,7 +32,6 @@ struct DashboardView: View {
     @State private var errorMessage: String?
     @State private var selectedMode: ModernDashboardMode = .overview
     
-    // 【新增】計算統計數據
     private var stats: DashboardStats {
         DashboardStats(from: knowledgePoints)
     }
@@ -48,23 +39,22 @@ struct DashboardView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // 【新增】現代化的模式選擇器
-                ModernModeSelector(selectedMode: $selectedMode)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
+                // 【簡化】模式選擇器
+                ClaudeModeSelector(selectedMode: $selectedMode)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
                 
                 if isLoading {
-                    ModernLoadingView()
+                    ClaudeLoadingView()
                 } else if let errorMessage = errorMessage {
-                    ModernErrorView(message: errorMessage) {
+                    ClaudeErrorView(message: errorMessage) {
                         Task { await fetchDashboardData() }
                     }
                 } else if knowledgePoints.isEmpty {
-                    ModernEmptyStateView()
+                    ClaudeEmptyStateView()
                 } else {
-                    // 【新增】根據模式顯示不同的現代化內容
                     ScrollView {
-                        LazyVStack(spacing: 20) {
+                        LazyVStack(spacing: 24) {
                             switch selectedMode {
                             case .overview:
                                 OverviewSection(stats: stats, points: knowledgePoints)
@@ -76,31 +66,23 @@ struct DashboardView: View {
                                 ScheduleSection(points: knowledgePoints)
                             }
                         }
-                        .padding()
+                        .padding(20)
                     }
                 }
             }
-            .background(
-                LinearGradient(
-                    colors: [Color(.systemBackground), Color(.systemGray6)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .navigationTitle("🧠 知識儀表板")
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("知識儀表板")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { Task { await fetchDashboardData() } }) {
                         Image(systemName: "arrow.clockwise")
-                            .font(.title3)
-                            .foregroundStyle(selectedMode.gradient)
+                            .foregroundStyle(Color.orange)
                     }
                     
                     NavigationLink(destination: ArchivedPointsView()) {
-                        Image(systemName: "archivebox.fill")
-                            .font(.title3)
-                            .foregroundStyle(selectedMode.gradient)
+                        Image(systemName: "archivebox")
+                            .foregroundStyle(Color.orange)
                     }
                 }
             }
@@ -123,11 +105,11 @@ struct DashboardView: View {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             let decodedResponse = try JSONDecoder().decode(DashboardResponse.self, from: data)
-            withAnimation(.spring()) {
+            withAnimation(.easeInOut(duration: 0.3)) {
                 self.knowledgePoints = decodedResponse.knowledge_points
             }
         } catch {
-            self.errorMessage = "無法獲取數據，請稍後再試。\n(\(error.localizedDescription))"
+            self.errorMessage = "無法獲取數據，請稍後再試。"
             print("獲取儀表板數據時發生錯誤: \(error)")
         }
         
@@ -135,9 +117,8 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - 現代化組件
+// MARK: - Claude 風格組件
 
-// 【新增】統計數據結構
 struct DashboardStats {
     let totalPoints: Int
     let weakPoints: Int
@@ -166,35 +147,33 @@ struct DashboardStats {
     }
 }
 
-// 【新增】現代化模式選擇器
-struct ModernModeSelector: View {
+// 【重新設計】Claude 風格模式選擇器
+struct ClaudeModeSelector: View {
     @Binding var selectedMode: ModernDashboardMode
     @Namespace private var animation
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 0) {
             ForEach(ModernDashboardMode.allCases) { mode in
-                ModeButton(
+                ClaudeModeButton(
                     mode: mode,
                     isSelected: selectedMode == mode,
                     animation: animation
                 ) {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    withAnimation(.easeInOut(duration: 0.2)) {
                         selectedMode = mode
                     }
                 }
             }
         }
-        .padding(.horizontal, 4)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.systemGray6))
         )
     }
 }
 
-// 【新增】模式按鈕組件
-struct ModeButton: View {
+struct ClaudeModeButton: View {
     let mode: ModernDashboardMode
     let isSelected: Bool
     let animation: Namespace.ID
@@ -202,26 +181,22 @@ struct ModeButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
+            HStack(spacing: 6) {
                 Image(systemName: mode.icon)
-                    .font(.title2)
-                    .foregroundStyle(isSelected ? .white : .primary)
+                    .font(.system(size: 14, weight: .medium))
                 
                 Text(mode.rawValue)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(isSelected ? .white : .secondary)
+                    .font(.system(size: 14, weight: .medium, design: .default))
             }
+            .foregroundStyle(isSelected ? .white : Color(.label))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 12)
             .background {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(mode.gradient)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.orange)
                         .matchedGeometryEffect(id: "selectedMode", in: animation)
-                } else {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray5))
                 }
             }
         }
@@ -229,125 +204,81 @@ struct ModeButton: View {
     }
 }
 
-// 【新增】概覽區域
+// 【重新設計】概覽區域 - 簡約風格
 struct OverviewSection: View {
     let stats: DashboardStats
     let points: [KnowledgePoint]
     
     var body: some View {
         VStack(spacing: 20) {
-            // 統計卡片網格
+            // 簡約統計卡片
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
-                StatCard(
-                    title: "總知識點",
-                    value: "\(stats.totalPoints)",
-                    icon: "brain.head.profile",
-                    gradient: LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                
-                StatCard(
-                    title: "平均熟練度",
-                    value: String(format: "%.1f", stats.averageMastery),
-                    icon: "chart.line.uptrend.xyaxis",
-                    gradient: LinearGradient(colors: [.green, .teal], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                
-                StatCard(
-                    title: "今日需複習",
-                    value: "\(stats.needReviewToday)",
-                    icon: "calendar.badge.exclamationmark",
-                    gradient: LinearGradient(colors: [.orange, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                
-                StatCard(
-                    title: "分類數量",
-                    value: "\(stats.categoriesCount)",
-                    icon: "folder.badge.plus",
-                    gradient: LinearGradient(colors: [.indigo, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
+                ClaudeStatCard(title: "總知識點", value: "\(stats.totalPoints)")
+                ClaudeStatCard(title: "平均熟練度", value: String(format: "%.1f", stats.averageMastery))
+                ClaudeStatCard(title: "今日需複習", value: "\(stats.needReviewToday)")
+                ClaudeStatCard(title: "分類數量", value: "\(stats.categoriesCount)")
             }
             
-            // 熟練度分布
-            MasteryDistributionCard(stats: stats)
+            // 簡約分布圖
+            ClaudeMasteryCard(stats: stats)
             
-            // 最需要關注的知識點
-            FocusAreaCard(points: points.filter { $0.mastery_level < 2.0 }.sorted { $0.mastery_level < $1.mastery_level }.prefix(5))
+            // 關注區域
+            ClaudeFocusCard(points: points.filter { $0.mastery_level < 2.0 }.sorted { $0.mastery_level < $1.mastery_level }.prefix(5))
         }
     }
 }
 
-// 【新增】統計卡片
-struct StatCard: View {
+// 【重新設計】簡約統計卡片
+struct ClaudeStatCard: View {
     let title: String
     let value: String
-    let icon: String
-    let gradient: LinearGradient
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(.white)
-                Spacer()
-            }
+        VStack(spacing: 8) {
+            Text(value)
+                .font(.system(size: 24, weight: .semibold, design: .rounded))
+                .foregroundStyle(.primary)
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(value)
-                    .font(.system(.title, design: .rounded, weight: .bold))
-                    .foregroundStyle(.white)
-                
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.8))
-            }
+            Text(title)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, minHeight: 80)
         .padding()
-        .frame(maxWidth: .infinity, minHeight: 100, alignment: .leading)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(gradient)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(.white.opacity(0.2), lineWidth: 1)
-                }
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
-        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
 }
 
-// 【新增】熟練度分布卡片
-struct MasteryDistributionCard: View {
+// 【重新設計】簡約熟練度卡片
+struct ClaudeMasteryCard: View {
     let stats: DashboardStats
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: "chart.pie.fill")
-                    .foregroundStyle(.purple)
-                Text("熟練度分布")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                Spacer()
-            }
+            Text("熟練度分布")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(.primary)
             
             VStack(spacing: 12) {
-                MasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: .red)
-                MasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: .orange)
-                MasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: .green)
+                ClaudeMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color(.systemRed))
+                ClaudeMasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: Color(.systemOrange))
+                ClaudeMasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: Color(.systemGreen))
             }
         }
-        .padding()
+        .padding(20)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
 
-// 【新增】熟練度條
-struct MasteryBar: View {
+struct ClaudeMasteryBar: View {
     let label: String
     let count: Int
     let total: Int
@@ -360,125 +291,125 @@ struct MasteryBar: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.subheadline)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.primary)
                 .frame(width: 80, alignment: .leading)
             
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
+                    RoundedRectangle(cornerRadius: 3)
                         .fill(Color(.systemGray5))
-                        .frame(height: 8)
+                        .frame(height: 6)
                     
-                    RoundedRectangle(cornerRadius: 4)
+                    RoundedRectangle(cornerRadius: 3)
                         .fill(color)
-                        .frame(width: geometry.size.width * percentage, height: 8)
-                        .animation(.spring(), value: percentage)
+                        .frame(width: geometry.size.width * percentage, height: 6)
+                        .animation(.easeInOut(duration: 0.3), value: percentage)
                 }
             }
-            .frame(height: 8)
+            .frame(height: 6)
             
             Text("\(count)")
-                .font(.caption)
-                .fontWeight(.medium)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary)
                 .frame(width: 30, alignment: .trailing)
         }
     }
 }
 
-// 【新增】重點關注區域
-struct FocusAreaCard: View {
+// 【重新設計】簡約關注卡片
+struct ClaudeFocusCard: View {
     let points: ArraySlice<KnowledgePoint>
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
                 Text("需要重點關注")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
                 Spacer()
             }
             
             if points.isEmpty {
-                HStack {
-                    Spacer()
-                    VStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title)
-                            .foregroundStyle(.green)
-                        Text("所有知識點都很穩固！")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                }
-                .padding()
-            } else {
                 VStack(spacing: 8) {
-                    ForEach(Array(points)) { point in
+                    Image(systemName: "checkmark.circle")
+                        .font(.system(size: 20))
+                        .foregroundStyle(Color(.systemGreen))
+                    Text("所有知識點都很穩固！")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(Array(points.enumerated()), id: \.element.id) { index, point in
                         NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(point.key_point_summary ?? "核心觀念")
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
+                                        .font(.system(size: 14, weight: .medium))
                                         .foregroundStyle(.primary)
                                         .lineLimit(1)
                                     
                                     Text(point.correct_phrase)
-                                        .font(.caption)
+                                        .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
                                 }
                                 
                                 Spacer()
                                 
-                                MasteryIndicator(level: point.mastery_level)
+                                ClaudeMasteryIndicator(level: point.mastery_level)
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color(.systemBackground))
-                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(Color(.systemGray6))
                         }
                         .buttonStyle(.plain)
+                        
+                        if index < points.count - 1 {
+                            Divider()
+                                .padding(.leading, 16)
+                        }
                     }
+                }
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(.systemGray6))
                 }
             }
         }
-        .padding()
+        .padding(20)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
 
-// 【新增】熟練度指示器
-struct MasteryIndicator: View {
+struct ClaudeMasteryIndicator: View {
     let level: Double
     
     private var color: Color {
-        if level < 1.5 { return .red }
-        else if level < 3.5 { return .orange }
-        else { return .green }
+        if level < 1.5 { return Color(.systemRed) }
+        else if level < 3.5 { return Color(.systemOrange) }
+        else { return Color(.systemGreen) }
     }
     
     var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 3) {
             ForEach(0..<5) { index in
                 Circle()
-                    .fill(Double(index) < level ? color : Color(.systemGray5))
-                    .frame(width: 6, height: 6)
+                    .fill(Double(index) < level ? color : Color(.systemGray4))
+                    .frame(width: 5, height: 5)
             }
         }
     }
 }
 
-// 【新增】分類區域
+// 【重新設計】分類區域
 struct CategoriesSection: View {
     let points: [KnowledgePoint]
     
@@ -487,10 +418,10 @@ struct CategoriesSection: View {
     }
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 1), spacing: 16) {
             ForEach(groupedPoints.keys.sorted(), id: \.self) { category in
                 NavigationLink(destination: KnowledgePointGridView(points: groupedPoints[category]!, categoryTitle: category)) {
-                    ModernCategoryCard(
+                    ClaudeCategoryCard(
                         title: category,
                         count: groupedPoints[category]!.count,
                         averageMastery: groupedPoints[category]!.map { $0.mastery_level }.reduce(0, +) / Double(groupedPoints[category]!.count)
@@ -502,92 +433,56 @@ struct CategoriesSection: View {
     }
 }
 
-// 【新增】現代化分類卡片
-struct ModernCategoryCard: View {
+struct ClaudeCategoryCard: View {
     let title: String
     let count: Int
     let averageMastery: Double
     
-    private var gradient: LinearGradient {
-        let hue = abs(title.hashValue) % 360
-        return LinearGradient(
-            colors: [
-                Color(hue: Double(hue) / 360.0, saturation: 0.8, brightness: 0.9),
-                Color(hue: Double(hue) / 360.0, saturation: 0.6, brightness: 0.7)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: categoryIcon(for: title))
-                    .font(.title2)
-                    .foregroundStyle(.white)
-                Spacer()
-                
-                Text("\(count)")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.primary)
                     .lineLimit(2)
                 
                 HStack {
-                    Text("平均熟練度")
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.8))
+                    Text("\(count) 個知識點")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.secondary)
                     
                     Spacer()
                     
-                    Text(String(format: "%.1f", averageMastery))
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.white)
+                    Text("平均 \(String(format: "%.1f", averageMastery))")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color.orange)
                 }
             }
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.tertiary)
         }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+        .padding(20)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(gradient)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(.white.opacity(0.2), lineWidth: 1)
-                }
-        }
-        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-    }
-    
-    private func categoryIcon(for category: String) -> String {
-        switch category {
-        case "詞彙與片語錯誤": return "textformat.abc"
-        case "語法結構錯誤": return "textformat.123"
-        case "語意與語用錯誤": return "bubble.left.and.bubble.right.fill"
-        case "拼寫與格式錯誤": return "textformat"
-        default: return "folder.fill"
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
     }
 }
 
-// 【新增】進度區域
+// 【重新設計】進度區域
 struct ProgressSection: View {
     let points: [KnowledgePoint]
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             ForEach(points.sorted { $0.mastery_level < $1.mastery_level }) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                    ModernProgressCard(point: point)
+                    ClaudeProgressCard(point: point)
                 }
                 .buttonStyle(.plain)
             }
@@ -595,82 +490,88 @@ struct ProgressSection: View {
     }
 }
 
-// 【新增】現代化進度卡片
-struct ModernProgressCard: View {
+struct ClaudeProgressCard: View {
     let point: KnowledgePoint
     
     var body: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(point.key_point_summary ?? "核心觀念")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                 
                 Text(point.correct_phrase)
-                    .font(.subheadline)
+                    .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                 
                 HStack(spacing: 12) {
-                    Label("\(point.mistake_count)", systemImage: "xmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.red)
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(.systemRed))
+                        Text("\(point.mistake_count)")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Color(.systemRed))
+                    }
                     
-                    Label("\(point.correct_count)", systemImage: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.green)
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color(.systemGreen))
+                        Text("\(point.correct_count)")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Color(.systemGreen))
+                    }
                 }
             }
             
             Spacer()
             
-            VStack(spacing: 8) {
-                CircularProgressView(progress: point.mastery_level / 5.0)
+            VStack(spacing: 6) {
+                ClaudeCircularProgress(progress: point.mastery_level / 5.0)
                 
                 Text(String(format: "%.1f", point.mastery_level))
-                    .font(.caption)
-                    .fontWeight(.medium)
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.secondary)
             }
         }
-        .padding()
+        .padding(16)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
 
-// 【新增】圓形進度視圖
-struct CircularProgressView: View {
+struct ClaudeCircularProgress: View {
     let progress: Double
     
     private var color: Color {
-        if progress < 0.3 { return .red }
-        else if progress < 0.7 { return .orange }
-        else { return .green }
+        if progress < 0.3 { return Color(.systemRed) }
+        else if progress < 0.7 { return Color(.systemOrange) }
+        else { return Color(.systemGreen) }
     }
     
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color(.systemGray5), lineWidth: 3)
-                .frame(width: 40, height: 40)
+                .stroke(Color(.systemGray5), lineWidth: 2)
+                .frame(width: 32, height: 32)
             
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                .frame(width: 40, height: 40)
+                .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .frame(width: 32, height: 32)
                 .rotationEffect(.degrees(-90))
-                .animation(.spring(), value: progress)
+                .animation(.easeInOut(duration: 0.3), value: progress)
         }
     }
 }
 
-// 【新增】排程區域
+// 【重新設計】排程區域
 struct ScheduleSection: View {
     let points: [KnowledgePoint]
     
@@ -683,7 +584,7 @@ struct ScheduleSection: View {
         VStack(spacing: 16) {
             ForEach(scheduledPoints) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                    ModernScheduleCard(point: point)
+                    ClaudeScheduleCard(point: point)
                 }
                 .buttonStyle(.plain)
             }
@@ -691,8 +592,7 @@ struct ScheduleSection: View {
     }
 }
 
-// 【新增】現代化排程卡片
-struct ModernScheduleCard: View {
+struct ClaudeScheduleCard: View {
     let point: KnowledgePoint
     
     private func formatDate(_ dateString: String) -> String {
@@ -716,15 +616,14 @@ struct ModernScheduleCard: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(point.key_point_summary ?? "核心觀念")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
                 Text(point.correct_phrase)
-                    .font(.subheadline)
+                    .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
@@ -733,103 +632,97 @@ struct ModernScheduleCard: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 Text(formatDate(point.next_review_date ?? ""))
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(isOverdue ? .red : .blue)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(isOverdue ? Color(.systemRed) : .primary)
                 
-                if isOverdue {
-                    Text("已逾期")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.red.opacity(0.1))
-                        .foregroundStyle(.red)
-                        .clipShape(Capsule())
-                } else {
-                    Text("待複習")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.blue.opacity(0.1))
-                        .foregroundStyle(.blue)
-                        .clipShape(Capsule())
-                }
+                Text(isOverdue ? "已逾期" : "待複習")
+                    .font(.system(size: 10, weight: .medium))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(isOverdue ? Color(.systemRed).opacity(0.1) : Color(.systemGray5))
+                    .foregroundStyle(isOverdue ? Color(.systemRed) : .secondary)
+                    .clipShape(Capsule())
             }
         }
-        .padding()
+        .padding(16)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(isOverdue ? .red.opacity(0.3) : .clear, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isOverdue ? Color(.systemRed).opacity(0.2) : Color.clear, lineWidth: 1)
                 }
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
 }
 
-// 【新增】現代化加載視圖
-struct ModernLoadingView: View {
+// 【重新設計】狀態視圖
+struct ClaudeLoadingView: View {
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             ProgressView()
-                .scaleEffect(1.2)
-                .tint(.blue)
+                .scaleEffect(1.1)
+                .tint(Color.orange)
             
-            Text("AI 正在分析您的學習數據...")
-                .font(.headline)
+            Text("正在載入數據...")
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-// 【新增】現代化錯誤視圖
-struct ModernErrorView: View {
+struct ClaudeErrorView: View {
     let message: String
     let retry: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(.orange)
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 40))
+                .foregroundStyle(Color(.systemOrange))
             
             Text("載入失敗")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(.primary)
             
             Text(message)
-                .font(.subheadline)
+                .font(.system(size: 14))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal)
+                .padding(.horizontal, 40)
             
             Button("重新載入", action: retry)
-                .buttonStyle(.borderedProminent)
+                .font(.system(size: 15, weight: .medium))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(Color.orange)
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-// 【新增】現代化空狀態視圖
-struct ModernEmptyStateView: View {
+struct ClaudeEmptyStateView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "brain.head.profile")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .font(.system(size: 50))
+                .foregroundStyle(Color.orange)
             
             Text("開始您的學習之旅")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(.primary)
             
             Text("完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！")
-                .font(.subheadline)
+                .font(.system(size: 14))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                .lineSpacing(2)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 40)
     }
 }
