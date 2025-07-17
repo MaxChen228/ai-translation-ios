@@ -34,7 +34,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"✨ Features/📇 Flashcards/Untitled.swift",
-				"✨ Features/📊 Dashboard/Untitled.swift",
 			);
 			target = 507B28E32E25561A005DAD5B /* ai translation */;
 		};

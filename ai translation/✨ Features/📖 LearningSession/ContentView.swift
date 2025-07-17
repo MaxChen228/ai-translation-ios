@@ -80,7 +80,7 @@ struct ContentView: View {
         let length = SettingsManager.shared.length.rawValue // 注意要傳送 rawValue ("short", "medium", "long")
         
         // 2. 建立 URL 並附加所有參數
-        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/start_session") else {
+        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/api/start_session") else {
             errorMessage = "無效的網址"
             isLoading = false
             return

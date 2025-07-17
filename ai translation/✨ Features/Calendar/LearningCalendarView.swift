@@ -99,7 +99,7 @@ struct LearningCalendarView: View {
     }
     
     private func fetchHeatmapData(year: Int, month: Int) async {
-        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/get_calendar_heatmap") else { return }
+        guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/api/get_calendar_heatmap") else { return }
         urlComponents.queryItems = [
             URLQueryItem(name: "year", value: String(year)),
             URLQueryItem(name: "month", value: String(month))

@@ -78,7 +78,8 @@ struct KnowledgePointAPIService {
     }
     
     static func batchArchivePoints(ids: [Int]) async throws {
-        let urlString = "\(baseURL)/api/knowledge_points/batch_action"
+        // 【修改】移除此處多餘的 /api，因為 baseURL 中已經包含了
+        let urlString = "\(baseURL)/knowledge_points/batch_action"
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
         }
@@ -96,6 +97,7 @@ struct KnowledgePointAPIService {
 
         try await performRequest(request: request)
     }
+
 
     // 內部輔助函式，用於執行不需要回傳資料的請求 (如 POST, DELETE)
     private static func performRequest(request: URLRequest) async throws {

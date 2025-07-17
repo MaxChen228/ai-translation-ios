@@ -117,7 +117,7 @@ struct DailyDetailView: View {
     private func loadDailyDetails() {
         isLoading = true
         Task {
-            guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/get_daily_details") else { return }
+            guard var urlComponents = URLComponents(string: "https://ai-tutor-ikjn.onrender.com/api/get_daily_details") else { return }
             urlComponents.queryItems = [
                 URLQueryItem(name: "date", value: dateStringForAPI)
             ]
