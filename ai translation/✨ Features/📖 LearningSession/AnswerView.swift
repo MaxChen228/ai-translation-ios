@@ -141,7 +141,7 @@ struct AnswerView: View {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // 動態建立 question_data，確保包含所有需要的資訊
+        // 動態建立 question_data
         var questionDataDict: [String: Any?] = [
             "new_sentence": sessionQuestion.question.new_sentence,
             "type": sessionQuestion.question.type,
@@ -153,9 +153,12 @@ struct AnswerView: View {
             questionDataDict["mastery_level"] = sessionQuestion.question.mastery_level
         }
         
+        // 【vNext 修改】建立請求的 body
         let body: [String: Any] = [
             "question_data": questionDataDict,
-            "user_answer": userAnswer
+            "user_answer": userAnswer,
+            // 【vNext 新增】把選擇的批改模型也加進來
+            "grading_model": SettingsManager.shared.gradingModel.rawValue
         ]
         
         do {
