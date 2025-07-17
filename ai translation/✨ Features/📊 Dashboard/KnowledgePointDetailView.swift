@@ -458,6 +458,15 @@ struct KnowledgePointDetailView: View {
             self.correct_phrase = point.correct_phrase
             self.explanation = point.explanation ?? ""
         }
+        
+        // 【在這裡添加新的初始化方法】
+        init(category: String, subcategory: String, key_point_summary: String, correct_phrase: String, explanation: String) {
+            self.category = category
+            self.subcategory = subcategory
+            self.key_point_summary = key_point_summary
+            self.correct_phrase = correct_phrase
+            self.explanation = explanation
+        }
     }
 
     struct SectionHeader: View {
