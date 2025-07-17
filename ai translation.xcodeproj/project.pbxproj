@@ -30,10 +30,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		503F9CFD2E27E91F00579C75 /* Exceptions for "ai translation" folder in "ai translation" target */ = {
+		503F9D0D2E28A0D500579C75 /* Exceptions for "ai translation" folder in "ai translation" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"✨ Features/📇 Flashcards/Untitled.swift",
+				"⚙️ Core/Untitled.swift",
 			);
 			target = 507B28E32E25561A005DAD5B /* ai translation */;
 		};
@@ -43,7 +43,7 @@
 		507B28E62E25561A005DAD5B /* ai translation */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				503F9CFD2E27E91F00579C75 /* Exceptions for "ai translation" folder in "ai translation" target */,
+				503F9D0D2E28A0D500579C75 /* Exceptions for "ai translation" folder in "ai translation" target */,
 			);
 			path = "ai translation";
 			sourceTree = "<group>";
