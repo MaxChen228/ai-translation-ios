@@ -83,22 +83,8 @@ struct ReaderLibraryView: View {
             handleFileImport(result)
         }
         // 暫時註解掉 ReaderView 的引用，等下一步創建
-        .sheet(item: $selectedBook) { book in
-            // ReaderView(book: book)
-            // 暫時用簡單的展示視圖
-            VStack {
-                Text("閱讀器開發中")
-                    .font(.title)
-                Text("書籍：\(book.title)")
-                    .font(.headline)
-                Button("關閉") {
-                    selectedBook = nil
-                }
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-            }
+        .fullScreenCover(item: $selectedBook) { book in
+            ReaderView(book: book)
         }
         .onAppear {
             if books.isEmpty {
