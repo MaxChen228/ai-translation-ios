@@ -1,206 +1,84 @@
-// AI-tutor-v1.0/ai translation/📚 Vocabulary/Views/StudySummaryView.swift
+// AI-tutor-v1.0/ai translation/📚 Vocabulary/Views/StudyModeSelectionView.swift
 
 import SwiftUI
 
-struct StudySummaryView: View {
-    let summary: StudySummary
-    let onDismiss: () -> Void
+struct StudyModeSelectionView: View {
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var vocabularyService = VocabularyService()
     
-    @State private var showingDetailedStats = false
-    @State private var animateProgress = false
+    @State private var selectedStudyMode: StudyMode = .review
+    @State private var selectedPracticeType: PracticeType = .flashcard
+    @State private var wordCount: Int = 10
+    @State private var selectedDifficulty: Int? = nil
+    @State private var isStartingStudy = false
+    @State private var errorMessage: String?
+    
+    // 導航狀態
+    @State private var showingPractice = false
+    @State private var generatedQuiz: QuizResponse?
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // 頂部成就區域
-                    achievementSection
+                    // 學習模式選擇
+                    studyModeSection
                     
-                    // 主要統計
-                    mainStatsSection
+                    // 練習類型選擇
+                    practiceTypeSection
                     
-                    // 詳細統計
-                    if showingDetailedStats {
-                        detailedStatsSection
-                    }
+                    // 學習設定
+                    settingsSection
                     
-                    // 單字列表
-                    wordsListSection
-                    
-                    // 成就獎章
-                    if !summary.newMasteryAchievements.isEmpty {
-                        masteryAchievementsSection
-                    }
-                    
-                    // 底部按鈕
-                    bottomButtonsSection
+                    // 開始按鈕
+                    startButton
                     
                     Spacer()
                 }
                 .padding()
             }
-            .navigationTitle("學習總結")
+            .navigationTitle("選擇學習模式")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
-                        onDismiss()
+                    Button("關閉") {
+                        dismiss()
                     }
                 }
             }
         }
-        .onAppear {
-            withAnimation(.easeOut(duration: 1.0).delay(0.5)) {
-                animateProgress = true
+        .sheet(isPresented: $showingPractice) {
+            if let quiz = generatedQuiz {
+                switch selectedPracticeType {
+                case .flashcard:
+                    FlashcardView(quiz: quiz, onComplete: handleStudyComplete)
+                case .multipleChoice:
+                    QuizView(quiz: quiz, type: .multipleChoice, onComplete: handleStudyComplete)
+                case .contextFill:
+                    QuizView(quiz: quiz, type: .contextFill, onComplete: handleStudyComplete)
+                }
             }
         }
     }
     
-    // MARK: - 成就區域
+    // MARK: - 學習模式選擇
     
-    private var achievementSection: some View {
-        VStack(spacing: 16) {
-            // 主要成就圖示
-            ZStack {
-                Circle()
-                    .fill(achievementColor)
-                    .frame(width: 100, height: 100)
-                    .shadow(color: achievementColor.opacity(0.3), radius: 10)
-                
-                Image(systemName: achievementIcon)
-                    .font(.system(size: 50, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            .scaleEffect(animateProgress ? 1.0 : 0.8)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: animateProgress)
-            
-            // 成就標題
-            Text(achievementTitle)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-                .multilineTextAlignment(.center)
-            
-            // 成就描述
-            Text(achievementDescription)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(20)
-    }
-    
-    // MARK: - 主要統計
-    
-    private var mainStatsSection: some View {
-        VStack(spacing: 16) {
+    private var studyModeSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("學習成果")
+                Image(systemName: "graduationcap")
+                    .foregroundColor(.blue)
+                Text("學習模式")
                     .font(.headline)
                     .fontWeight(.semibold)
-                
-                Spacer()
-                
-                Button(showingDetailedStats ? "收起" : "查看詳細") {
-                    withAnimation(.easeInOut) {
-                        showingDetailedStats.toggle()
-                    }
-                }
-                .font(.caption)
-                .foregroundColor(.blue)
             }
-            
-            // 進度圓環
-            HStack(spacing: 30) {
-                // 正確率圓環
-                VStack(spacing: 8) {
-                    ZStack {
-                        Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 8)
-                            .frame(width: 80, height: 80)
-                        
-                        Circle()
-                            .trim(from: 0, to: animateProgress ? CGFloat(summary.accuracyRate / 100) : 0)
-                            .stroke(accuracyColor, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeOut(duration: 1.5).delay(0.3), value: animateProgress)
-                        
-                        Text("\(Int(summary.accuracyRate))%")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .foregroundColor(accuracyColor)
-                    }
-                    
-                    Text("正確率")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                
-                // 統計數字
-                VStack(alignment: .leading, spacing: 12) {
-                    StatRow(
-                        icon: "checkmark.circle.fill",
-                        label: "答對題數",
-                        value: "\(summary.correctAnswers)/\(summary.totalQuestions)",
-                        color: .green
-                    )
-                    
-                    StatRow(
-                        icon: "clock.fill",
-                        label: "學習時間",
-                        value: formatTime(summary.studyTime),
-                        color: .blue
-                    )
-                    
-                    StatRow(
-                        icon: "book.fill",
-                        label: "學習單字",
-                        value: "\(summary.wordsStudied.count)",
-                        color: .purple
-                    )
-                }
-                
-                Spacer()
-            }
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
-    }
-    
-    // MARK: - 詳細統計
-    
-    private var detailedStatsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("詳細分析")
-                .font(.headline)
-                .fontWeight(.semibold)
             
             VStack(spacing: 12) {
-                DetailedStatRow(
-                    title: "平均回答時間",
-                    value: "\(String(format: "%.1f", summary.studyTime / Double(summary.totalQuestions)))秒/題",
-                    progress: min(summary.studyTime / Double(summary.totalQuestions) / 30.0, 1.0), // 假設30秒為滿分
-                    color: .orange
-                )
-                
-                DetailedStatRow(
-                    title: "學習效率",
-                    value: efficiency,
-                    progress: summary.accuracyRate / 100.0,
-                    color: .green
-                )
-                
-                if !summary.newMasteryAchievements.isEmpty {
-                    DetailedStatRow(
-                        title: "新掌握單字",
-                        value: "\(summary.newMasteryAchievements.count)個",
-                        progress: Double(summary.newMasteryAchievements.count) / Double(summary.totalQuestions),
-                        color: .blue
+                ForEach(StudyMode.allCases, id: \.self) { mode in
+                    StudyModeCard(
+                        mode: mode,
+                        isSelected: selectedStudyMode == mode,
+                        onTap: { selectedStudyMode = mode }
                     )
                 }
             }
@@ -211,32 +89,25 @@ struct StudySummaryView: View {
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
     
-    // MARK: - 單字列表
+    // MARK: - 練習類型選擇
     
-    private var wordsListSection: some View {
+    private var practiceTypeSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("學習的單字")
+                Image(systemName: "gamecontroller")
+                    .foregroundColor(.green)
+                Text("練習類型")
                     .font(.headline)
                     .fontWeight(.semibold)
-                
-                Spacer()
-                
-                Text("共 \(summary.wordsStudied.count) 個")
-                    .font(.caption)
-                    .foregroundColor(.gray)
             }
             
-            LazyVStack(spacing: 8) {
-                ForEach(Array(summary.wordsStudied.enumerated()), id: \.offset) { index, word in
-                    WordSummaryRow(word: word, index: index)
-                        .opacity(animateProgress ? 1.0 : 0.0)
-                        .offset(y: animateProgress ? 0 : 20)
-                        .animation(
-                            .easeOut(duration: 0.4)
-                            .delay(Double(index) * 0.1),
-                            value: animateProgress
-                        )
+            VStack(spacing: 12) {
+                ForEach(PracticeType.allCases, id: \.self) { type in
+                    PracticeTypeCard(
+                        type: type,
+                        isSelected: selectedPracticeType == type,
+                        onTap: { selectedPracticeType = type }
+                    )
                 }
             }
         }
@@ -246,53 +117,79 @@ struct StudySummaryView: View {
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
     
-    // MARK: - 掌握成就
+    // MARK: - 設定區域
     
-    private var masteryAchievementsSection: some View {
+    private var settingsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Image(systemName: "trophy.fill")
+                Image(systemName: "slider.horizontal.3")
                     .foregroundColor(.orange)
-                
-                Text("新掌握成就")
+                Text("學習設定")
                     .font(.headline)
                     .fontWeight(.semibold)
             }
             
-            Text("恭喜！你在這次學習中掌握了以下單字：")
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            
-            LazyVStack(spacing: 8) {
-                ForEach(summary.newMasteryAchievements, id: \.id) { word in
+            VStack(spacing: 16) {
+                // 單字數量
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("單字數量: \(wordCount)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    
+                    Slider(value: Binding(
+                        get: { Double(wordCount) },
+                        set: { wordCount = Int($0) }
+                    ), in: 5...20, step: 5)
+                    .accentColor(.blue)
+                    
                     HStack {
-                        Image(systemName: "crown.fill")
-                            .foregroundColor(.orange)
+                        Text("5")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("10")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("15")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        Spacer()
+                        Text("20")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                Divider()
+                
+                // 難度選擇（專項練習時顯示）
+                if selectedStudyMode == .targeted {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("難度等級")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
                         
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(word.word)
-                                .font(.headline)
-                                .fontWeight(.semibold)
+                        HStack(spacing: 8) {
+                            Button("全部") {
+                                selectedDifficulty = nil
+                            }
+                            .buttonStyle(DifficultyButtonStyle(isSelected: selectedDifficulty == nil))
                             
-                            Text(word.definitionZH)
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                            ForEach(1...5, id: \.self) { level in
+                                Button("\(level)") {
+                                    selectedDifficulty = level
+                                }
+                                .buttonStyle(DifficultyButtonStyle(isSelected: selectedDifficulty == level))
+                            }
+                            
+                            Spacer()
                         }
                         
-                        Spacer()
-                        
-                        Text("已掌握")
+                        Text("1=簡單, 5=困難")
                             .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.orange)
-                            .cornerRadius(8)
+                            .foregroundColor(.gray)
                     }
-                    .padding()
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(12)
                 }
             }
         }
@@ -302,220 +199,190 @@ struct StudySummaryView: View {
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
     
-    // MARK: - 底部按鈕
+    // MARK: - 開始按鈕
     
-    private var bottomButtonsSection: some View {
+    private var startButton: some View {
         VStack(spacing: 12) {
-            Button(action: {
-                // 繼續學習
-                onDismiss()
-            }) {
+            if let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button(action: startStudy) {
                 HStack {
-                    Image(systemName: "arrow.clockwise")
-                    Text("繼續學習")
+                    if isStartingStudy {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                            .foregroundColor(.white)
+                    } else {
+                        Image(systemName: "play.fill")
+                    }
+                    
+                    Text(isStartingStudy ? "準備中..." : "開始學習")
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(Color.blue)
+                .background(isStartingStudy ? Color.gray : Color.blue)
                 .cornerRadius(16)
             }
+            .disabled(isStartingStudy)
             
-            Button(action: {
-                // 查看單字庫
-                onDismiss()
-            }) {
-                HStack {
-                    Image(systemName: "book.circle")
-                    Text("查看單字庫")
-                        .fontWeight(.medium)
-                }
-                .foregroundColor(.blue)
-                .frame(maxWidth: .infinity)
-                .frame(height: 48)
-                .background(Color.blue.opacity(0.1))
-                .cornerRadius(12)
-            }
+            Text("根據你的選擇，將生成 \(wordCount) 個單字的 \(selectedPracticeType.displayName)")
+                .font(.caption)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
         }
     }
     
-    // MARK: - 計算屬性
+    // MARK: - 方法
     
-    private var achievementColor: Color {
-        if summary.accuracyRate >= 90 { return .green }
-        else if summary.accuracyRate >= 70 { return .orange }
-        else { return .blue }
-    }
-    
-    private var achievementIcon: String {
-        if summary.accuracyRate >= 90 { return "star.fill" }
-        else if summary.accuracyRate >= 70 { return "hand.thumbsup.fill" }
-        else { return "book.fill" }
-    }
-    
-    private var achievementTitle: String {
-        if summary.accuracyRate >= 90 { return "優秀表現！" }
-        else if summary.accuracyRate >= 70 { return "表現良好！" }
-        else { return "繼續努力！" }
-    }
-    
-    private var achievementDescription: String {
-        if summary.accuracyRate >= 90 {
-            return "你的正確率超過90%，表現非常出色！"
-        } else if summary.accuracyRate >= 70 {
-            return "你的正確率達到70%以上，學習效果不錯！"
-        } else {
-            return "繼續練習，你會越來越進步的！"
+    private func startStudy() {
+        Task {
+            await generateAndStartQuiz()
         }
     }
     
-    private var accuracyColor: Color {
-        if summary.accuracyRate >= 80 { return .green }
-        else if summary.accuracyRate >= 60 { return .orange }
-        else { return .red }
+    @MainActor
+    private func generateAndStartQuiz() async {
+        isStartingStudy = true
+        errorMessage = nil
+        
+        do {
+            let quiz = try await vocabularyService.generateQuiz(
+                type: selectedPracticeType,
+                wordCount: wordCount,
+                difficultyLevel: selectedDifficulty
+            )
+            
+            generatedQuiz = quiz
+            showingPractice = true
+            
+        } catch {
+            errorMessage = "生成測驗失敗: \(error.localizedDescription)"
+        }
+        
+        isStartingStudy = false
     }
     
-    private var efficiency: String {
-        let wordsPerMinute = Double(summary.correctAnswers) / (summary.studyTime / 60.0)
-        if wordsPerMinute >= 2.0 { return "高效" }
-        else if wordsPerMinute >= 1.0 { return "良好" }
-        else { return "需加強" }
-    }
-    
-    // MARK: - 輔助方法
-    
-    private func formatTime(_ timeInterval: TimeInterval) -> String {
-        let totalSeconds = Int(timeInterval)
-        let minutes = totalSeconds / 60
-        let seconds = totalSeconds % 60
-        return String(format: "%d分%02d秒", minutes, seconds)
+    private func handleStudyComplete(summary: StudySummary) {
+        // 關閉練習界面
+        showingPractice = false
+        
+        // 關閉選擇界面，回到主頁
+        dismiss()
+        
+        // 這裡可以添加顯示學習總結的邏輯
+        print("學習完成: \(summary.correctAnswers)/\(summary.totalQuestions)")
     }
 }
 
 // MARK: - 輔助元件
 
-struct StatRow: View {
-    let icon: String
-    let label: String
-    let value: String
-    let color: Color
+struct StudyModeCard: View {
+    let mode: StudyMode
+    let isSelected: Bool
+    let onTap: () -> Void
     
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .foregroundColor(color)
-                .frame(width: 16)
-            
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.gray)
-            
-            Spacer()
-            
-            Text(value)
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
-        }
-    }
-}
-
-struct DetailedStatRow: View {
-    let title: String
-    let value: String
-    let progress: Double
-    let color: Color
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
+        Button(action: onTap) {
+            HStack(spacing: 16) {
+                Image(systemName: mode.systemImageName)
+                    .font(.title2)
+                    .foregroundColor(isSelected ? .white : .blue)
+                    .frame(width: 32)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(mode.displayName)
+                        .font(.headline)
+                        .fontWeight(.medium)
+                        .foregroundColor(isSelected ? .white : .primary)
+                    
+                    Text(mode.description)
+                        .font(.caption)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+                }
                 
                 Spacer()
                 
-                Text(value)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(color)
-            }
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(height: 4)
-                        .cornerRadius(2)
-                    
-                    Rectangle()
-                        .fill(color)
-                        .frame(width: geometry.size.width * progress, height: 4)
-                        .cornerRadius(2)
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.white)
                 }
             }
-            .frame(height: 4)
+            .padding()
+            .background(isSelected ? Color.blue : Color(.systemGray6))
+            .cornerRadius(12)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct PracticeTypeCard: View {
+    let type: PracticeType
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 16) {
+                Image(systemName: type.systemImageName)
+                    .font(.title2)
+                    .foregroundColor(isSelected ? .white : .green)
+                    .frame(width: 32)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(type.displayName)
+                        .font(.headline)
+                        .fontWeight(.medium)
+                        .foregroundColor(isSelected ? .white : .primary)
+                    
+                    Text(practiceDescription(for: type))
+                        .font(.caption)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+                }
+                
+                Spacer()
+                
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.white)
+                }
+            }
+            .padding()
+            .background(isSelected ? Color.green : Color(.systemGray6))
+            .cornerRadius(12)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private func practiceDescription(for type: PracticeType) -> String {
+        switch type {
+        case .flashcard:
+            return "查看單字，回想中文意思"
+        case .multipleChoice:
+            return "選擇正確的中文意思"
+        case .contextFill:
+            return "在語境中填入正確單字"
         }
     }
 }
 
-struct WordSummaryRow: View {
-    let word: VocabularyWord
-    let index: Int
+struct DifficultyButtonStyle: ButtonStyle {
+    let isSelected: Bool
     
-    var body: some View {
-        HStack(spacing: 12) {
-            // 序號
-            Text("\(index + 1)")
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.white)
-                .frame(width: 20, height: 20)
-                .background(Color.blue)
-                .clipShape(Circle())
-            
-            // 單字資訊
-            VStack(alignment: .leading, spacing: 2) {
-                Text(word.word)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                
-                Text(word.definitionZH)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-            }
-            
-            Spacer()
-            
-            // 掌握度指示器
-            HStack(spacing: 4) {
-                Image(systemName: masteryIcon(for: word.masteryLevel))
-                    .font(.caption)
-                    .foregroundColor(masteryColor(for: word.masteryLevel))
-                
-                Text(String(format: "%.1f", word.masteryLevel))
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(masteryColor(for: word.masteryLevel))
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color(.systemGray6))
-        .cornerRadius(8)
-    }
-    
-    private func masteryIcon(for level: Double) -> String {
-        if level >= 4.0 { return "checkmark.circle.fill" }
-        else if level >= 2.0 { return "clock.circle.fill" }
-        else { return "plus.circle.fill" }
-    }
-    
-    private func masteryColor(for level: Double) -> Color {
-        if level >= 4.0 { return .green }
-        else if level >= 2.0 { return .orange }
-        else { return .blue }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.caption)
+            .fontWeight(.medium)
+            .foregroundColor(isSelected ? .white : .orange)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(isSelected ? Color.orange : Color.orange.opacity(0.1))
+            .cornerRadius(8)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
