@@ -23,6 +23,13 @@ struct ai_translationApp: App {
                         Text("學習")
                     }
                 
+                // 🆕 新增閱讀分頁
+                ReaderLibraryView()
+                    .tabItem {
+                        Image(systemName: "book.fill")
+                        Text("閱讀")
+                    }
+                
                 // 儀表板分頁
                 DashboardView()
                     .tabItem {
