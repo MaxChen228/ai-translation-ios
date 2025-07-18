@@ -151,6 +151,11 @@ struct ReaderView: View {
             chapterTitles = epubReader.getChapterTitles()
             currentChapterIndex = book.currentChapterIndex
             
+            // 載入第一章並應用當前設定
+            if !chapterTitles.isEmpty {
+                await epubReader.loadChapter(at: currentChapterIndex, with: settings)
+            }
+            
             await MainActor.run {
                 isLoading = false
             }
@@ -190,7 +195,7 @@ struct ReaderView: View {
 class EPUBReader: ObservableObject {
     private var epubDirectory: URL?
     private var chapters: [EPUBChapterInfo] = []
-    private var currentChapterHTML: String = ""
+    private var currentSettings: ReaderSettings = ReaderSettings()
     
     @Published var webViewHTML: String = ""
     @Published var isReady = false
@@ -225,7 +230,7 @@ class EPUBReader: ObservableObject {
         
         // 載入第一章
         if !chapters.isEmpty {
-            await loadChapter(at: 0)
+            await loadChapter(at: 0, with: currentSettings)
         }
         
         isReady = true
@@ -480,11 +485,14 @@ class EPUBReader: ObservableObject {
         return chapterList
     }
     
-    func loadChapter(at index: Int) async {
+    func loadChapter(at index: Int, with settings: ReaderSettings = ReaderSettings()) async {
         guard index < chapters.count, let epubDir = epubDirectory else {
             print("❌ 載入章節失敗：index=\(index), chapters.count=\(chapters.count)")
             return
         }
+        
+        // 儲存當前設定
+        currentSettings = settings
         
         let chapter = chapters[index]
         let chapterPath = epubDir.appendingPathComponent(chapter.href)
@@ -492,6 +500,7 @@ class EPUBReader: ObservableObject {
         print("📖 嘗試載入章節 \(index): \(chapter.title)")
         print("📁 章節檔案路徑: \(chapterPath.path)")
         print("📄 檔案是否存在: \(FileManager.default.fileExists(atPath: chapterPath.path))")
+        print("⚙️ 應用設定 - 字體大小: \(settings.fontSize), 行距: \(settings.lineSpacing), 邊距: \(settings.pageMargin)")
         
         do {
             let htmlData = try Data(contentsOf: chapterPath)
@@ -504,10 +513,10 @@ class EPUBReader: ObservableObject {
             htmlContent = processRelativeLinks(htmlContent, basePath: chapterPath.deletingLastPathComponent())
             
             // 應用閱讀設定的CSS
-            htmlContent = applyReaderStyles(to: htmlContent)
+            htmlContent = applyReaderStyles(to: htmlContent, with: settings)
             
             print("✅ HTML處理完成，內容長度: \(htmlContent.count)")
-            print("🔗 處理後內容開頭: \(String(htmlContent.prefix(300)))")
+            print("🎨 CSS設定已應用")
             
             await MainActor.run {
                 self.webViewHTML = htmlContent
@@ -562,37 +571,95 @@ class EPUBReader: ObservableObject {
         return processedHTML
     }
     
-    private func applyReaderStyles(to html: String) -> String {
+    private func applyReaderStyles(to html: String, with settings: ReaderSettings) -> String {
+        // 根據背景色決定文字顏色
+        let textColor = getTextColorForBackground(settings.backgroundColor)
+        let bgColor = colorToCSS(settings.backgroundColor.color)
+        
         let readerCSS = """
         <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 20px;
-            color: #333;
-            background-color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang TC', 'Helvetica Neue', Arial, sans-serif;
+            font-size: \(settings.fontSize)px;
+            line-height: \(settings.lineSpacing);
+            margin: 0;
+            padding: \(settings.pageMargin)px;
+            color: \(textColor);
+            background-color: \(bgColor);
             max-width: 100%;
             overflow-x: hidden;
+            text-align: justify;
+            word-wrap: break-word;
         }
         p {
-            margin-bottom: 1em;
+            margin-bottom: 1.2em;
             text-align: justify;
+            text-justify: inter-word;
         }
         h1, h2, h3, h4, h5, h6 {
-            color: #2c3e50;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
+            color: \(textColor);
+            margin-top: 2em;
+            margin-bottom: 1em;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        h1 {
+            font-size: \(settings.fontSize + 6)px;
+            text-align: center;
+            margin-bottom: 1.5em;
+        }
+        h2 {
+            font-size: \(settings.fontSize + 4)px;
+        }
+        h3 {
+            font-size: \(settings.fontSize + 2)px;
         }
         img {
             max-width: 100%;
             height: auto;
             display: block;
-            margin: 1em auto;
+            margin: 1.5em auto;
+            border-radius: 8px;
         }
-        .epub-container {
-            max-width: 100%;
-            padding: 0 10px;
+        blockquote {
+            margin: 1.5em 0;
+            padding: 1em 1.5em;
+            border-left: 4px solid #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+            font-style: italic;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul, ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+        li {
+            margin-bottom: 0.5em;
+            line-height: \(settings.lineSpacing);
+        }
+        /* 段落首行縮排 */
+        p + p {
+            text-indent: 2em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+        }
+        th, td {
+            padding: 0.8em;
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            text-align: left;
+        }
+        th {
+            background-color: rgba(128, 128, 128, 0.1);
+            font-weight: 600;
         }
         </style>
         """
@@ -603,6 +670,30 @@ class EPUBReader: ObservableObject {
         } else {
             return "\(readerCSS)\(html)"
         }
+    }
+    
+    private func getTextColorForBackground(_ bgColor: ReaderSettings.ReaderBackgroundColor) -> String {
+        switch bgColor {
+        case .white:
+            return "#2c3e50"  // 深色文字
+        case .sepia:
+            return "#5d4037"  // 深棕色文字
+        case .dark:
+            return "#e8e8e8"  // 淺色文字
+        }
+    }
+    
+    private func colorToCSS(_ color: Color) -> String {
+        // 將SwiftUI Color轉換為CSS顏色
+        let uiColor = UIColor(color)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        return "rgba(\(Int(red * 255)), \(Int(green * 255)), \(Int(blue * 255)), \(alpha))"
     }
     
     func getChapterTitles() -> [String] {
