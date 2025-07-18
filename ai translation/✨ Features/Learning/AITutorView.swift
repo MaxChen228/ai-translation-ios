@@ -1,8 +1,8 @@
-// ContentView.swift
+// AITutorView.swift - 重命名後的 AI 家教主頁
 
 import SwiftUI
 
-struct ContentView: View {
+struct AITutorView: View {
     @EnvironmentObject var sessionManager: SessionManager
     
     @State private var isLoading = false
@@ -113,61 +113,80 @@ struct ClaudeStartLearningCard: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            // 歡迎區域
-            VStack(spacing: 12) {
-                Image(systemName: "brain.head.profile")
-                    .font(.system(size: 50))
-                    .foregroundStyle(Color.orange)
+            // 歡迎區塊
+            VStack(spacing: 16) {
+                HStack {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 24, weight: .medium))
+                        .foregroundStyle(Color.orange)
+                    
+                    Text("AI 英文家教")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.primary)
+                    
+                    Spacer()
+                }
                 
-                Text("準備好開始學習了嗎？")
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundStyle(.primary)
-                
-                Text("AI 會根據您的設定為您量身打造練習題")
+                Text("個人化學習路徑，智慧複習系統")
                     .font(.system(size: 15))
                     .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             
-            // 快速統計
+            // 快速設定概覽
             ClaudeQuickStatsRow()
             
-            // 開始按鈕
+            // 開始學習按鈕
             Button(action: onStartLearning) {
                 HStack(spacing: 12) {
                     if isLoading {
                         ProgressView()
                             .scaleEffect(0.9)
-                            .tint(.white)
-                        Text("AI 老師備課中...")
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
                         Image(systemName: "play.fill")
                             .font(.system(size: 16, weight: .medium))
-                        Text("開始新的學習回合")
                     }
+                    
+                    Text(isLoading ? "準備題目中..." : "開始學習")
+                        .font(.system(size: 16, weight: .semibold))
                 }
-                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.orange)
+                        .fill(.linearGradient(
+                            colors: [Color.orange, Color.red],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
                 }
             }
             .disabled(isLoading)
             
             // 錯誤訊息
             if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .font(.system(size: 13))
-                    .foregroundStyle(.red)
-                    .padding(12)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.red.opacity(0.1))
-                    }
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(.red)
+                        .padding(.top, 1)
+                    
+                    Text(errorMessage)
+                        .font(.system(size: 13))
+                        .foregroundStyle(.red)
+                        .lineSpacing(1)
+                }
+                .padding(12)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(.red.opacity(0.1))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(.red.opacity(0.3), lineWidth: 1)
+                        }
+                }
             }
         }
         .padding(24)
@@ -237,78 +256,22 @@ struct ClaudeSettingsPreviewCard: View {
                 Spacer()
                 
                 NavigationLink(destination: SettingsView()) {
-                    Text("編輯")
+                    Text("調整")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.orange)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background {
-                            Capsule()
-                                .fill(Color.orange.opacity(0.1))
-                        }
                 }
             }
             
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
-                ClaudeSettingPreviewItem(
-                    title: "出題模型",
-                    value: SettingsManager.shared.generationModel.displayName,
-                    icon: "sparkles"
-                )
-                ClaudeSettingPreviewItem(
-                    title: "批改模型",
-                    value: SettingsManager.shared.gradingModel.displayName,
-                    icon: "checkmark.seal"
-                )
-                ClaudeSettingPreviewItem(
-                    title: "每日目標",
-                    value: "\(SettingsManager.shared.dailyGoal) 題",
-                    icon: "target"
-                )
-                ClaudeSettingPreviewItem(
-                    title: "句子類型",
-                    value: SettingsManager.shared.length.displayName,
-                    icon: "text.alignleft"
-                )
-            }
+            Text("在設定中可以調整每次學習的題目數量、難度、句子長度等參數。")
+                .font(.system(size: 14))
+                .foregroundStyle(.secondary)
+                .lineSpacing(2)
         }
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-        }
-    }
-}
-
-struct ClaudeSettingPreviewItem: View {
-    let title: String
-    let value: String
-    let icon: String
-    
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color.orange)
-                .frame(width: 16)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(value)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                
-                Text(title)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
-            
-            Spacer()
-        }
-        .padding(10)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.systemGray6))
         }
     }
 }
@@ -370,60 +333,56 @@ struct ClaudeLearningProgressCard: View {
     
     var body: some View {
         VStack(spacing: 20) {
+            // 進度標題
             HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Color.orange)
+                
                 Text("學習進度")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(.primary)
                 
                 Spacer()
                 
                 Button(action: onNewSession) {
                     HStack(spacing: 6) {
-                        Image(systemName: "arrow.clockwise")
+                        Image(systemName: "plus")
                             .font(.system(size: 12, weight: .medium))
                         Text("新回合")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 14, weight: .medium))
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.orange)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background {
                         Capsule()
-                            .fill(Color.orange)
+                            .fill(Color.orange.opacity(0.15))
                     }
                 }
             }
             
-            // 進度條
+            // 進度條和統計
             VStack(spacing: 12) {
                 HStack {
-                    Text("已完成 \(completedCount) / \(sessionQuestions.count)")
-                        .font(.system(size: 14, weight: .medium))
+                    Text("\(completedCount) / \(sessionQuestions.count) 題已完成")
+                        .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.primary)
                     
                     Spacer()
                     
                     Text("\(Int(progressPercentage * 100))%")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(Color.orange)
                 }
                 
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.systemGray5))
-                            .frame(height: 8)
-                        
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.orange)
-                            .frame(width: geometry.size.width * progressPercentage, height: 8)
-                            .animation(.easeInOut(duration: 0.3), value: progressPercentage)
-                    }
-                }
-                .frame(height: 8)
+                ProgressView(value: progressPercentage)
+                    .progressViewStyle(.linear)
+                    .tint(Color.orange)
+                    .scaleEffect(y: 1.5)
             }
         }
-        .padding(20)
+        .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
@@ -436,29 +395,29 @@ struct ClaudeQuestionListCard: View {
     let sessionQuestions: [SessionQuestion]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("練習題目")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(.primary)
-                .padding(.horizontal, 20)
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Image(systemName: "list.bullet")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(Color.orange)
+                
+                Text("題目列表")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+            }
             
-            LazyVStack(spacing: 0) {
+            LazyVStack(spacing: 12) {
                 ForEach(Array(sessionQuestions.enumerated()), id: \.element.id) { index, sessionQuestion in
-                    NavigationLink(destination: AnswerView(sessionQuestionId: sessionQuestion.id)) {
-                        ClaudeQuestionRow(
-                            index: index + 1,
-                            sessionQuestion: sessionQuestion
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    
-                    if index < sessionQuestions.count - 1 {
-                        Divider()
-                            .padding(.leading, 60)
-                    }
+                    ClaudeQuestionItem(
+                        sessionQuestion: sessionQuestion,
+                        questionNumber: index + 1
+                    )
                 }
             }
         }
+        .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
@@ -467,16 +426,23 @@ struct ClaudeQuestionListCard: View {
     }
 }
 
-struct ClaudeQuestionRow: View {
-    let index: Int
+struct ClaudeQuestionItem: View {
     let sessionQuestion: SessionQuestion
+    let questionNumber: Int
     
     var body: some View {
+        NavigationLink(destination: AnswerView(sessionQuestionId: sessionQuestion.id)) {
+            questionItemContent
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var questionItemContent: some View {
         HStack(spacing: 16) {
-            // 編號圓圈
+            // 題目編號和狀態
             ZStack {
                 Circle()
-                    .fill(sessionQuestion.isCompleted ? Color.green : Color.orange.opacity(0.2))
+                    .fill(sessionQuestion.isCompleted ? Color.green : Color.orange)
                     .frame(width: 32, height: 32)
                 
                 if sessionQuestion.isCompleted {
@@ -484,19 +450,21 @@ struct ClaudeQuestionRow: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(.white)
                 } else {
-                    Text("\(index)")
+                    Text("\(questionNumber)")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(.white)
                 }
             }
             
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
+                // 中文句子預覽
                 Text(sessionQuestion.question.new_sentence)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                 
-                HStack(spacing: 12) {
+                // 題目標籤
+                HStack(spacing: 8) {
                     HStack(spacing: 4) {
                         Image(systemName: sessionQuestion.question.type == "review" ? "arrow.clockwise" : "plus")
                             .font(.system(size: 10))
@@ -529,10 +497,14 @@ struct ClaudeQuestionRow: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+        }
     }
 }
 
 #Preview {
-    ContentView()
+    AITutorView()
         .environmentObject(SessionManager())
 }
