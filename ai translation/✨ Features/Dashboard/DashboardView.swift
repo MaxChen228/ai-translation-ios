@@ -328,7 +328,7 @@ struct ClaudeMasteryBar: View {
             .frame(height: 6)
             
             Text("\(count)")
-                .font(.appCaption(for: "\(count)"))
+                .font(.appCaption())
                 .foregroundStyle(.secondary)
                 .frame(width: 30, alignment: .trailing)
         }
@@ -351,7 +351,7 @@ struct ClaudeFocusCard: View {
             if points.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle")
-                        .font(.system(size: 20))
+                        .font(.appLargeTitle(for: "✅"))
                         .foregroundStyle(Color(.systemGreen))
                     Text("所有知識點都很穩固！")
                         .font(.appSubheadline(for: "所有知識點都很穩固！"))
@@ -642,7 +642,7 @@ struct ClaudeErrorView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 40))
+                .font(.appLargeTitle(for: "⚠️"))
                 .foregroundStyle(Color(.systemOrange))
             
             Text("載入失敗")
@@ -671,7 +671,7 @@ struct ClaudeEmptyStateView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "brain.head.profile")
-                .font(.system(size: 50))
+                .font(.appLargeTitle(for: "🧠"))
                 .foregroundStyle(Color.orange)
             
             Text("開始您的學習之旅")

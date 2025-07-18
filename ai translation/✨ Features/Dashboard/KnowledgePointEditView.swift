@@ -32,7 +32,7 @@ struct KnowledgePointEditView: View {
                     Section {
                         Text(errorMessage)
                             .foregroundColor(.red)
-                            .font(.caption)
+                            .font(.appCaption(for: "錯誤訊息"))
                     }
                 }
             }

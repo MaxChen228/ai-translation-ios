@@ -143,12 +143,12 @@ struct ClaudeQuestionCard: View {
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("第 \(questionNumber) 題")
-                            .font(.appHeadline(for: "第 \(questionNumber) 題"))
+                            .font(.appHeadline())
                             .fontWeight(.bold)
                             .foregroundStyle(.primary)
                         
                         Text("共 \(totalQuestions) 題")
-                            .font(.appFootnote(for: "共 \(totalQuestions) 題"))
+                            .font(.appFootnote())
                             .fontWeight(.medium)
                             .foregroundStyle(.secondary)
                     }
@@ -545,7 +545,7 @@ struct ClaudeAnswerCard: View {
                 HStack {
                     Spacer()
                     Text("\(userAnswer.count) 字元")
-                        .font(.appCaption(for: "\(userAnswer.count) 字元"))
+                        .font(.appCaption())
                         .fontWeight(.medium)
                         .foregroundStyle(.secondary)
                 }

@@ -124,11 +124,11 @@ struct ClaudeSettingsCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "設定圖示"))
                     .foregroundStyle(Color.orange)
                 
                 Text(title)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "設定標題"))
                     .foregroundStyle(.primary)
             }
             
@@ -153,11 +153,11 @@ struct ClaudeStepperSetting: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "設定項目"))
                     .foregroundStyle(.primary)
                 
                 Text(description)
-                    .font(.system(size: 13))
+                    .font(.appCaption(for: "設定說明"))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -172,7 +172,7 @@ struct ClaudeStepperSetting: View {
                         }
                     }) {
                         Image(systemName: "minus")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.appCallout(for: "設定項目"))
                             .foregroundStyle(value > range.lowerBound ? Color.orange : .secondary)
                             .frame(width: 32, height: 32)
                             .background {
@@ -183,7 +183,7 @@ struct ClaudeStepperSetting: View {
                     .disabled(value <= range.lowerBound)
                     
                     Text("\(value)")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.appTitle3(for: "設定標題"))
                         .foregroundStyle(.primary)
                         .frame(minWidth: 30)
                     
@@ -193,7 +193,7 @@ struct ClaudeStepperSetting: View {
                         }
                     }) {
                         Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.appCallout(for: "設定項目"))
                             .foregroundStyle(value < range.upperBound ? Color.orange : .secondary)
                             .frame(width: 32, height: 32)
                             .background {
@@ -226,13 +226,13 @@ struct ClaudeSliderSetting: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(title)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.appCallout(for: "設定項目"))
                         .foregroundStyle(.primary)
                     
                     Spacer()
                     
                     Text("\(value)")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.appCallout(for: "設定值"))
                         .foregroundStyle(Color.orange)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
@@ -243,14 +243,14 @@ struct ClaudeSliderSetting: View {
                 }
                 
                 Text(description)
-                    .font(.system(size: 13))
+                    .font(.appCaption(for: "設定說明"))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
             
             HStack(spacing: 12) {
                 Text("\(range.lowerBound)")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption(for: "小標題"))
                     .foregroundStyle(.tertiary)
                 
                 Slider(
@@ -270,7 +270,7 @@ struct ClaudeSliderSetting: View {
                 .tint(Color.orange)
                 
                 Text("\(range.upperBound)")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption(for: "小標題"))
                     .foregroundStyle(.tertiary)
             }
         }
@@ -291,11 +291,11 @@ struct ClaudePickerSetting: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "設定項目"))
                     .foregroundStyle(.primary)
                 
                 Text(description)
-                    .font(.system(size: 13))
+                    .font(.appCaption(for: "設定說明"))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -308,7 +308,7 @@ struct ClaudePickerSetting: View {
                         }
                     }) {
                         Text(option.displayName)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.appSubheadline(for: "選項"))
                             .foregroundStyle(value == option ? .white : .primary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
@@ -338,11 +338,11 @@ struct ClaudeAIModelSetting: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "設定項目"))
                     .foregroundStyle(.primary)
                 
                 Text(description)
-                    .font(.system(size: 13))
+                    .font(.appCaption(for: "設定說明"))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -356,18 +356,18 @@ struct ClaudeAIModelSetting: View {
                     }) {
                         HStack {
                             Text(model.displayName)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.appSubheadline(for: "選項"))
                                 .foregroundStyle(.primary)
                             
                             Spacer()
                             
                             if value == model {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 16))
+                                    .font(.appCallout(for: "模型選項"))
                                     .foregroundStyle(Color.orange)
                             } else {
                                 Image(systemName: "circle")
-                                    .font(.system(size: 16))
+                                    .font(.appCallout(for: "模型選項"))
                                     .foregroundStyle(.tertiary)
                             }
                         }
@@ -399,7 +399,7 @@ struct ClaudeInfoBox: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "info.circle.fill")
-                .font(.system(size: 14))
+                .font(.appSubheadline(for: "說明文字"))
                 .foregroundStyle(Color.blue)
             
             Text(text)
@@ -420,7 +420,7 @@ struct ClaudeInfoCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
                 Image(systemName: "lightbulb.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "設定圖示"))
                     .foregroundStyle(.yellow)
                 
                 Text("使用提示")
@@ -466,7 +466,7 @@ struct ClaudeInfoTip: View {
                 .padding(.top, 1)
             
             Text(text)
-                .font(.system(size: 14))
+                .font(.appSubheadline(for: "說明文字"))
                 .foregroundStyle(.secondary)
                 .lineSpacing(1)
         }

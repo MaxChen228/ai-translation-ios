@@ -100,7 +100,7 @@ struct KnowledgePointDetailView: View {
                         .foregroundStyle(categoryColor)
                     
                     Text("\(point.category) → \(point.subcategory)")
-                        .font(.appCallout(for: "\(point.category) → \(point.subcategory)"))
+                        .font(.appCallout())
                         .fontWeight(.semibold)
                         .foregroundStyle(categoryColor)
                 }
@@ -727,7 +727,7 @@ struct ScoreRow: View {
                     .frame(width: 100)
                 
                 Text("\(score)")
-                    .font(.appBody(for: "\(score)"))
+                    .font(.appBody())
                     .fontWeight(.semibold)
                     .foregroundColor(scoreColor(score))
             }

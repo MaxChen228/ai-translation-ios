@@ -102,22 +102,22 @@ struct ReadingHistoryCard: View {
                 .frame(width: 60, height: 80)
                 .overlay {
                     Image(systemName: "book.closed")
-                        .font(.title2)
+                        .font(.appTitle2(for: "📚"))
                         .foregroundStyle(.white)
                 }
             
             VStack(alignment: .leading, spacing: 8) {
                 Text(book.title)
-                    .font(.headline)
+                    .font(.appHeadline(for: book.title))
                     .lineLimit(2)
                 
                 Text(book.author)
-                    .font(.subheadline)
+                    .font(.appSubheadline(for: book.author))
                     .foregroundStyle(.secondary)
                 
                 if let lastRead = book.lastRead {
                     Text("最後閱讀：\(lastRead, formatter: dateFormatter)")
-                        .font(.caption)
+                        .font(.appCaption(for: "最後閱讀"))
                         .foregroundStyle(.tertiary)
                 }
                 
@@ -187,7 +187,7 @@ struct BookmarksSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "bookmark.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "🔖"))
                     .foregroundStyle(.blue)
                 
                 Text("我的書籤")
@@ -196,7 +196,7 @@ struct BookmarksSection: View {
                 Spacer()
                 
                 Text("\(bookmarks.count)")
-                    .font(.appCaption(for: "\(bookmarks.count)"))
+                    .font(.appCaption())
                     .fontWeight(.medium)
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 8)
@@ -226,17 +226,17 @@ struct NotesSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "note.text")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "📝"))
                     .foregroundStyle(.blue)
                 
                 Text("我的筆記")
-                    .font(.title2)
+                    .font(.appTitle2(for: "我的筆記"))
                     .fontWeight(.bold)
                 
                 Spacer()
                 
                 Text("\(notes.count)")
-                    .font(.caption)
+                    .font(.appCaption())
                     .fontWeight(.medium)
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 8)
@@ -266,7 +266,7 @@ struct BookmarkCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("第 \(bookmark.pageNumber) 頁")
-                    .font(.caption)
+                    .font(.appCaption(for: "第 N 頁"))
                     .fontWeight(.medium)
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 8)
@@ -277,13 +277,13 @@ struct BookmarkCard: View {
                 Spacer()
                 
                 Text(bookmark.dateCreated, formatter: shortDateFormatter)
-                    .font(.caption)
+                    .font(.appCaption(for: "日期"))
                     .foregroundStyle(.secondary)
             }
             
             if !bookmark.note.isEmpty {
                 Text(bookmark.note)
-                    .font(.body)
+                    .font(.appBody(for: bookmark.note))
                     .lineLimit(3)
             }
         }
@@ -308,7 +308,7 @@ struct NoteCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("第 \(note.pageNumber) 頁")
-                    .font(.caption)
+                    .font(.appCaption(for: "第 N 頁"))
                     .fontWeight(.medium)
                     .foregroundStyle(.green)
                     .padding(.horizontal, 8)
@@ -319,12 +319,12 @@ struct NoteCard: View {
                 Spacer()
                 
                 Text(note.dateCreated, formatter: shortDateFormatter)
-                    .font(.caption)
+                    .font(.appCaption(for: "日期"))
                     .foregroundStyle(.secondary)
             }
             
             Text("\"\(note.selectedText)\"")
-                .font(.body)
+                .font(.appBody(for: note.selectedText))
                 .fontWeight(.medium)
                 .padding(.leading, 8)
                 .overlay(alignment: .leading) {
@@ -334,7 +334,7 @@ struct NoteCard: View {
                 }
             
             Text(note.note)
-                .font(.body)
+                .font(.appBody(for: note.note))
                 .lineLimit(3)
         }
         .padding(12)
@@ -364,7 +364,7 @@ struct ReadingSettingsContainerView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Image(systemName: "gearshape.fill")
-                                .font(.system(size: 18, weight: .medium))
+                                .font(.appHeadline(for: "⚙️"))
                                 .foregroundStyle(.blue)
                             
                             Text("預設閱讀設定")

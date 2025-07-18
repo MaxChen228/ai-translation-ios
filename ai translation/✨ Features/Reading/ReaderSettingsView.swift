@@ -17,12 +17,12 @@ struct ReaderSettingsView: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
                                     Text("字體大小")
-                                        .font(.system(size: 16, weight: .medium))
+                                        .font(.appCallout(for: "字體大小"))
                                     
                                     Spacer()
                                     
                                     Text("\(Int(settings.fontSize))")
-                                        .font(.system(size: 16, weight: .bold))
+                                        .font(.appCallout())
                                         .foregroundStyle(.orange)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 4)
@@ -32,7 +32,7 @@ struct ReaderSettingsView: View {
                                 
                                 HStack {
                                     Text("A")
-                                        .font(.system(size: 12))
+                                        .font(.appCaption(for: "A"))
                                         .foregroundStyle(.secondary)
                                     
                                     Slider(
@@ -43,7 +43,7 @@ struct ReaderSettingsView: View {
                                     .tint(.orange)
                                     
                                     Text("A")
-                                        .font(.system(size: 20, weight: .bold))
+                                        .font(.appTitle3(for: "A"))
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -53,7 +53,7 @@ struct ReaderSettingsView: View {
                             // 中文字體選擇
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("中文字體")
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(.appCallout(for: "設定選項"))
                                 
                                 LazyVGrid(columns: [
                                     GridItem(.flexible()),
@@ -76,7 +76,7 @@ struct ReaderSettingsView: View {
                             // 英文字體選擇
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("英文字體")
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(.appCallout(for: "設定選項"))
                                 
                                 LazyVGrid(columns: [
                                     GridItem(.flexible()),
@@ -101,12 +101,12 @@ struct ReaderSettingsView: View {
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
                                     Text("行距")
-                                        .font(.system(size: 16, weight: .medium))
+                                        .font(.appCallout(for: "設定選項"))
                                     
                                     Spacer()
                                     
                                     Text("\(settings.lineSpacing, specifier: "%.1f")")
-                                        .font(.system(size: 16, weight: .bold))
+                                        .font(.appCallout(for: "設定值"))
                                         .foregroundStyle(.orange)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 4)
@@ -130,7 +130,7 @@ struct ReaderSettingsView: View {
                             // 背景色選擇
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("背景顏色")
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(.appCallout(for: "設定選項"))
                                 
                                 HStack(spacing: 12) {
                                     ForEach(ReaderSettings.ReaderBackgroundColor.allCases, id: \.self) { bgColor in
@@ -150,13 +150,13 @@ struct ReaderSettingsView: View {
                             // 自動儲存進度
                             HStack {
                                 Text("自動儲存閱讀進度")
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(.appCallout(for: "設定選項"))
                                 
                                 Spacer()
                                 
                                 Toggle("", isOn: $settings.autoSaveProgress)
                                     .toggleStyle(SwitchToggleStyle())
-                                    .font(.system(size: 16, weight: .medium))
+                                    .font(.appCallout(for: "設定選項"))
                                     .tint(.orange)
                             }
                         }
@@ -175,7 +175,7 @@ struct ReaderSettingsView: View {
                     Button("完成") {
                         dismiss()
                     }
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "完成"))
                     .foregroundStyle(.orange)
                 }
             }
@@ -194,11 +194,11 @@ struct ReaderSettingsSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "設定標題"))
                     .foregroundStyle(.orange)
                 
                 Text(title)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "設定標題"))
                     .foregroundStyle(.primary)
             }
             
@@ -230,7 +230,7 @@ struct FontOption: View {
                     .frame(height: 20)
                 
                 Text(fontFamily)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption(for: "小標題"))
                     .foregroundStyle(isSelected ? .orange : .secondary)
                     .lineLimit(1)
             }
@@ -274,13 +274,13 @@ struct BackgroundColorOption: View {
                     .overlay {
                         if isSelected {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.appCaption(for: "顏色名稱"))
                                 .foregroundStyle(.orange)
                         }
                     }
                 
                 Text(color.rawValue)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption(for: "小標題"))
                     .foregroundStyle(isSelected ? .orange : .secondary)
             }
         }
@@ -303,11 +303,11 @@ struct ReaderPreviewSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
                 Image(systemName: "eye.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "設定標題"))
                     .foregroundStyle(.orange)
                 
                 Text("預覽效果")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "設定標題"))
                     .foregroundStyle(.primary)
             }
             

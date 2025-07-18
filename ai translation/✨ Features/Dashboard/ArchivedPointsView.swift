@@ -18,7 +18,7 @@ struct ArchivedPointsView: View {
             } else if let errorMessage = errorMessage {
                 VStack(spacing: 10) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 40))
+                        .font(.appLargeTitle(for: "⚠️"))
                         .foregroundColor(.yellow)
                     Text("載入失敗")
                         .font(.appHeadline(for: "載入失敗"))

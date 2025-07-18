@@ -89,7 +89,7 @@ struct BottomActionBar: View {
             Divider()
             HStack {
                 Text("已選取 \(selectionCount) 個項目")
-                    .font(.appSubheadline(for: "已選取 \(selectionCount) 個項目"))
+                    .font(.appSubheadline(for: "已選取項目"))
                     .foregroundColor(.secondary)
                 
                 Spacer()

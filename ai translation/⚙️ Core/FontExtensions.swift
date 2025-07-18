@@ -291,7 +291,7 @@ struct FontPreviewView: View {
                 ForEach(sampleTexts, id: \.self) { text in
                     VStack(alignment: .leading, spacing: 8) {
                         Text("原文：\(text)")
-                            .font(.caption)
+                            .font(.appCaption(for: "原文標籤"))
                             .foregroundStyle(.secondary)
                         
                         Text(text)

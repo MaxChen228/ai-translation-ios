@@ -164,11 +164,11 @@ struct MonthlyOverviewCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "calendar")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "📅"))
                     .foregroundStyle(Color.orange)
                 
                 Text("本月學習概覽")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "本月學習概覽"))
                 
                 Spacer()
             }
@@ -185,16 +185,16 @@ struct MonthlyOverviewCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("當前連續")
-                            .font(.caption)
+                            .font(.appCaption(for: "當前連續"))
                             .foregroundStyle(.secondary)
                         
                         HStack(spacing: 4) {
                             Image(systemName: "flame.fill")
-                                .font(.system(size: 16))
+                                .font(.appCallout(for: "🔥"))
                                 .foregroundStyle(.orange)
                             
                             Text("\(stats.currentStreak)天")
-                                .font(.system(size: 18, weight: .bold))
+                                .font(.appHeadline())
                                 .foregroundStyle(.primary)
                         }
                     }
@@ -203,11 +203,11 @@ struct MonthlyOverviewCard: View {
                     
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("最長紀錄")
-                            .font(.caption)
+                            .font(.appCaption(for: "最長紀錄"))
                             .foregroundStyle(.secondary)
                         
                         Text("\(stats.longestStreak)天")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.appCallout())
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -234,11 +234,11 @@ struct WeeklyTrendCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "📈"))
                     .foregroundStyle(Color.orange)
                 
                 Text("近七天學習趨勢")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "近七天學習趨勢"))
                 
                 Spacer()
             }
@@ -258,7 +258,7 @@ struct WeeklyTrendCard: View {
                                     .frame(width: 32, height: CGFloat(max(4, data.questionsCompleted * 8)))
                                 
                                 Text(data.date, formatter: dayFormatter)
-                                    .font(.caption)
+                                    .font(.appCaption(for: "日期"))
                                     .foregroundStyle(.secondary)
                             }
                         }
@@ -269,11 +269,11 @@ struct WeeklyTrendCard: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("總題數")
-                                .font(.caption)
+                                .font(.appCaption(for: "總題數"))
                                 .foregroundStyle(.secondary)
                             
                             Text("\(weeklyData.reduce(0) { $0 + $1.questionsCompleted })")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.appCallout())
                                 .foregroundStyle(.primary)
                         }
                         
@@ -281,11 +281,11 @@ struct WeeklyTrendCard: View {
                         
                         VStack(alignment: .trailing, spacing: 2) {
                             Text("平均每天")
-                                .font(.caption)
+                                .font(.appCaption(for: "平均每天"))
                                 .foregroundStyle(.secondary)
                             
                             Text("\(weeklyData.reduce(0) { $0 + $1.questionsCompleted } / max(1, weeklyData.count))題")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.appCallout())
                                 .foregroundStyle(.primary)
                         }
                     }
@@ -319,16 +319,16 @@ struct AchievementsCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "trophy.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "🏆"))
                     .foregroundStyle(Color.orange)
                 
                 Text("學習成就")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "學習成就"))
                 
                 Spacer()
                 
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
-                    .font(.caption)
+                    .font(.appCaption())
                     .fontWeight(.medium)
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 8)
@@ -364,11 +364,11 @@ struct LearningAdviceCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "lightbulb.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "💡"))
                     .foregroundStyle(Color.orange)
                 
                 Text("學習建議")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.appTitle3(for: "學習建議"))
                 
                 Spacer()
             }
@@ -377,14 +377,14 @@ struct LearningAdviceCard: View {
                 ForEach(Array(advice.enumerated()), id: \.offset) { index, tip in
                     HStack(alignment: .top, spacing: 12) {
                         Text("\(index + 1)")
-                            .font(.caption)
+                            .font(.appCaption())
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                             .frame(width: 20, height: 20)
                             .background(Circle().fill(Color.orange))
                         
                         Text(tip)
-                            .font(.body)
+                            .font(.appBody(for: tip))
                             .foregroundStyle(.primary)
                             .lineSpacing(2)
                         
@@ -412,15 +412,15 @@ struct StatMiniCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .medium))
+                .font(.appTitle3(for: icon))
                 .foregroundStyle(Color.orange)
             
             Text(value)
-                .font(.system(size: 18, weight: .bold))
+                .font(.appHeadline(for: value))
                 .foregroundStyle(.primary)
             
             Text(title)
-                .font(.caption)
+                .font(.appCaption(for: title))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -446,17 +446,17 @@ struct AchievementMiniCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: achievement.icon)
-                .font(.system(size: 24, weight: .medium))
+                .font(.appTitle2(for: achievement.icon))
                 .foregroundStyle(achievement.isUnlocked ? Color.orange : .secondary)
             
             Text(achievement.title)
-                .font(.caption)
+                .font(.appCaption(for: achievement.title))
                 .fontWeight(.medium)
                 .foregroundStyle(achievement.isUnlocked ? .primary : .secondary)
                 .multilineTextAlignment(.center)
             
             Text(achievement.description)
-                .font(.caption2)
+                .font(.appCaption2(for: achievement.description))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)

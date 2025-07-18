@@ -133,7 +133,7 @@ struct ClaudeMonthStatsCard: View {
             // 月份標題
             HStack {
                 Text(monthText)
-                    .font(.system(size: 24, weight: .bold))
+                    .font(.appTitle2(for: "月份"))
                     .foregroundStyle(.primary)
                 Spacer()
                 
@@ -169,17 +169,17 @@ struct ClaudeStatMini: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 16, weight: .medium))
+                .font(.appCallout(for: "統計標籤"))
                 .foregroundStyle(Color.orange)
                 .frame(width: 20)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(value)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "統計數值"))
                     .foregroundStyle(.primary)
                 
                 Text(title)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.appCaption2(for: "小標籤"))
                     .foregroundStyle(.secondary)
             }
             
@@ -218,11 +218,11 @@ struct ClaudeGoalIndicator: View {
             
             VStack(alignment: .leading, spacing: 1) {
                 Text("\(Int(percentage * 100))%")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.appSubheadline(for: "星期"))
                     .foregroundStyle(.primary)
                 
                 Text("達標率")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.appCaption2(for: "星期簡稱"))
                     .foregroundStyle(.secondary)
             }
         }
@@ -273,7 +273,7 @@ struct ClaudeMonthNavigation: View {
         HStack {
             Button(action: { changeMonth(by: -1) }) {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "統計數值"))
                     .foregroundStyle(.primary)
                     .frame(width: 32, height: 32)
                     .background {
@@ -285,14 +285,14 @@ struct ClaudeMonthNavigation: View {
             Spacer()
             
             Text(monthYearText)
-                .font(.system(size: 20, weight: .bold))
+                .font(.appTitle3(for: "詳細標題"))
                 .foregroundStyle(.primary)
             
             Spacer()
             
             Button(action: { changeMonth(by: 1) }) {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout(for: "統計數值"))
                     .foregroundStyle(.primary)
                     .frame(width: 32, height: 32)
                     .background {
@@ -318,7 +318,7 @@ struct ClaudeWeekdayHeader: View {
         HStack(spacing: 0) {
             ForEach(weekdays, id: \.self) { day in
                 Text(day)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption(for: "日期數字"))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
             }
@@ -407,12 +407,12 @@ struct ClaudeDateCell: View {
         NavigationLink(destination: DailyDetailView(selectedDate: date)) {
             VStack(spacing: 4) {
                 Text(dayNumber)
-                    .font(.system(size: 14, weight: isToday ? .bold : .medium))
+                    .font(.appSubheadline(for: "日期"))
                     .foregroundStyle(isToday ? Color.orange : .primary)
                 
                 if count > 0 {
                     Text("\(count)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.appCaption2(for: "進度點"))
                         .foregroundStyle(Color.orange)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)

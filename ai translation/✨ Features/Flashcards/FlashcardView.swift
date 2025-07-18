@@ -46,7 +46,7 @@ struct FlashcardView: View {
                 
                 // 進度指示器
                 Text("\(currentIndex + 1) / \(flashcards.count)")
-                    .font(.headline)
+                    .font(.appHeadline())
                 
                 // 控制按鈕
                 HStack {
@@ -107,7 +107,7 @@ struct FlashcardSide: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.caption)
+                .font(.appCaption(for: title))
                 .foregroundColor(.white)
                 .padding(5)
                 .background(color.opacity(0.8))
@@ -116,7 +116,7 @@ struct FlashcardSide: View {
             Spacer()
             
             Text(content)
-                .font(.title2)
+                .font(.appTitle2(for: content))
                 .multilineTextAlignment(.center)
             
             Spacer()

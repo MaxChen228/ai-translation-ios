@@ -129,14 +129,14 @@ struct ReaderTopToolbar: View {
         HStack {
             Button(action: onClose) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "✕"))
                     .foregroundStyle(.primary)
             }
             
             Spacer()
             
             Text(bookTitle)
-                .font(.system(size: 16, weight: .medium))
+                .font(.appCallout(for: bookTitle))
                 .foregroundStyle(.primary)
                 .lineLimit(1)
             
@@ -144,7 +144,7 @@ struct ReaderTopToolbar: View {
             
             Button(action: onSettings) {
                 Image(systemName: "textformat.size")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appHeadline(for: "🖄"))
                     .foregroundStyle(.primary)
             }
         }
@@ -165,7 +165,7 @@ struct ReaderBottomToolbar: View {
             // 進度條
             HStack {
                 Text("\(currentPage)")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.appSubheadline())
                     .foregroundStyle(.secondary)
                     .frame(width: 30)
                 
@@ -180,7 +180,7 @@ struct ReaderBottomToolbar: View {
                 .tint(.orange)
                 
                 Text("\(totalPages)")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.appSubheadline())
                     .foregroundStyle(.secondary)
                     .frame(width: 30)
             }
@@ -189,25 +189,25 @@ struct ReaderBottomToolbar: View {
             HStack(spacing: 40) {
                 Button(action: {}) {
                     Image(systemName: "bookmark")
-                        .font(.system(size: 20))
+                        .font(.appTitle3(for: "🔖"))
                         .foregroundStyle(.primary)
                 }
                 
                 Button(action: {}) {
                     Image(systemName: "note.text")
-                        .font(.system(size: 20))
+                        .font(.appTitle3(for: "📝"))
                         .foregroundStyle(.primary)
                 }
                 
                 Button(action: {}) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 20))
+                        .font(.appTitle3(for: "🔍"))
                         .foregroundStyle(.primary)
                 }
                 
                 Button(action: {}) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 20))
+                        .font(.appTitle3(for: "📤"))
                         .foregroundStyle(.primary)
                 }
             }
@@ -304,7 +304,7 @@ struct TextSelectionMenu: View {
         VStack(spacing: 12) {
             // 選取的文字預覽
             Text("\"\(selectedText.prefix(50))\(selectedText.count > 50 ? "..." : "")\"")
-                .font(.system(size: 14, weight: .medium))
+                .font(.appSubheadline(for: selectedText))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -322,7 +322,7 @@ struct TextSelectionMenu: View {
                         Text("螢光筆")
                         Spacer()
                     }
-                    .font(.system(size: 16))
+                    .font(.appCallout(for: "功能選項"))
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -335,7 +335,7 @@ struct TextSelectionMenu: View {
                         Text("新增筆記")
                         Spacer()
                     }
-                    .font(.system(size: 16))
+                    .font(.appCallout(for: "功能選項"))
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
@@ -348,7 +348,7 @@ struct TextSelectionMenu: View {
                         Text("建立知識點")
                         Spacer()
                     }
-                    .font(.system(size: 16))
+                    .font(.appCallout(for: "功能選項"))
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
