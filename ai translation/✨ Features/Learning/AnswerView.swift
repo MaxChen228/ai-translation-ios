@@ -216,10 +216,10 @@ struct ClaudeQuestionTypeTag: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: tagInfo.icon)
-                .font(.system(size: 10, weight: .medium))
+                .font(.appCaption2(for: "圖示"))
             
             Text(tagInfo.text)
-                .font(.system(size: 12, weight: .medium))
+                .font(.appCaption(for: tagInfo.text))
         }
         .foregroundStyle(tagInfo.color)
         .padding(.horizontal, 12)
@@ -255,10 +255,10 @@ struct ClaudeHintCard: View {
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "lightbulb")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.appSubheadline(for: "💡"))
                             
                             Text("基本提示")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.appSubheadline(for: "基本提示"))
                         }
                         .foregroundStyle(Color.orange)
                         .padding(.horizontal, 16)
@@ -560,11 +560,11 @@ struct ClaudeAnswerCard: View {
                             Text("AI 批改中...")
                         } else {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(.appCallout(for: "✓"))
                             Text("提交批改")
                         }
                     }
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appCallout())
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
