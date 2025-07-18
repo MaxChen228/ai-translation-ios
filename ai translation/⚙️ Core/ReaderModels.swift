@@ -51,8 +51,8 @@ struct ReaderBook: Identifiable, Codable {
         bookmarks = try container.decodeIfPresent([ReaderBookmark].self, forKey: .bookmarks) ?? []
         notes = try container.decodeIfPresent([ReaderNote].self, forKey: .notes) ?? []
         
-        // 處理顏色編碼
-        if let colorData = try container.decodeIfPresent(Data.self, forKey: .coverColorData) {
+        // 處理顏色編碼 - 移除未使用的colorData變數
+        if let _ = try container.decodeIfPresent(Data.self, forKey: .coverColorData) {
             // 這裡可以實作顏色的序列化，暫時用預設值
             coverColor = .blue
         } else {

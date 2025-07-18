@@ -79,7 +79,7 @@ struct KnowledgePointEditView: View {
 }
 
 #Preview {
-    @State var samplePoint = EditableKnowledgePoint(
+    @Previewable @State var samplePoint = EditableKnowledgePoint(
         category: "文法結構錯誤",
         subcategory: "動詞時態",
         key_point_summary: "現在完成進行式",

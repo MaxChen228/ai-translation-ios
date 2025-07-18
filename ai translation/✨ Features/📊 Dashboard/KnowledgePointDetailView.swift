@@ -454,9 +454,9 @@ struct KnowledgePointDetailView: View {
         init(from point: KnowledgePoint) {
             self.category = point.category
             self.subcategory = point.subcategory
-            self.key_point_summary = point.key_point_summary ?? ""
+            self.key_point_summary = point.key_point_summary ?? ""  // 恢復 ?? ""
             self.correct_phrase = point.correct_phrase
-            self.explanation = point.explanation ?? ""
+            self.explanation = point.explanation ?? ""  // 恢復 ?? ""
         }
         
         // 【在這裡添加新的初始化方法】

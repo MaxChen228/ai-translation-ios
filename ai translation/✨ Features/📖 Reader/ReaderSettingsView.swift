@@ -271,7 +271,7 @@ struct ReaderPreviewSection: View {
 }
 
 #Preview {
-    @State var settings = ReaderSettings()
+    @Previewable @State var settings = ReaderSettings()
     
     ReaderSettingsView(settings: $settings)
 }

@@ -358,8 +358,7 @@ struct ClaudeDateGrid: View {
     }
     
     private func fetchDaysInMonth() -> [Date?] {
-        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: selectedDate),
-              let firstDayOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: selectedDate))
+        guard let firstDayOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: selectedDate))
         else { return [] }
 
         let firstWeekday = Calendar.current.component(.weekday, from: firstDayOfMonth)
