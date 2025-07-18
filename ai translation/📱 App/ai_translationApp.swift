@@ -1,4 +1,4 @@
-// ai_translationApp.swift - 完整重寫版本
+// ai_translationApp.swift - 移除閱讀功能版本
 
 import SwiftUI
 
@@ -21,11 +21,11 @@ struct MainContentView: View {
     
     var body: some View {
         TabView {
-            // 閱讀區域 - 完全獨立
-            ReadingAreaView()
+            // 單字記憶庫 - 替換原本的閱讀功能
+            VocabularyAreaView()
                 .tabItem {
                     Image(systemName: "book.fill")
-                    Text("閱讀")
+                    Text("單字庫")
                 }
             
             // 學習區域 - 完全獨立
