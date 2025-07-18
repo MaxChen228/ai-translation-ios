@@ -10,31 +10,36 @@ struct ArchivedPointsView: View {
     var body: some View {
         ZStack {
             if isLoading {
-                ProgressView("正在載入...")
+                VStack(spacing: 12) {
+                    ProgressView()
+                    Text("正在載入...")
+                        .font(.appSubheadline(for: "正在載入..."))
+                }
             } else if let errorMessage = errorMessage {
                 VStack(spacing: 10) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.largeTitle)
+                        .font(.system(size: 40))
                         .foregroundColor(.yellow)
                     Text("載入失敗")
-                        .font(.headline)
+                        .font(.appHeadline(for: "載入失敗"))
                     Text(errorMessage)
-                        .font(.caption)
+                        .font(.appCaption(for: errorMessage))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
             } else if archivedPoints.isEmpty {
                 Text("封存區是空的")
-                    .font(.headline)
+                    .font(.appHeadline(for: "封存區是空的"))
                     .foregroundColor(.secondary)
             } else {
                 List {
                     ForEach(archivedPoints) { point in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(point.correct_phrase)
-                                .fontWeight(.bold)
+                                .font(.appCallout(for: point.correct_phrase))
+                                .fontWeight(.medium)
                             Text(point.key_point_summary ?? "核心觀念")
-                                .font(.caption)
+                                .font(.appCaption(for: point.key_point_summary ?? "核心觀念"))
                                 .foregroundColor(.secondary)
                         }
                         .padding(.vertical, 5)
@@ -67,24 +72,29 @@ struct ArchivedPointsView: View {
                     switch apiError {
                     case .serverError(_, let message):
                         self.errorMessage = message
+                    case .invalidURL:
+                        self.errorMessage = "無效的網址"
+                    case .invalidResponse:
+                        self.errorMessage = "伺服器回應無效"
+                    case .decodingError:
+                        self.errorMessage = "資料解析失敗"
                     default:
-                        self.errorMessage = "發生未知網路錯誤，請稍後再試。"
+                        self.errorMessage = "發生未知網路錯誤"
                     }
                 } else {
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = "發生未知錯誤"
                 }
             }
             isLoading = false
         }
     }
-
+    
     private func unarchivePoint(id: Int) async {
         do {
             try await KnowledgePointAPIService.unarchivePoint(id: id)
-            // 從列表中移除，製造即時反饋
-            archivedPoints.removeAll { $0.id == id }
+            // 重新載入資料
+            await fetchArchivedPoints()
         } catch {
-            // 在此可以加入錯誤處理的 Alert
             print("取消封存失敗: \(error)")
         }
     }

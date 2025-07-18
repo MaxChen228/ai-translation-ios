@@ -65,7 +65,7 @@ struct KnowledgePointGridView: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 // 【核心修改】: 主要標題改為顯示 AI 生成的要點標題
                                 Text(point.key_point_summary ?? "核心觀念")
-                                    .font(.headline)
+                                    .font(.appHeadline(for: point.key_point_summary ?? "核心觀念"))
                                     .foregroundColor(.primary)
                                     .lineLimit(2) // 限制為兩行
                                     .minimumScaleFactor(0.8) // 如果文字太長，允許縮小
@@ -73,7 +73,7 @@ struct KnowledgePointGridView: View {
                                 
                                 // 將原本的正確用法作為補充說明，放在下方
                                 Text(point.correct_phrase)
-                                    .font(.caption)
+                                    .font(.appCaption(for: point.correct_phrase))
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                                     .truncationMode(.tail)

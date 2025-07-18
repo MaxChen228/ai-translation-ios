@@ -20,10 +20,10 @@ struct AllKnowledgePointsListView: View {
                     NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(point.key_point_summary ?? "核心觀念")
-                                .font(.headline)
+                                .font(.appHeadline(for: point.key_point_summary ?? "核心觀念"))
                                 .lineLimit(1)
                             Text(point.correct_phrase)
-                                .font(.caption)
+                                .font(.appCaption(for: point.correct_phrase))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
@@ -89,14 +89,14 @@ struct BottomActionBar: View {
             Divider()
             HStack {
                 Text("已選取 \(selectionCount) 個項目")
-                    .font(.subheadline)
+                    .font(.appSubheadline(for: "已選取 \(selectionCount) 個項目"))
                     .foregroundColor(.secondary)
                 
                 Spacer()
                 
                 Button(action: onArchiveAction) {
                     Text("封存")
-                        .font(.headline)
+                        .font(.appHeadline(for: "封存"))
                         .foregroundColor(.blue)
                 }
             }

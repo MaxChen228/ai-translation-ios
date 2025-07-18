@@ -130,11 +130,46 @@ struct ReaderTextPosition: Codable {
 // 閱讀設定
 struct ReaderSettings: Codable {
     var fontSize: Double = 16.0
-    var fontFamily: String = "系統字體"
+    var chineseFontFamily: ChineseFontFamily = .sourceHanSerif
+    var englishFontFamily: EnglishFontFamily = .rounded
     var lineSpacing: Double = 1.5
     var pageMargin: Double = 20.0
     var backgroundColor: ReaderBackgroundColor = .white
     var autoSaveProgress: Bool = true
+    
+    enum ChineseFontFamily: String, CaseIterable, Codable {
+        case sourceHanSerif = "思源宋體"
+        case system = "系統字體"
+        
+        var fontName: String {
+            switch self {
+            case .sourceHanSerif: return "SourceHanSerifTC-Regular"
+            case .system: return "PingFangTC-Regular"
+            }
+        }
+        
+        var displayName: String {
+            return self.rawValue
+        }
+    }
+    
+    enum EnglishFontFamily: String, CaseIterable, Codable {
+        case rounded = "圓潤字體"
+        case serif = "襯線字體"
+        case system = "系統字體"
+        
+        var fontName: String {
+            switch self {
+            case .rounded: return "SFProRounded-Regular"
+            case .serif: return "TimesNewRomanPSMT"
+            case .system: return "SFProText-Regular"
+            }
+        }
+        
+        var displayName: String {
+            return self.rawValue
+        }
+    }
     
     enum ReaderBackgroundColor: String, CaseIterable, Codable {
         case white = "白色"
@@ -148,5 +183,25 @@ struct ReaderSettings: Codable {
             case .dark: return Color(.systemBackground)
             }
         }
+    }
+    
+    // 獲取混合字體的方法
+    func getFont(size: CGFloat, for text: String) -> Font {
+        // 判斷文字主要是中文還是英文
+        let isChineseText = text.range(of: "[\u{4e00}-\u{9fff}]", options: .regularExpression) != nil
+        
+        if isChineseText {
+            return .custom(chineseFontFamily.fontName, size: size)
+        } else {
+            return .custom(englishFontFamily.fontName, size: size)
+        }
+    }
+    
+    // 獲取 UIFont 版本（用於 UIKit 組件）
+    func getUIFont(size: CGFloat, for text: String) -> UIFont {
+        let isChineseText = text.range(of: "[\u{4e00}-\u{9fff}]", options: .regularExpression) != nil
+        
+        let fontName = isChineseText ? chineseFontFamily.fontName : englishFontFamily.fontName
+        return UIFont(name: fontName, size: size) ?? UIFont.systemFont(ofSize: size)
     }
 }

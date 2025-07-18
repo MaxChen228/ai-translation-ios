@@ -61,7 +61,7 @@ struct DashboardView: View {
                             case .categories:
                                 CategoriesSection(points: knowledgePoints)
                             case .progress:
-                                ProgressSection(points: knowledgePoints)
+                               ProgressSection(points: knowledgePoints)
                             case .schedule:
                                 ScheduleSection(points: knowledgePoints)
                             }
@@ -88,6 +88,24 @@ struct DashboardView: View {
             }
             .onAppear {
                 Task { await fetchDashboardData() }
+                
+                #if DEBUG
+                // 字體測試代碼
+                print("=== 字體載入測試 ===")
+                let testFonts = [
+                    "SourceHanSerifTCVF-Regular",
+                    "SourceHanSerifTCVF-Bold",
+                    "SourceHanSerifTCVF-Light"
+                ]
+
+                for fontName in testFonts {
+                    if let font = UIFont(name: fontName, size: 16) {
+                        print("✅ \(fontName) 載入成功")
+                    } else {
+                        print("❌ \(fontName) 載入失敗")
+                    }
+                }
+                #endif
             }
         }
     }
@@ -183,10 +201,10 @@ struct ClaudeModeButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: mode.icon)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.appFootnote())
                 
                 Text(mode.rawValue)
-                    .font(.system(size: 14, weight: .medium, design: .default))
+                    .font(.appFootnote(for: mode.rawValue))
             }
             .foregroundStyle(isSelected ? .white : Color(.label))
             .frame(maxWidth: .infinity)
@@ -236,11 +254,11 @@ struct ClaudeStatCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Text(value)
-                .font(.system(size: 24, weight: .semibold, design: .rounded))
+                .font(.appTitle2(for: value))
                 .foregroundStyle(.primary)
             
             Text(title)
-                .font(.system(size: 13, weight: .medium))
+                .font(.appCaption(for: title))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, minHeight: 80)
@@ -260,7 +278,7 @@ struct ClaudeMasteryCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("熟練度分布")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.appHeadline(for: "熟練度分布"))
                 .foregroundStyle(.primary)
             
             VStack(spacing: 12) {
@@ -291,7 +309,7 @@ struct ClaudeMasteryBar: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 14, weight: .medium))
+                .font(.appSubheadline(for: label))
                 .foregroundStyle(.primary)
                 .frame(width: 80, alignment: .leading)
             
@@ -310,7 +328,7 @@ struct ClaudeMasteryBar: View {
             .frame(height: 6)
             
             Text("\(count)")
-                .font(.system(size: 13, weight: .medium))
+                .font(.appCaption(for: "\(count)"))
                 .foregroundStyle(.secondary)
                 .frame(width: 30, alignment: .trailing)
         }
@@ -325,7 +343,7 @@ struct ClaudeFocusCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("需要重點關注")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appHeadline(for: "需要重點關注"))
                     .foregroundStyle(.primary)
                 Spacer()
             }
@@ -336,7 +354,7 @@ struct ClaudeFocusCard: View {
                         .font(.system(size: 20))
                         .foregroundStyle(Color(.systemGreen))
                     Text("所有知識點都很穩固！")
-                        .font(.system(size: 14))
+                        .font(.appSubheadline(for: "所有知識點都很穩固！"))
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -348,23 +366,24 @@ struct ClaudeFocusCard: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(point.key_point_summary ?? "核心觀念")
-                                        .font(.system(size: 14, weight: .medium))
+                                        .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
                                         .foregroundStyle(.primary)
                                         .lineLimit(1)
                                     
                                     Text(point.correct_phrase)
-                                        .font(.system(size: 12))
+                                        .font(.appCaption(for: point.correct_phrase))
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
                                 }
                                 
                                 Spacer()
                                 
-                                ClaudeMasteryIndicator(level: point.mastery_level)
+                                MasteryBarView(masteryLevel: point.mastery_level)
+                                    .frame(width: 40)
                             }
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
-                            .background(Color(.systemGray6))
+                            .background(index % 2 == 0 ? Color(.systemBackground) : Color(.systemGray6))
                         }
                         .buttonStyle(.plain)
                         
@@ -374,10 +393,8 @@ struct ClaudeFocusCard: View {
                         }
                     }
                 }
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray6))
-                }
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding(20)
@@ -389,81 +406,71 @@ struct ClaudeFocusCard: View {
     }
 }
 
-struct ClaudeMasteryIndicator: View {
-    let level: Double
-    
-    private var color: Color {
-        if level < 1.5 { return Color(.systemRed) }
-        else if level < 3.5 { return Color(.systemOrange) }
-        else { return Color(.systemGreen) }
-    }
-    
-    var body: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<5) { index in
-                Circle()
-                    .fill(Double(index) < level ? color : Color(.systemGray4))
-                    .frame(width: 5, height: 5)
-            }
-        }
-    }
-}
-
 // 【重新設計】分類區域
 struct CategoriesSection: View {
     let points: [KnowledgePoint]
     
-    private var groupedPoints: [String: [KnowledgePoint]] {
-        Dictionary(grouping: points, by: { $0.category })
+    private var categorizedPoints: [String: [KnowledgePoint]] {
+        Dictionary(grouping: points) { $0.category }
     }
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 1), spacing: 16) {
-            ForEach(groupedPoints.keys.sorted(), id: \.self) { category in
-                NavigationLink(destination: KnowledgePointGridView(points: groupedPoints[category]!, categoryTitle: category)) {
-                    ClaudeCategoryCard(
-                        title: category,
-                        count: groupedPoints[category]!.count,
-                        averageMastery: groupedPoints[category]!.map { $0.mastery_level }.reduce(0, +) / Double(groupedPoints[category]!.count)
-                    )
+        VStack(spacing: 16) {
+            ForEach(categorizedPoints.keys.sorted(), id: \.self) { category in
+                if let categoryPoints = categorizedPoints[category] {
+                    NavigationLink(destination: KnowledgePointGridView(points: categoryPoints, categoryTitle: category)) {
+                        ClaudeCategoryCard(category: category, points: categoryPoints)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
 }
 
 struct ClaudeCategoryCard: View {
-    let title: String
-    let count: Int
-    let averageMastery: Double
+    let category: String
+    let points: [KnowledgePoint]
+    
+    private var averageMastery: Double {
+        points.isEmpty ? 0 : points.map { $0.mastery_level }.reduce(0, +) / Double(points.count)
+    }
+    
+    private var weakPointsCount: Int {
+        points.filter { $0.mastery_level < 2.0 }.count
+    }
     
     var body: some View {
-        HStack {
+        HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                Text(category)
+                    .font(.appHeadline(for: category))
                     .foregroundStyle(.primary)
-                    .lineLimit(2)
                 
-                HStack {
-                    Text("\(count) 個知識點")
-                        .font(.system(size: 13))
+                HStack(spacing: 16) {
+                    Label("\(points.count)", systemImage: "book.closed")
+                        .font(.appCaption())
                         .foregroundStyle(.secondary)
                     
-                    Spacer()
-                    
-                    Text("平均 \(String(format: "%.1f", averageMastery))")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(Color.orange)
+                    if weakPointsCount > 0 {
+                        Label("\(weakPointsCount) 需加強", systemImage: "exclamationmark.triangle")
+                            .font(.appCaption())
+                            .foregroundStyle(.orange)
+                    }
                 }
             }
             
             Spacer()
             
-            Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.tertiary)
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(String(format: "%.1f", averageMastery))
+                    .font(.appTitle3())
+                    .foregroundStyle(.primary)
+                
+                Text("平均熟練度")
+                    .font(.appCaption2(for: "平均熟練度"))
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(20)
         .background {
@@ -497,44 +504,25 @@ struct ClaudeProgressCard: View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(point.key_point_summary ?? "核心觀念")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
                     .foregroundStyle(.primary)
-                    .lineLimit(2)
-                
-                Text(point.correct_phrase)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
                     .lineLimit(1)
                 
-                HStack(spacing: 12) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(Color(.systemRed))
-                        Text("\(point.mistake_count)")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Color(.systemRed))
-                    }
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(Color(.systemGreen))
-                        Text("\(point.correct_count)")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Color(.systemGreen))
-                    }
-                }
+                Text(point.correct_phrase)
+                    .font(.appCaption(for: point.correct_phrase))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
             
             Spacer()
             
-            VStack(spacing: 6) {
-                ClaudeCircularProgress(progress: point.mastery_level / 5.0)
-                
+            VStack(alignment: .trailing, spacing: 4) {
                 Text(String(format: "%.1f", point.mastery_level))
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .font(.appHeadline())
+                    .foregroundStyle(.primary)
+                
+                MasteryBarView(masteryLevel: point.mastery_level)
+                    .frame(width: 60)
             }
         }
         .padding(16)
@@ -546,38 +534,12 @@ struct ClaudeProgressCard: View {
     }
 }
 
-struct ClaudeCircularProgress: View {
-    let progress: Double
-    
-    private var color: Color {
-        if progress < 0.3 { return Color(.systemRed) }
-        else if progress < 0.7 { return Color(.systemOrange) }
-        else { return Color(.systemGreen) }
-    }
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color(.systemGray5), lineWidth: 2)
-                .frame(width: 32, height: 32)
-            
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                .frame(width: 32, height: 32)
-                .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.3), value: progress)
-        }
-    }
-}
-
 // 【重新設計】排程區域
 struct ScheduleSection: View {
     let points: [KnowledgePoint]
     
     private var scheduledPoints: [KnowledgePoint] {
-        points.filter { $0.next_review_date != nil }
-              .sorted { $0.next_review_date! < $1.next_review_date! }
+        points.filter { $0.next_review_date != nil }.sorted { $0.next_review_date! < $1.next_review_date! }
     }
     
     var body: some View {
@@ -618,12 +580,12 @@ struct ClaudeScheduleCard: View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(point.key_point_summary ?? "核心觀念")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.appSubheadline(for: point.key_point_summary ?? "核心觀念"))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
                 Text(point.correct_phrase)
-                    .font(.system(size: 12))
+                    .font(.appCaption(for: point.correct_phrase))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
@@ -632,11 +594,11 @@ struct ClaudeScheduleCard: View {
             
             VStack(alignment: .trailing, spacing: 4) {
                 Text(formatDate(point.next_review_date ?? ""))
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.appCaption())
                     .foregroundStyle(isOverdue ? Color(.systemRed) : .primary)
                 
                 Text(isOverdue ? "已逾期" : "待複習")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.appCaption2(for: isOverdue ? "已逾期" : "待複習"))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
                     .background(isOverdue ? Color(.systemRed).opacity(0.1) : Color(.systemGray5))
@@ -666,7 +628,7 @@ struct ClaudeLoadingView: View {
                 .tint(Color.orange)
             
             Text("正在載入數據...")
-                .font(.system(size: 15, weight: .medium))
+                .font(.appSubheadline(for: "正在載入數據..."))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -684,17 +646,17 @@ struct ClaudeErrorView: View {
                 .foregroundStyle(Color(.systemOrange))
             
             Text("載入失敗")
-                .font(.system(size: 18, weight: .semibold))
+                .font(.appTitle3(for: "載入失敗"))
                 .foregroundStyle(.primary)
             
             Text(message)
-                .font(.system(size: 14))
+                .font(.appSubheadline(for: message))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             
             Button("重新載入", action: retry)
-                .font(.system(size: 15, weight: .medium))
+                .font(.appSubheadline(for: "重新載入"))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(Color.orange)
@@ -713,11 +675,11 @@ struct ClaudeEmptyStateView: View {
                 .foregroundStyle(Color.orange)
             
             Text("開始您的學習之旅")
-                .font(.system(size: 18, weight: .semibold))
+                .font(.appTitle3(for: "開始您的學習之旅"))
                 .foregroundStyle(.primary)
             
             Text("完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！")
-                .font(.system(size: 14))
+                .font(.appSubheadline(for: "完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！"))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)

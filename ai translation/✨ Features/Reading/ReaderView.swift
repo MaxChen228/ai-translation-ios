@@ -244,7 +244,9 @@ struct SelectableTextView: UIViewRepresentable {
     
     private func updateTextView(_ textView: UITextView) {
         let fontSize = CGFloat(settings.fontSize)
-        let font = UIFont.systemFont(ofSize: fontSize)
+        
+        // 分析文字內容並決定字體
+        let font = settings.getUIFont(size: fontSize, for: content)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = CGFloat(settings.lineSpacing - 1.0) * fontSize

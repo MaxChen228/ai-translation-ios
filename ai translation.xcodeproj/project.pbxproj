@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		504A5DBD2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf in Resources */ = {isa = PBXBuildFile; fileRef = 504A5DBC2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		507B28F22E25561C005DAD5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		504A5DBC2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceHanSerifTC-VF.otf"; sourceTree = "<group>"; };
 		507B28E42E25561A005DAD5B /* ai translation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ai translation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		507B28F12E25561C005DAD5B /* ai translationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ai translationTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		507B28FB2E25561C005DAD5B /* ai translationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ai translationUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +84,7 @@
 				507B28F42E25561C005DAD5B /* ai translationTests */,
 				507B28FE2E25561C005DAD5B /* ai translationUITests */,
 				507B28E52E25561A005DAD5B /* Products */,
+				504A5DBC2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				504A5DBD2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,6 +406,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ai-translation-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +437,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "ai-translation-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
