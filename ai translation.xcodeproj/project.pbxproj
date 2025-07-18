@@ -29,22 +29,9 @@
 		507B28FB2E25561C005DAD5B /* ai translationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ai translationUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		508513D32E2A14FF001783A7 /* Exceptions for "ai translation" folder in "ai translation" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"✨ Features/📖 Reader/Untitled.swift",
-			);
-			target = 507B28E32E25561A005DAD5B /* ai translation */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		507B28E62E25561A005DAD5B /* ai translation */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				508513D32E2A14FF001783A7 /* Exceptions for "ai translation" folder in "ai translation" target */,
-			);
 			path = "ai translation";
 			sourceTree = "<group>";
 		};
