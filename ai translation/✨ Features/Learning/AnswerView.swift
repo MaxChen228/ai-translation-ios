@@ -1050,7 +1050,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onTap) {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .font(.appHeadline())  // 原來：.font(.system(size: 20))
+                        .font(.system(size: 20))
                         .foregroundStyle(isSelected ? Color.blue : Color.secondary.opacity(0.6))
                 }
                 .padding(.trailing, 16)
@@ -1061,12 +1061,10 @@ struct ClaudeErrorAnalysisRow: View {
                 // 分類標籤
                 HStack(spacing: 8) {
                     Image(systemName: error.categoryIcon)
-                        .font(.appCaption())  // 原來：.font(.system(size: 12, weight: .medium))
-                        .fontWeight(.medium)
+                        .font(.system(size: 12, weight: .medium))
                     
                     Text(error.categoryName)
-                        .font(.appCaption(for: error.categoryName))  // 原來：.font(.system(size: 12, weight: .semibold))
-                        .fontWeight(.semibold)
+                        .font(.system(size: 12, weight: .semibold))
                 }
                 .foregroundStyle(error.categoryColor)
                 .padding(.horizontal, 10)
@@ -1080,41 +1078,36 @@ struct ClaudeErrorAnalysisRow: View {
                 
                 // 核心觀念
                 Text(error.key_point_summary)
-                    .font(.appBody(for: error.key_point_summary))  // 原來：.font(.system(size: 16, weight: .semibold))
-                    .fontWeight(.semibold)
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.primary)
                 
                 // 錯誤與修正
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .top, spacing: 8) {
                         Text("原文：")
-                            .font(.appFootnote(for: "原文："))  // 原來：.font(.system(size: 13, weight: .semibold))
-                            .fontWeight(.semibold)
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.original_phrase)\"")
-                            .font(.appFootnote(for: error.original_phrase))  // 原來：.font(.system(size: 13, design: .monospaced))
-                            .fontFamily(.monospaced)  // 保持等寬字體效果
+                            .font(.system(size: 13, design: .monospaced))
                             .foregroundStyle(.red)
                             .strikethrough(color: .red)
                     }
                     
                     HStack(alignment: .top, spacing: 8) {
                         Text("修正：")
-                            .font(.appFootnote(for: "修正："))  // 原來：.font(.system(size: 13, weight: .semibold))
-                            .fontWeight(.semibold)
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.correction)\"")
-                            .font(.appFootnote(for: error.correction))  // 原來：.font(.system(size: 13, design: .monospaced))
-                            .fontFamily(.monospaced)  // 保持等寬字體效果
+                            .font(.system(size: 13, design: .monospaced))
                             .foregroundStyle(.green)
                     }
                 }
                 
                 // 解釋
                 Text(error.explanation)
-                    .font(.appFootnote(for: error.explanation))  // 原來：.font(.system(size: 13))
+                    .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -1124,7 +1117,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onDelete) {
                     Image(systemName: "trash.fill")
-                        .font(.appBody())  // 原來：.font(.system(size: 16))
+                        .font(.system(size: 16))
                         .foregroundStyle(.red)
                 }
                 .padding(.leading, 16)
