@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		504A5DBD2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf in Resources */ = {isa = PBXBuildFile; fileRef = 504A5DBC2E2A393D00BB9FAE /* SourceHanSerifTC-VF.otf */; };
+		50AA87CB2E2A86E400611133 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 50AA87CA2E2A86E400611133 /* ZIPFoundation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50AA87CB2E2A86E400611133 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			);
 			name = "ai translation";
 			packageProductDependencies = (
+				50AA87CA2E2A86E400611133 /* ZIPFoundation */,
 			);
 			productName = "ai translation";
 			productReference = 507B28E42E25561A005DAD5B /* ai translation.app */;
@@ -201,6 +204,9 @@
 			);
 			mainGroup = 507B28DB2E25561A005DAD5B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				50AA87C92E2A86E400611133 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 507B28E52E25561A005DAD5B /* Products */;
 			projectDirPath = "";
@@ -565,6 +571,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		50AA87C92E2A86E400611133 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		50AA87CA2E2A86E400611133 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50AA87C92E2A86E400611133 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 507B28DC2E25561A005DAD5B /* Project object */;
 }
