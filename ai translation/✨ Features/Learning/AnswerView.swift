@@ -494,7 +494,7 @@ struct ClaudeAnswerCard: View {
             // 標題
             HStack {
                 Image(systemName: "pencil.circle.fill")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appBody())
                     .foregroundStyle(Color.orange)
                 
                 Text("您的翻譯")
