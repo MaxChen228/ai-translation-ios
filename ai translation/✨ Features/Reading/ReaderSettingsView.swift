@@ -1,4 +1,4 @@
-// ReaderSettingsView.swift
+// ReaderSettingsView.swift - 修正版本
 
 import SwiftUI
 
@@ -12,154 +12,12 @@ struct ReaderSettingsView: View {
                 LazyVStack(spacing: 24) {
                     // 字體設定
                     ReaderSettingsSection(title: "字體設定", icon: "textformat.size") {
-                        VStack(spacing: 20) {
-                            // 字體大小
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Text("字體大小")
-                                        .font(.appCallout(for: "字體大小"))
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(Int(settings.fontSize))")
-                                        .font(.appCallout())
-                                        .foregroundStyle(.orange)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 4)
-                                        .background(Color.orange.opacity(0.15))
-                                        .clipShape(Capsule())
-                                }
-                                
-                                HStack {
-                                    Text("A")
-                                        .font(.appCaption(for: "A"))
-                                        .foregroundStyle(.secondary)
-                                    
-                                    Slider(
-                                        value: $settings.fontSize,
-                                        in: 12...24,
-                                        step: 1
-                                    )
-                                    .tint(.orange)
-                                    
-                                    Text("A")
-                                        .font(.appTitle3(for: "A"))
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            
-                            Divider()
-                            
-                            // 中文字體選擇
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("中文字體")
-                                    .font(.appCallout(for: "設定選項"))
-                                
-                                LazyVGrid(columns: [
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible())
-                                ], spacing: 12) {
-                                    ForEach(ReaderSettings.ChineseFontFamily.allCases, id: \.self) { font in
-                                        FontOption(
-                                            fontFamily: font.displayName,
-                                            sampleText: "中文字體預覽",
-                                            fontName: font.fontName,
-                                            isSelected: settings.chineseFontFamily == font,
-                                            onTap: { settings.chineseFontFamily = font }
-                                        )
-                                    }
-                                }
-                            }
-                            
-                            Divider()
-                            
-                            // 英文字體選擇
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("英文字體")
-                                    .font(.appCallout(for: "設定選項"))
-                                
-                                LazyVGrid(columns: [
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible()),
-                                    GridItem(.flexible())
-                                ], spacing: 12) {
-                                    ForEach(ReaderSettings.EnglishFontFamily.allCases, id: \.self) { font in
-                                        FontOption(
-                                            fontFamily: font.displayName,
-                                            sampleText: "English Font",
-                                            fontName: font.fontName,
-                                            isSelected: settings.englishFontFamily == font,
-                                            onTap: { settings.englishFontFamily = font }
-                                        )
-                                    }
-                                }
-                            }
-                            
-                            Divider()
-                            
-                            // 行距
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack {
-                                    Text("行距")
-                                        .font(.appCallout(for: "設定選項"))
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(settings.lineSpacing, specifier: "%.1f")")
-                                        .font(.appCallout(for: "設定值"))
-                                        .foregroundStyle(.orange)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 4)
-                                        .background(Color.orange.opacity(0.15))
-                                        .clipShape(Capsule())
-                                }
-                                
-                                Slider(
-                                    value: $settings.lineSpacing,
-                                    in: 1.0...2.5,
-                                    step: 0.1
-                                )
-                                .tint(.orange)
-                            }
-                        }
+                        FontSettingsContent(settings: $settings)
                     }
                     
                     // 閱讀環境設定
                     ReaderSettingsSection(title: "閱讀環境", icon: "eye") {
-                        VStack(spacing: 16) {
-                            // 背景色選擇
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("背景顏色")
-                                    .font(.appCallout(for: "設定選項"))
-                                
-                                HStack(spacing: 12) {
-                                    ForEach(ReaderSettings.ReaderBackgroundColor.allCases, id: \.self) { bgColor in
-                                        BackgroundColorOption(
-                                            color: bgColor,
-                                            isSelected: settings.backgroundColor == bgColor,
-                                            onTap: { settings.backgroundColor = bgColor }
-                                        )
-                                    }
-                                    
-                                    Spacer()
-                                }
-                            }
-                            
-                            Divider()
-                            
-                            // 自動儲存進度
-                            HStack {
-                                Text("自動儲存閱讀進度")
-                                    .font(.appCallout(for: "設定選項"))
-                                
-                                Spacer()
-                                
-                                Toggle("", isOn: $settings.autoSaveProgress)
-                                    .toggleStyle(SwitchToggleStyle())
-                                    .font(.appCallout(for: "設定選項"))
-                                    .tint(.orange)
-                            }
-                        }
+                        EnvironmentSettingsContent(settings: $settings)
                     }
                     
                     // 文字預覽
@@ -178,6 +36,165 @@ struct ReaderSettingsView: View {
                     .font(.appCallout(for: "完成"))
                     .foregroundStyle(.orange)
                 }
+            }
+        }
+    }
+}
+
+// MARK: - 字體設定內容
+
+struct FontSettingsContent: View {
+    @Binding var settings: ReaderSettings
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 字體大小
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("字體大小")
+                        .font(.appCallout(for: "字體大小"))
+                    
+                    Spacer()
+                    
+                    Text("\(Int(settings.fontSize))")
+                        .font(.appCallout())
+                        .foregroundStyle(.orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                
+                HStack {
+                    Text("A")
+                        .font(.appCaption(for: "A"))
+                        .foregroundStyle(.secondary)
+                    
+                    Slider(
+                        value: $settings.fontSize,
+                        in: 12...24,
+                        step: 1
+                    )
+                    .tint(.orange)
+                    
+                    Text("A")
+                        .font(.appTitle3(for: "A"))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Divider()
+            
+            // 中文字體
+            VStack(alignment: .leading, spacing: 12) {
+                Text("中文字體")
+                    .font(.appCallout(for: "設定選項"))
+                
+                HStack(spacing: 12) {
+                    ForEach(ReaderSettings.ChineseFontFamily.allCases, id: \.self) { fontFamily in
+                        FontOption(
+                            fontFamily: fontFamily.displayName,
+                            sampleText: "文字",
+                            fontName: fontFamily.fontName,
+                            isSelected: settings.chineseFontFamily == fontFamily,
+                            onTap: { settings.chineseFontFamily = fontFamily }
+                        )
+                    }
+                    
+                    Spacer()
+                }
+            }
+            
+            Divider()
+            
+            // 英文字體
+            VStack(alignment: .leading, spacing: 12) {
+                Text("英文字體")
+                    .font(.appCallout(for: "設定選項"))
+                
+                HStack(spacing: 12) {
+                    ForEach(ReaderSettings.EnglishFontFamily.allCases, id: \.self) { fontFamily in
+                        FontOption(
+                            fontFamily: fontFamily.displayName,
+                            sampleText: "Text",
+                            fontName: fontFamily.fontName,
+                            isSelected: settings.englishFontFamily == fontFamily,
+                            onTap: { settings.englishFontFamily = fontFamily }
+                        )
+                    }
+                    
+                    Spacer()
+                }
+            }
+            
+            Divider()
+            
+            // 行距
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("行距")
+                        .font(.appCallout(for: "設定選項"))
+                    
+                    Spacer()
+                    
+                    Text(String(format: "%.1f", settings.lineSpacing))
+                        .font(.appCallout())
+                        .foregroundStyle(.orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                
+                Slider(
+                    value: $settings.lineSpacing,
+                    in: 1.0...2.5,
+                    step: 0.1
+                )
+                .tint(.orange)
+            }
+        }
+    }
+}
+
+// MARK: - 環境設定內容
+
+struct EnvironmentSettingsContent: View {
+    @Binding var settings: ReaderSettings
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // 背景色選擇
+            VStack(alignment: .leading, spacing: 12) {
+                Text("背景顏色")
+                    .font(.appCallout(for: "設定選項"))
+                
+                HStack(spacing: 12) {
+                    ForEach(ReaderSettings.ReaderBackgroundColor.allCases, id: \.self) { bgColor in
+                        BackgroundColorOption(
+                            color: bgColor,
+                            isSelected: settings.backgroundColor == bgColor,
+                            onTap: { settings.backgroundColor = bgColor }
+                        )
+                    }
+                    
+                    Spacer()
+                }
+            }
+            
+            Divider()
+            
+            // 自動儲存進度
+            HStack {
+                Text("自動儲存閱讀進度")
+                    .font(.appCallout(for: "設定選項"))
+                
+                Spacer()
+                
+                Toggle("", isOn: $settings.autoSaveProgress)
+                    .toggleStyle(SwitchToggleStyle())
+                    .font(.appCallout(for: "設定選項"))
+                    .tint(.orange)
             }
         }
     }
@@ -288,16 +305,10 @@ struct BackgroundColorOption: View {
     }
 }
 
+// MARK: - 預覽區段 (簡化版本)
+
 struct ReaderPreviewSection: View {
     let settings: ReaderSettings
-    
-    private let previewText = """
-    Learning English grammar can be challenging, but with the right approach, it becomes much more manageable.
-    
-    學習英語語法雖然具有挑戰性，但只要方法得當，就會變得更加容易掌握。
-    
-    This book will guide you through complex grammatical structures that are essential for advanced English proficiency.
-    """
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -311,33 +322,52 @@ struct ReaderPreviewSection: View {
                     .foregroundStyle(.primary)
             }
             
-            // 預覽區域
-            VStack {
-                // 混合文字預覽，使用新的字體系統
-                VStack(alignment: .leading, spacing: CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize)) {
-                    ForEach(previewText.components(separatedBy: "\n\n"), id: \.self) { paragraph in
-                        if !paragraph.isEmpty {
-                            Text(paragraph)
-                                .font(settings.getFont(size: CGFloat(settings.fontSize), for: paragraph))
-                                .foregroundStyle(.primary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                }
-                .padding(settings.pageMargin)
-                .background(settings.backgroundColor.color)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
-                }
-            }
+            // 簡化的預覽區域
+            PreviewTextContent(settings: settings)
         }
         .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+}
+
+struct PreviewTextContent: View {
+    let settings: ReaderSettings
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // 英文段落
+            Text("Learning English grammar can be challenging, but with the right approach, it becomes much more manageable.")
+                .font(.custom(settings.englishFontFamily.fontName, size: CGFloat(settings.fontSize)))
+                .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
+                .foregroundStyle(settings.backgroundColor.textColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, CGFloat(settings.fontSize) * 0.5)
+            
+            // 中文段落
+            Text("學習英語語法雖然具有挑戰性，但只要方法得當，就會變得更加容易掌握。")
+                .font(.custom(settings.chineseFontFamily.fontName, size: CGFloat(settings.fontSize)))
+                .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
+                .foregroundStyle(settings.backgroundColor.textColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, CGFloat(settings.fontSize) * 0.5)
+            
+            // 混合段落
+            Text("This book will guide you through complex grammatical structures.")
+                .font(.custom(settings.englishFontFamily.fontName, size: CGFloat(settings.fontSize)))
+                .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
+                .foregroundStyle(settings.backgroundColor.textColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(settings.pageMargin)
+        .background(settings.backgroundColor.color)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color(.systemGray4), lineWidth: 1)
         }
     }
 }

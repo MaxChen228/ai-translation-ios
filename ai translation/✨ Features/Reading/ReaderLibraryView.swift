@@ -1,61 +1,56 @@
-// ReaderLibraryView.swift
+// ReaderLibraryView.swift - 重構版本，支援真實檔案匯入
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ReaderLibraryView: View {
+    @StateObject private var bookImporter = BookImporter()
     @State private var books: [ReaderBook] = []
     @State private var showingFileImporter = false
     @State private var selectedBook: ReaderBook?
     @State private var searchText = ""
+    @State private var showingImportProgress = false
+    @State private var showingErrorAlert = false
     
-    // Demo書籍
-    private let demoBooks: [ReaderBook] = [
-        ReaderBook(
-            id: UUID(),
-            title: "英語語法大全",
-            author: "示範作者",
-            coverColor: .blue,
-            progress: 0.3,
-            totalPages: 200,
-            currentPage: 60,
-            dateAdded: Date()
-        ),
-        ReaderBook(
-            id: UUID(),
-            title: "商業英文寫作",
-            author: "範例作者",
-            coverColor: .green,
-            progress: 0.7,
-            totalPages: 150,
-            currentPage: 105,
-            dateAdded: Date()
-        )
-    ]
+    private var filteredBooks: [ReaderBook] {
+        if searchText.isEmpty {
+            return books
+        } else {
+            return books.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText) ||
+                $0.author.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: 24) {
-                    // Apple Books風格的歡迎區域
-                    AppleBooksWelcomeCard(
-                        onImportBook: {
+                    // 歡迎卡片或匯入進度
+                    if bookImporter.isImporting {
+                        ImportProgressCard(
+                            progress: bookImporter.importProgress,
+                            status: bookImporter.importStatus
+                        )
+                    } else if books.isEmpty {
+                        WelcomeCard {
                             showingFileImporter = true
                         }
-                    )
+                    }
                     
                     // 最近閱讀
                     if !books.isEmpty {
-                        AppleBooksRecentSection(books: books) { book in
+                        RecentBooksSection(books: filteredBooks) { book in
                             selectedBook = book
                         }
                     }
                     
                     // 我的圖書館
-                    AppleBooksLibrarySection(
-                        books: books.isEmpty ? demoBooks : books,
-                        searchText: searchText
-                    ) { book in
-                        selectedBook = book
+                    if !books.isEmpty {
+                        LibrarySection(books: filteredBooks) { book in
+                            selectedBook = book
+                        }
                     }
                 }
                 .padding(20)
@@ -77,42 +72,68 @@ struct ReaderLibraryView: View {
         }
         .fileImporter(
             isPresented: $showingFileImporter,
-            allowedContentTypes: [.text, .pdf],
-            allowsMultipleSelection: false
+            allowedContentTypes: [.epub, .pdf, .plainText],
+            allowsMultipleSelection: true
         ) { result in
             handleFileImport(result)
         }
-        // 暫時註解掉 ReaderView 的引用，等下一步創建
         .fullScreenCover(item: $selectedBook) { book in
             ReaderView(book: book)
         }
-        .onAppear {
-            if books.isEmpty {
-                books = demoBooks
+        .alert("匯入錯誤", isPresented: $showingErrorAlert) {
+            Button("確定") { }
+        } message: {
+            if let error = bookImporter.lastError {
+                Text(error.localizedDescription)
             }
+        }
+        .onAppear {
+            loadBooks()
+        }
+        .onChange(of: bookImporter.lastError) { _, error in
+            if error != nil {
+                showingErrorAlert = true
+            }
+        }
+    }
+    
+    // MARK: - 私有方法
+    
+    private func loadBooks() {
+        do {
+            let storageManager = BookStorageManager()
+            books = try storageManager.loadAllBooks()
+            print("📚 載入了 \(books.count) 本書籍")
+        } catch {
+            print("❌ 載入書籍失敗: \(error)")
         }
     }
     
     private func handleFileImport(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
-            guard let url = urls.first else { return }
-            // TODO: 實際的文件處理邏輯
-            print("導入文件: \(url.lastPathComponent)")
+            Task {
+                let importedBooks = await bookImporter.importBooks(from: urls)
+                
+                // 將新匯入的書籍加入列表
+                await MainActor.run {
+                    books.append(contentsOf: importedBooks)
+                    print("✅ 成功匯入 \(importedBooks.count) 本書籍")
+                }
+            }
         case .failure(let error):
-            print("文件導入失敗: \(error.localizedDescription)")
+            print("❌ 檔案選擇失敗: \(error.localizedDescription)")
         }
     }
 }
 
-// MARK: - Apple Books風格組件
+// MARK: - 子組件
 
-struct AppleBooksWelcomeCard: View {
+struct WelcomeCard: View {
     let onImportBook: () -> Void
     
     var body: some View {
         VStack(spacing: 20) {
-            // 圖標和標題
             VStack(spacing: 12) {
                 Image(systemName: "books.vertical.fill")
                     .font(.system(size: 50))
@@ -122,24 +143,29 @@ struct AppleBooksWelcomeCard: View {
                         endPoint: .bottomTrailing
                     ))
                 
-                Text("開始您的智慧閱讀")
+                Text("開始您的閱讀之旅")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundStyle(.primary)
                 
-                Text("匯入文件，邊讀邊學，建立專屬知識庫")
-                    .font(.system(size: 15))
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(2)
+                VStack(spacing: 4) {
+                    Text("支援 EPUB、PDF、TXT 格式")
+                        .font(.system(size: 15))
+                        .foregroundStyle(.secondary)
+                    
+                    Text("匯入您的第一本電子書開始閱讀")
+                        .font(.system(size: 15))
+                        .foregroundStyle(.secondary)
+                }
+                .multilineTextAlignment(.center)
+                .lineSpacing(2)
             }
             
-            // 匯入按鈕
             Button(action: onImportBook) {
                 HStack(spacing: 12) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 16, weight: .medium))
                     
-                    Text("匯入第一本書")
+                    Text("匯入電子書")
                         .font(.system(size: 16, weight: .semibold))
                 }
                 .foregroundStyle(.white)
@@ -154,6 +180,21 @@ struct AppleBooksWelcomeCard: View {
                         ))
                 }
             }
+            
+            // 支援格式說明
+            HStack(spacing: 16) {
+                ForEach(["EPUB", "PDF", "TXT"], id: \.self) { format in
+                    Text(format)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color(.systemGray6))
+                        }
+                }
+            }
         }
         .padding(24)
         .background {
@@ -164,14 +205,53 @@ struct AppleBooksWelcomeCard: View {
     }
 }
 
-struct AppleBooksRecentSection: View {
+struct ImportProgressCard: View {
+    let progress: Double
+    let status: String
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            VStack(spacing: 8) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .font(.system(size: 40))
+                    .foregroundStyle(.orange)
+                
+                Text("正在匯入書籍")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Text(status)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            VStack(spacing: 8) {
+                ProgressView(value: progress)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .orange))
+                
+                Text("\(Int(progress * 100))%")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        }
+    }
+}
+
+struct RecentBooksSection: View {
     let books: [ReaderBook]
     let onBookTap: (ReaderBook) -> Void
     
     private var recentBooks: [ReaderBook] {
         books.sorted { $0.lastRead ?? Date.distantPast > $1.lastRead ?? Date.distantPast }
-             .prefix(3)
-             .map { $0 }
+            .prefix(3)
+            .map { $0 }
     }
     
     var body: some View {
@@ -180,11 +260,10 @@ struct AppleBooksRecentSection: View {
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(.primary)
             
-            // 修復 ScrollView 初始化
             ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                     ForEach(recentBooks) { book in
-                        AppleBooksRecentCard(book: book) {
+                        RecentBookCard(book: book) {
                             onBookTap(book)
                         }
                     }
@@ -197,7 +276,7 @@ struct AppleBooksRecentSection: View {
     }
 }
 
-struct AppleBooksRecentCard: View {
+struct RecentBookCard: View {
     let book: ReaderBook
     let onTap: () -> Void
     
@@ -212,6 +291,81 @@ struct AppleBooksRecentCard: View {
                         VStack {
                             Text(book.title)
                                 .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(3)
+                            
+                            Spacer()
+                            
+                            Text(book.author)
+                                .font(.system(size: 10))
+                                .foregroundStyle(.white.opacity(0.8))
+                                .lineLimit(1)
+                        }
+                        .padding(12)
+                    }
+                
+                // 進度資訊
+                VStack(spacing: 4) {
+                    Text("第 \(book.currentPage) 頁")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+                    
+                    Text("\(Int(book.progress * 100))%")
+                        .font(.system(size: 10))
+                        .foregroundStyle(book.coverColor)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct LibrarySection: View {
+    let books: [ReaderBook]
+    let onBookTap: (ReaderBook) -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("我的圖書館")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                Text("\(books.count) 本書籍")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+            }
+            
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 20) {
+                ForEach(books) { book in
+                    LibraryBookCard(book: book) {
+                        onBookTap(book)
+                    }
+                }
+            }
+        }
+        .padding(.top, 8)
+    }
+}
+
+struct LibraryBookCard: View {
+    let book: ReaderBook
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 12) {
+                // 書籍封面
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(book.coverColor.opacity(0.8))
+                    .aspectRatio(0.7, contentMode: .fit)
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Text(book.title)
+                                .font(.system(size: 14, weight: .bold))
                                 .foregroundStyle(.white)
                                 .multilineTextAlignment(.center)
                                 .lineLimit(3)
@@ -247,111 +401,29 @@ struct AppleBooksRecentCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                     
-                    Text("\(Int(book.progress * 100))% 完成")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .frame(width: 120)
-    }
-}
-
-struct AppleBooksLibrarySection: View {
-    let books: [ReaderBook]
-    let searchText: String
-    let onBookTap: (ReaderBook) -> Void
-    
-    private var filteredBooks: [ReaderBook] {
-        if searchText.isEmpty {
-            return books
-        } else {
-            return books.filter {
-                $0.title.localizedCaseInsensitiveContains(searchText) ||
-                $0.author.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("我的圖書館")
-                .font(.system(size: 20, weight: .bold))
-                .foregroundStyle(.primary)
-            
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 20) {
-                ForEach(filteredBooks) { book in
-                    AppleBooksLibraryCard(book: book) {
-                        onBookTap(book)
-                    }
-                }
-            }
-        }
-        .padding(.top, 8)
-    }
-}
-
-struct AppleBooksLibraryCard: View {
-    let book: ReaderBook
-    let onTap: () -> Void
-    
-    var body: some View {
-        Button(action: onTap) {
-            VStack(spacing: 12) {
-                // 書籍封面
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(book.coverColor.opacity(0.8))
-                    .aspectRatio(0.7, contentMode: .fit)
-                    .overlay {
-                        VStack(spacing: 8) {
-                            Text(book.title)
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundStyle(.white)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(3)
-                            
-                            Spacer()
-                            
-                            Text(book.author)
-                                .font(.system(size: 11))
-                                .foregroundStyle(.white.opacity(0.8))
-                                .lineLimit(1)
-                        }
-                        .padding(12)
-                    }
-                
-                // 進度條
-                VStack(spacing: 6) {
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(Color(.systemGray5))
-                                .frame(height: 4)
-                            
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(book.coverColor)
-                                .frame(width: geometry.size.width * book.progress, height: 4)
-                        }
-                    }
-                    .frame(height: 4)
-                    
-                    HStack {
-                        Text("第 \(book.currentPage) 頁")
-                            .font(.system(size: 11, weight: .medium))
+                    HStack(spacing: 4) {
+                        Text("\(Int(book.progress * 100))% •")
+                            .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                         
-                        Spacer()
-                        
-                        Text("\(Int(book.progress * 100))%")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(book.coverColor)
+                        if let fileType = book.fileType {
+                            Text(fileType.uppercased())
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(book.coverColor)
+                        }
                     }
                 }
             }
         }
         .buttonStyle(.plain)
+        .frame(width: 140)
     }
+}
+
+// MARK: - 支援的檔案類型擴展
+
+extension UTType {
+    static let epub = UTType(filenameExtension: "epub")!
 }
 
 #Preview {
