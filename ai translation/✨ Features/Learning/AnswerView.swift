@@ -136,17 +136,20 @@ struct ClaudeQuestionCard: View {
                             .frame(width: 40, height: 40)
                         
                         Text("\(questionNumber)")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.appBody())
+                            .fontWeight(.bold)
                             .foregroundStyle(.white)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("第 \(questionNumber) 題")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.appHeadline(for: "第 \(questionNumber) 題"))
+                            .fontWeight(.bold)
                             .foregroundStyle(.primary)
                         
                         Text("共 \(totalQuestions) 題")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.appFootnote(for: "共 \(totalQuestions) 題"))
+                            .fontWeight(.medium)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -159,11 +162,13 @@ struct ClaudeQuestionCard: View {
             // 題目內容 (保持不變)
             VStack(alignment: .leading, spacing: 16) {
                 Text("請翻譯以下句子：")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appBody(for: "請翻譯以下句子："))
+                    .fontWeight(.semibold)
                     .foregroundStyle(.primary)
                 
                 Text(question.new_sentence)
-                    .font(.system(size: 18, weight: .medium, design: .serif))
+                    .font(.appHeadline(for: question.new_sentence))
+                    .fontWeight(.medium)
                     .foregroundStyle(.primary)
                     .lineSpacing(4)
                     .padding(20)
@@ -173,7 +178,7 @@ struct ClaudeQuestionCard: View {
                             .fill(Color.orange.opacity(0.08))
                             .overlay {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                                    .stroke(Color.orange.opacity(0.25), lineWidth: 1)
                             }
                     }
             }
@@ -193,7 +198,7 @@ struct ClaudeQuestionCard: View {
                 .fill(Color(.systemBackground))
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
-    }
+    }      
 }
 
 struct ClaudeQuestionTypeTag: View {
@@ -498,7 +503,8 @@ struct ClaudeAnswerCard: View {
                     .foregroundStyle(Color.orange)
                 
                 Text("您的翻譯")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appBody(for: "您的翻譯"))
+                    .fontWeight(.bold)
                     .foregroundStyle(.primary)
                 
                 Spacer()
@@ -517,14 +523,14 @@ struct ClaudeAnswerCard: View {
                     
                     if userAnswer.isEmpty {
                         Text("請在此輸入您的英文翻譯...")
-                            .font(.system(size: 16))
+                            .font(.appBody(for: "請在此輸入您的英文翻譯..."))
                             .foregroundStyle(Color.secondary.opacity(0.6))
                             .padding(16)
                             .allowsHitTesting(false)
                     }
                     
                     TextEditor(text: $userAnswer)
-                        .font(.system(size: 16))
+                        .font(.appBody())
                         .scrollContentBackground(.hidden)
                         .padding(12)
                         .onTapGesture {
@@ -539,7 +545,8 @@ struct ClaudeAnswerCard: View {
                 HStack {
                     Spacer()
                     Text("\(userAnswer.count) 字元")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.appCaption(for: "\(userAnswer.count) 字元"))
+                        .fontWeight(.medium)
                         .foregroundStyle(.secondary)
                 }
                 
@@ -1043,7 +1050,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onTap) {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 20))
+                        .font(.appHeadline())  // 原來：.font(.system(size: 20))
                         .foregroundStyle(isSelected ? Color.blue : Color.secondary.opacity(0.6))
                 }
                 .padding(.trailing, 16)
@@ -1054,10 +1061,12 @@ struct ClaudeErrorAnalysisRow: View {
                 // 分類標籤
                 HStack(spacing: 8) {
                     Image(systemName: error.categoryIcon)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.appCaption())  // 原來：.font(.system(size: 12, weight: .medium))
+                        .fontWeight(.medium)
                     
                     Text(error.categoryName)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.appCaption(for: error.categoryName))  // 原來：.font(.system(size: 12, weight: .semibold))
+                        .fontWeight(.semibold)
                 }
                 .foregroundStyle(error.categoryColor)
                 .padding(.horizontal, 10)
@@ -1071,36 +1080,41 @@ struct ClaudeErrorAnalysisRow: View {
                 
                 // 核心觀念
                 Text(error.key_point_summary)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appBody(for: error.key_point_summary))  // 原來：.font(.system(size: 16, weight: .semibold))
+                    .fontWeight(.semibold)
                     .foregroundStyle(.primary)
                 
                 // 錯誤與修正
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .top, spacing: 8) {
                         Text("原文：")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.appFootnote(for: "原文："))  // 原來：.font(.system(size: 13, weight: .semibold))
+                            .fontWeight(.semibold)
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.original_phrase)\"")
-                            .font(.system(size: 13, design: .monospaced))
+                            .font(.appFootnote(for: error.original_phrase))  // 原來：.font(.system(size: 13, design: .monospaced))
+                            .fontFamily(.monospaced)  // 保持等寬字體效果
                             .foregroundStyle(.red)
                             .strikethrough(color: .red)
                     }
                     
                     HStack(alignment: .top, spacing: 8) {
                         Text("修正：")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.appFootnote(for: "修正："))  // 原來：.font(.system(size: 13, weight: .semibold))
+                            .fontWeight(.semibold)
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.correction)\"")
-                            .font(.system(size: 13, design: .monospaced))
+                            .font(.appFootnote(for: error.correction))  // 原來：.font(.system(size: 13, design: .monospaced))
+                            .fontFamily(.monospaced)  // 保持等寬字體效果
                             .foregroundStyle(.green)
                     }
                 }
                 
                 // 解釋
                 Text(error.explanation)
-                    .font(.system(size: 13))
+                    .font(.appFootnote(for: error.explanation))  // 原來：.font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -1110,7 +1124,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onDelete) {
                     Image(systemName: "trash.fill")
-                        .font(.system(size: 16))
+                        .font(.appBody())  // 原來：.font(.system(size: 16))
                         .foregroundStyle(.red)
                 }
                 .padding(.leading, 16)
