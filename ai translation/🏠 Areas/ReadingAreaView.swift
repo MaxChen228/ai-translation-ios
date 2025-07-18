@@ -75,30 +75,19 @@ struct EmptyReadingHistoryView: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "clock")
-                .font(.system(size: 48))
+                .font(.appLargeTitle())
                 .foregroundStyle(.secondary)
             
-            Text("還沒有閱讀記錄")
-                .font(.title2)
-                .fontWeight(.medium)
+            Text("尚無閱讀歷史")
+                .font(.appHeadline(for: "尚無閱讀歷史"))
+                .foregroundStyle(.primary)
+            
+            Text("開始閱讀書籍後，會在這裡顯示您的閱讀記錄")
+                .font(.appSubheadline(for: "開始閱讀書籍後，會在這裡顯示您的閱讀記錄"))
                 .foregroundStyle(.secondary)
-            
-            Text("開始閱讀第一本書吧！")
-                .font(.body)
-                .foregroundStyle(.tertiary)
-            
-            NavigationLink(destination: ReaderLibraryView()) {
-                Text("前往圖書館")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(Color.blue)
-                    .clipShape(Capsule())
-            }
+                .multilineTextAlignment(.center)
         }
-        .frame(maxHeight: .infinity)
-        .padding(.top, 100)
+        .padding()
     }
 }
 
@@ -202,18 +191,17 @@ struct BookmarksSection: View {
                     .foregroundStyle(.blue)
                 
                 Text("我的書籤")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                    .font(.appTitle2(for: "我的書籤"))
                 
                 Spacer()
                 
                 Text("\(bookmarks.count)")
-                    .font(.caption)
+                    .font(.appCaption(for: "\(bookmarks.count)"))
                     .fontWeight(.medium)
                     .foregroundStyle(.blue)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.blue.opacity(0.15))
+                    .background(Color.blue.opacity(0.2))
                     .clipShape(Capsule())
             }
             
@@ -380,12 +368,11 @@ struct ReadingSettingsContainerView: View {
                                 .foregroundStyle(.blue)
                             
                             Text("預設閱讀設定")
-                                .font(.title2)
-                                .fontWeight(.bold)
+                                .font(.appTitle2(for: "預設閱讀設定"))
                         }
                         
                         Text("這些設定將套用到所有新開啟的書籍，您也可以在閱讀時個別調整。")
-                            .font(.subheadline)
+                            .font(.appSubheadline(for: "這些設定將套用到所有新開啟的書籍，您也可以在閱讀時個別調整。"))
                             .foregroundStyle(.secondary)
                             .lineSpacing(2)
                     }
