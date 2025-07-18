@@ -52,8 +52,55 @@ class BookImporter: ObservableObject {
     }
     
     func importSingleBook(from url: URL) async -> ReaderBook? {
-        let result = await importBooks(from: [url])
-        return result.first
+        isImporting = true
+        importProgress = 0.0
+        lastError = nil
+        
+        defer {
+            isImporting = false
+        }
+        
+        do {
+            updateStatus("正在解析 \(url.lastPathComponent)...")
+            
+            // 解析文件
+            let parsedBook = try await DocumentParser.parseDocument(from: url)
+            
+            // 轉換為ReaderBook
+            let readerBook = convertToReaderBook(parsedBook)
+            
+            // 儲存到本地
+            try await storageManager.saveBook(readerBook, originalURL: url)
+            
+            updateStatus("匯入完成")
+            importProgress = 1.0
+            
+            return readerBook
+            
+        } catch {
+            print("❌ 匯入失敗: \(url.lastPathComponent) - \(error)")
+            
+            // 針對不同錯誤類型提供更友善的訊息
+            let friendlyError: ImportError
+            if let docError = error as? DocumentParseError {
+                switch docError {
+                case .unsupportedFormat(let format):
+                    friendlyError = ImportError(
+                        fileName: url.lastPathComponent,
+                        underlyingError: DocumentParseError.processingFailed("不支援 .\(format) 檔案格式")
+                    )
+                default:
+                    friendlyError = ImportError(fileName: url.lastPathComponent, underlyingError: error)
+                }
+            } else {
+                friendlyError = ImportError(fileName: url.lastPathComponent, underlyingError: error)
+            }
+            
+            lastError = friendlyError
+            updateStatus("匯入失敗")
+            
+            return nil
+        }
     }
     
     // MARK: - 私有方法
