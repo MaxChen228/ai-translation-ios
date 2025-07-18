@@ -116,7 +116,13 @@ class BookImporter: ObservableObject {
             totalPages: parsedBook.totalPages,
             currentPage: 1,
             dateAdded: Date(),
-            lastRead: nil
+            lastRead: nil,
+            fileType: parsedBook.fileType.displayName.lowercased(),
+            originalFileName: nil,
+            fileSize: nil,
+            originalFilePath: nil,
+            epubChapters: nil,  // 確保EPUB相關欄位有預設值
+            currentChapterIndex: 0
         )
     }
     
@@ -147,11 +153,6 @@ class BookStorageManager {
         let bookDirectory = booksDirectory.appendingPathComponent(book.id.uuidString)
         try fileManager.createDirectory(at: bookDirectory, withIntermediateDirectories: true)
         
-        // 儲存書籍元資料
-        let metadataURL = bookDirectory.appendingPathComponent("metadata.json")
-        let metadataData = try JSONEncoder().encode(book)
-        try metadataData.write(to: metadataURL)
-        
         // 複製原始檔案
         let originalFileName = originalURL.lastPathComponent
         let savedFileURL = bookDirectory.appendingPathComponent(originalFileName)
@@ -160,6 +161,16 @@ class BookStorageManager {
             defer { originalURL.stopAccessingSecurityScopedResource() }
             try fileManager.copyItem(at: originalURL, to: savedFileURL)
         }
+        
+        // 更新book的檔案路徑資訊
+        var updatedBook = book
+        updatedBook.originalFilePath = savedFileURL.path
+        updatedBook.originalFileName = originalFileName
+        
+        // 儲存更新後的書籍元資料
+        let metadataURL = bookDirectory.appendingPathComponent("metadata.json")
+        let metadataData = try JSONEncoder().encode(updatedBook)
+        try metadataData.write(to: metadataURL)
         
         print("✅ 書籍已儲存: \(book.title)")
     }

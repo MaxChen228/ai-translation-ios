@@ -33,7 +33,7 @@ struct ReaderSettingsView: View {
                     Button("完成") {
                         dismiss()
                     }
-                    .font(.appCallout(for: "完成"))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(.orange)
                 }
             }
@@ -52,12 +52,12 @@ struct FontSettingsContent: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text("字體大小")
-                        .font(.appCallout(for: "字體大小"))
+                        .font(.system(size: 16, weight: .medium))
                     
                     Spacer()
                     
                     Text("\(Int(settings.fontSize))")
-                        .font(.appCallout())
+                        .font(.system(size: 16))
                         .foregroundStyle(.orange)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
@@ -67,7 +67,7 @@ struct FontSettingsContent: View {
                 
                 HStack {
                     Text("A")
-                        .font(.appCaption(for: "A"))
+                        .font(.system(size: 12))
                         .foregroundStyle(.secondary)
                     
                     Slider(
@@ -78,7 +78,7 @@ struct FontSettingsContent: View {
                     .tint(.orange)
                     
                     Text("A")
-                        .font(.appTitle3(for: "A"))
+                        .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -88,7 +88,7 @@ struct FontSettingsContent: View {
             // 中文字體
             VStack(alignment: .leading, spacing: 12) {
                 Text("中文字體")
-                    .font(.appCallout(for: "設定選項"))
+                    .font(.system(size: 16, weight: .medium))
                 
                 HStack(spacing: 12) {
                     ForEach(ReaderSettings.ChineseFontFamily.allCases, id: \.self) { fontFamily in
@@ -110,7 +110,7 @@ struct FontSettingsContent: View {
             // 英文字體
             VStack(alignment: .leading, spacing: 12) {
                 Text("英文字體")
-                    .font(.appCallout(for: "設定選項"))
+                    .font(.system(size: 16, weight: .medium))
                 
                 HStack(spacing: 12) {
                     ForEach(ReaderSettings.EnglishFontFamily.allCases, id: \.self) { fontFamily in
@@ -133,12 +133,12 @@ struct FontSettingsContent: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text("行距")
-                        .font(.appCallout(for: "設定選項"))
+                        .font(.system(size: 16, weight: .medium))
                     
                     Spacer()
                     
                     Text(String(format: "%.1f", settings.lineSpacing))
-                        .font(.appCallout())
+                        .font(.system(size: 16))
                         .foregroundStyle(.orange)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
@@ -167,7 +167,7 @@ struct EnvironmentSettingsContent: View {
             // 背景色選擇
             VStack(alignment: .leading, spacing: 12) {
                 Text("背景顏色")
-                    .font(.appCallout(for: "設定選項"))
+                    .font(.system(size: 16, weight: .medium))
                 
                 HStack(spacing: 12) {
                     ForEach(ReaderSettings.ReaderBackgroundColor.allCases, id: \.self) { bgColor in
@@ -184,16 +184,42 @@ struct EnvironmentSettingsContent: View {
             
             Divider()
             
+            // 頁面邊距
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("頁面邊距")
+                        .font(.system(size: 16, weight: .medium))
+                    
+                    Spacer()
+                    
+                    Text("\(Int(settings.pageMargin))")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
+                        .background(Color.orange.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                
+                Slider(
+                    value: $settings.pageMargin,
+                    in: 10...40,
+                    step: 5
+                )
+                .tint(.orange)
+            }
+            
+            Divider()
+            
             // 自動儲存進度
             HStack {
                 Text("自動儲存閱讀進度")
-                    .font(.appCallout(for: "設定選項"))
+                    .font(.system(size: 16, weight: .medium))
                 
                 Spacer()
                 
                 Toggle("", isOn: $settings.autoSaveProgress)
                     .toggleStyle(SwitchToggleStyle())
-                    .font(.appCallout(for: "設定選項"))
                     .tint(.orange)
             }
         }
@@ -211,11 +237,11 @@ struct ReaderSettingsSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.appHeadline(for: "設定標題"))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.orange)
                 
                 Text(title)
-                    .font(.appTitle3(for: "設定標題"))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.primary)
             }
             
@@ -247,7 +273,7 @@ struct FontOption: View {
                     .frame(height: 20)
                 
                 Text(fontFamily)
-                    .font(.appCaption(for: "小標題"))
+                    .font(.system(size: 12))
                     .foregroundStyle(isSelected ? .orange : .secondary)
                     .lineLimit(1)
             }
@@ -291,13 +317,13 @@ struct BackgroundColorOption: View {
                     .overlay {
                         if isSelected {
                             Image(systemName: "checkmark")
-                                .font(.appCaption(for: "顏色名稱"))
+                                .font(.system(size: 12, weight: .bold))
                                 .foregroundStyle(.orange)
                         }
                     }
                 
                 Text(color.rawValue)
-                    .font(.appCaption(for: "小標題"))
+                    .font(.system(size: 12))
                     .foregroundStyle(isSelected ? .orange : .secondary)
             }
         }
@@ -305,7 +331,7 @@ struct BackgroundColorOption: View {
     }
 }
 
-// MARK: - 預覽區段 (簡化版本)
+// MARK: - 預覽區段
 
 struct ReaderPreviewSection: View {
     let settings: ReaderSettings
@@ -314,15 +340,15 @@ struct ReaderPreviewSection: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
                 Image(systemName: "eye.fill")
-                    .font(.appHeadline(for: "設定標題"))
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.orange)
                 
                 Text("預覽效果")
-                    .font(.appTitle3(for: "設定標題"))
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(.primary)
             }
             
-            // 簡化的預覽區域
+            // 預覽區域
             PreviewTextContent(settings: settings)
         }
         .padding(24)
@@ -343,7 +369,7 @@ struct PreviewTextContent: View {
             Text("Learning English grammar can be challenging, but with the right approach, it becomes much more manageable.")
                 .font(.custom(settings.englishFontFamily.fontName, size: CGFloat(settings.fontSize)))
                 .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
-                .foregroundStyle(settings.backgroundColor.textColor)
+                .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, CGFloat(settings.fontSize) * 0.5)
             
@@ -351,15 +377,15 @@ struct PreviewTextContent: View {
             Text("學習英語語法雖然具有挑戰性，但只要方法得當，就會變得更加容易掌握。")
                 .font(.custom(settings.chineseFontFamily.fontName, size: CGFloat(settings.fontSize)))
                 .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
-                .foregroundStyle(settings.backgroundColor.textColor)
+                .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, CGFloat(settings.fontSize) * 0.5)
             
             // 混合段落
-            Text("This book will guide you through complex grammatical structures.")
+            Text("This book will guide you through complex grammatical structures that are essential for advanced English proficiency.")
                 .font(.custom(settings.englishFontFamily.fontName, size: CGFloat(settings.fontSize)))
                 .lineSpacing(CGFloat(settings.lineSpacing - 1.0) * CGFloat(settings.fontSize))
-                .foregroundStyle(settings.backgroundColor.textColor)
+                .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(settings.pageMargin)

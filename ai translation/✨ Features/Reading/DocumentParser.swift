@@ -35,55 +35,23 @@ struct DocumentParser {
     
     // MARK: - EPUB 解析（簡化版本）
     
+    // MARK: - EPUB 解析（保留檔案路徑版本）
     private static func parseEPUB(from url: URL) async throws -> ParsedBook {
         print("📖 解析EPUB檔案...")
         
-        // 暫時的簡化處理：提取基本資訊
+        // 提取基本資訊
         let fileName = url.deletingPathExtension().lastPathComponent
-        
-        // 嘗試從檔案名稱提取書名和作者
         let bookInfo = extractBookInfoFromFileName(fileName)
         
-        // 創建示例內容（實際應該解析EPUB內容）
-        let sampleContent = """
-        # \(bookInfo.title)
+        // 不再生成demo內容，改為提供檔案路徑資訊
+        let epubInfo = """
+        這是一本EPUB電子書，檔案已成功匯入。
         
+        檔案：\(url.lastPathComponent)
+        書名：\(bookInfo.title)
         作者：\(bookInfo.author)
         
-        這是一本EPUB電子書。由於需要整合ZIPFoundation框架來完整解析EPUB檔案，目前顯示的是簡化版本。
-        
-        EPUB (Electronic Publication) 是一種開放的電子書標準，基於HTML、CSS和其他網頁技術。
-        
-        本書包含豐富的內容，包括：
-        - 詳細的章節結構
-        - 精美的排版設計
-        - 互動式導航功能
-        
-        要完整支援EPUB檔案，建議：
-        1. 整合ZIPFoundation框架進行檔案解壓縮
-        2. 實作HTML/CSS內容解析
-        3. 支援圖片和媒體資源
-        4. 添加章節導航功能
-        
-        目前您可以正常閱讀此內容，所有閱讀功能（書籤、筆記、進度追蹤）都可正常使用。
-        
-        Chapter 1: The Beginning
-        
-        The journey starts here with an incredible adventure that will take you through magical lands and mysterious realms. Every page turns with anticipation as the story unfolds.
-        
-        In this world of imagination, heroes are born and legends are made. The characters you'll meet along the way will become companions in your reading journey.
-        
-        Chapter 2: The Adventure Continues
-        
-        As we delve deeper into the story, new challenges arise and our protagonists must face their fears. The plot thickens with each passing moment.
-        
-        Through trials and tribulations, the characters grow stronger and more determined. Their courage inspires readers to persevere through their own challenges.
-        
-        Chapter 3: The Climax
-        
-        All the elements of the story come together in this pivotal chapter. The tension reaches its peak as everything hangs in the balance.
-        
-        Will our heroes succeed in their quest? The answers lie within these pages, waiting to be discovered by eager readers.
+        點擊進入閱讀器以開始閱讀真實的EPUB內容。
         """
         
         let coverColor = generateCoverColor(for: bookInfo.title)
@@ -91,8 +59,8 @@ struct DocumentParser {
         return ParsedBook(
             title: bookInfo.title,
             author: bookInfo.author,
-            content: sampleContent,
-            totalPages: estimatePageCount(content: sampleContent),
+            content: epubInfo, // 簡短說明文字
+            totalPages: 1, // EPUB將使用章節導航
             coverColor: coverColor,
             fileType: .epub
         )
