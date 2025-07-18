@@ -626,10 +626,10 @@ struct ClaudeFeedbackCard: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            // Claude 風格的整體評估
-            ClaudeOverallAssessment(feedback: feedback)
+            // 【修改】Claude 風格的整體評估 - 傳入 questionData 參數
+            ClaudeOverallAssessment(feedback: feedback, questionData: questionData)
             
-            // Claude 風格的錯誤分析
+            // Claude 風格的錯誤分析（保持不變）
             if !editableErrors.isEmpty {
                 ClaudeErrorAnalysisCard(
                     editableErrors: $editableErrors,
@@ -640,7 +640,7 @@ struct ClaudeFeedbackCard: View {
                     onMerge: performMerge
                 )
                 
-                // Claude 風格的儲存區域
+                // Claude 風格的儲存區域（保持不變）
                 ClaudeSaveSection(
                     editableErrors: editableErrors,
                     isSaving: isSaving,
@@ -728,6 +728,7 @@ struct ClaudeFeedbackCard: View {
 
 struct ClaudeOverallAssessment: View {
     let feedback: FeedbackResponse
+    let questionData: Question  // 新增這個參數，用於判斷題目類型
     
     var body: some View {
         VStack(spacing: 16) {
@@ -744,7 +745,15 @@ struct ClaudeOverallAssessment: View {
                 Spacer()
             }
             
-            // 評估結果
+            // 【新增】複習題專屬區域
+            if questionData.type == "review" {
+                ClaudeReviewResultCard(
+                    feedback: feedback,
+                    questionData: questionData
+                )
+            }
+            
+            // 評估結果（原有的，但針對複習題略做調整）
             HStack(spacing: 16) {
                 ZStack {
                     Circle()
@@ -761,7 +770,8 @@ struct ClaudeOverallAssessment: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.primary)
                     
-                    Text("AI 已完成詳細分析")
+                    // 【修改】根據題目類型顯示不同的描述
+                    Text(questionData.type == "review" ? "複習題批改完成" : "AI 已完成詳細分析")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
@@ -795,6 +805,112 @@ struct ClaudeOverallAssessment: View {
         }
     }
 }
+
+struct ClaudeReviewResultCard: View {
+    let feedback: FeedbackResponse
+    let questionData: Question
+    
+    private var masteryChange: String {
+        // 根據複習結果顯示熟練度變化
+        if feedback.did_master_review_concept == true {
+            return "熟練度提升！"
+        } else if feedback.is_generally_correct {
+            return "輕微進步"
+        } else {
+            return "需要再次複習"
+        }
+    }
+    
+    private var masteryColor: Color {
+        if feedback.did_master_review_concept == true {
+            return .green
+        } else if feedback.is_generally_correct {
+            return .blue
+        } else {
+            return .orange
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // 複習題標示
+            HStack {
+                Image(systemName: "arrow.clockwise")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.green)
+                
+                Text("複習題結果")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Spacer()
+                
+                // 【明顯標示】正確/錯誤指示器
+                HStack(spacing: 6) {
+                    Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(feedback.is_generally_correct ? .green : .red)
+                    
+                    Text(feedback.is_generally_correct ? "答對" : "答錯")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(feedback.is_generally_correct ? .green : .red)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background {
+                    Capsule()
+                        .fill((feedback.is_generally_correct ? Color.green : Color.red).opacity(0.15))
+                }
+            }
+            
+            // 【新增】熟練度變化顯示
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("學習成果")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.secondary)
+                    
+                    Text(masteryChange)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(masteryColor)
+                }
+                
+                Spacer()
+                
+                // 【新增】熟練度進度條
+                if let masteryLevel = questionData.mastery_level {
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("熟練度")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.secondary)
+                        
+                        HStack(spacing: 4) {
+                            Text("\(Int(masteryLevel * 100))%")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(masteryColor)
+                            
+                            ProgressView(value: masteryLevel, total: 1.0)
+                                .progressViewStyle(.linear)
+                                .tint(masteryColor)
+                                .frame(width: 60)
+                                .scaleEffect(y: 1.5)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemGray6))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(masteryColor.opacity(0.3), lineWidth: 1.5)
+                }
+        }
+    }
+}
+
 
 struct ClaudeErrorAnalysisCard: View {
     @Binding var editableErrors: [ErrorAnalysis]

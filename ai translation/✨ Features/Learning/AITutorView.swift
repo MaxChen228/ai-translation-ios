@@ -13,6 +13,9 @@ struct AITutorView: View {
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: 24) {
+                    if isLoading {
+                        ClaudeQuestionGenerationStatus()
+                    }
                     if showStartLearning && sessionManager.sessionQuestions.isEmpty {
                         // Claude 風格的開始學習卡片
                         ClaudeStartLearningCard(
@@ -507,4 +510,60 @@ struct ClaudeQuestionItem: View {
 #Preview {
     AITutorView()
         .environmentObject(SessionManager())
+}
+struct ClaudeQuestionGenerationStatus: View {
+    @State private var animationScale: CGFloat = 1.0
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // 動畫圖標
+            HStack(spacing: 12) {
+                ForEach(0..<3) { index in
+                    Circle()
+                        .fill(Color.orange)
+                        .frame(width: 12, height: 12)
+                        .scaleEffect(animationScale)
+                        .animation(
+                            Animation.easeInOut(duration: 0.6)
+                                .repeatForever(autoreverses: true)
+                                .delay(Double(index) * 0.2),
+                            value: animationScale
+                        )
+                }
+            }
+            .onAppear {
+                animationScale = 0.5
+            }
+            
+            // 狀態文字
+            VStack(spacing: 8) {
+                Text("正在出題...")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.primary)
+                
+                Text("正在根據您的學習狀況設計個人化題目")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.linearGradient(
+                    colors: [Color.orange.opacity(0.1), Color.red.opacity(0.05)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(.linearGradient(
+                            colors: [Color.orange.opacity(0.3), Color.red.opacity(0.2)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ), lineWidth: 1.5)
+                }
+        }
+    }
 }
