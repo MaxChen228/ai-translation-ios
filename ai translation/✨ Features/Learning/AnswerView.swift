@@ -132,7 +132,7 @@ struct ClaudeQuestionCard: View {
                 HStack(spacing: 12) {
                     ZStack {
                         Circle()
-                            .fill(Color.orange)
+                            .fill(Color.modernAccent)
                             .frame(width: 40, height: 40)
                         
                         Text("\(questionNumber)")
@@ -175,10 +175,10 @@ struct ClaudeQuestionCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.orange.opacity(0.08))
+                            .fill(Color.modernAccent.opacity(0.08))
                             .overlay {
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.orange.opacity(0.25), lineWidth: 1)
+                                    .stroke(Color.modernAccent.opacity(0.25), lineWidth: 1)
                             }
                     }
             }
@@ -195,7 +195,7 @@ struct ClaudeQuestionCard: View {
         .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }      
@@ -260,15 +260,15 @@ struct ClaudeHintCard: View {
                             Text("基本提示")
                                 .font(.appSubheadline(for: "基本提示"))
                         }
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background {
                             Capsule()
-                                .fill(Color.orange.opacity(0.1))
+                                .fill(Color.modernAccent.opacity(0.1))
                                 .overlay {
                                     Capsule()
-                                        .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.modernAccent.opacity(0.3), lineWidth: 1)
                                 }
                         }
                     }
@@ -500,7 +500,7 @@ struct ClaudeAnswerCard: View {
             HStack {
                 Image(systemName: "pencil.circle.fill")
                     .font(.appBody())
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("您的翻譯")
                     .font(.appBody(for: "您的翻譯"))
@@ -514,10 +514,10 @@ struct ClaudeAnswerCard: View {
             VStack(spacing: 16) {
                 ZStack(alignment: .topLeading) {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6))
+                        .fill(Color.modernSurface.opacity(0.7))
                         .overlay {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(showKeyboard ? Color.orange : Color.clear, lineWidth: 2)
+                                .stroke(showKeyboard ? Color.modernAccent : Color.clear, lineWidth: 2)
                         }
                         .frame(minHeight: 120)
                     
@@ -570,7 +570,7 @@ struct ClaudeAnswerCard: View {
                     .padding(.vertical, 16)
                     .background {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(userAnswer.isEmpty ? Color.gray : Color.orange)
+                            .fill(userAnswer.isEmpty ? Color.gray : Color.modernAccent)
                     }
                 }
                 .disabled(isLoading || userAnswer.isEmpty)
@@ -584,7 +584,7 @@ struct ClaudeAnswerCard: View {
         .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -743,7 +743,7 @@ struct ClaudeOverallAssessment: View {
             HStack {
                 Image(systemName: "sparkles")
                     .font(.appTitle3())
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("AI 家教點評")
                     .font(.appTitle3())
@@ -764,12 +764,12 @@ struct ClaudeOverallAssessment: View {
             HStack(spacing: 16) {
                 ZStack {
                     Circle()
-                        .fill(feedback.is_generally_correct ? Color.green.opacity(0.15) : Color.orange.opacity(0.15))
+                        .fill(feedback.is_generally_correct ? Color.modernSuccess.opacity(0.15) : Color.modernAccent.opacity(0.15))
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                         .font(.appTitle2())
-                        .foregroundStyle(feedback.is_generally_correct ? .green : .orange)
+                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernAccent)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -800,14 +800,14 @@ struct ClaudeOverallAssessment: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.systemGray6))
+                            .fill(Color.modernSurface.opacity(0.7))
                     }
             }
         }
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -834,7 +834,7 @@ struct ClaudeReviewResultCard: View {
         } else if feedback.is_generally_correct {
             return .blue
         } else {
-            return .orange
+            return Color.modernAccent
         }
     }
     
@@ -977,12 +977,12 @@ struct ClaudeErrorAnalysisCard: View {
                         }) {
                             Text(isEditMode ? "完成" : "編輯")
                                 .font(.appCallout())
-                                .foregroundStyle(Color.orange)
+                                .foregroundStyle(Color.modernAccent)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
                                 .background {
                                     Capsule()
-                                        .fill(Color.orange.opacity(0.15))
+                                        .fill(Color.modernAccent.opacity(0.15))
                                 }
                         }
                     }
@@ -1014,7 +1014,7 @@ struct ClaudeErrorAnalysisCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -1211,7 +1211,7 @@ struct ClaudeSaveSection: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }

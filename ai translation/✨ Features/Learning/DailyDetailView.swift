@@ -189,7 +189,7 @@ struct ClaudeLoadingCard: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.2)
-                .tint(Color.orange)
+                .tint(Color.modernAccent)
             
             Text("正在分析您的學習紀錄...")
                 .font(.appBody(for: "正在分析您的學習紀錄..."))
@@ -199,7 +199,7 @@ struct ClaudeLoadingCard: View {
         .padding(40)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -216,7 +216,7 @@ struct ClaudeNoDataCard: View {
         VStack(spacing: 20) {
             Image(systemName: isToday ? "moon.zzz" : "calendar.badge.minus")
                 .font(.appLargeTitle())
-                .foregroundStyle(Color.orange.opacity(0.7))
+                .foregroundStyle(Color.modernAccent.opacity(0.7))
             
             Text(isToday ? "今天還沒有學習紀錄" : "這天沒有學習紀錄")
                 .font(.appHeadline(for: isToday ? "今天還沒有學習紀錄" : "這天沒有學習紀錄"))
@@ -231,7 +231,7 @@ struct ClaudeNoDataCard: View {
         .padding(40)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -273,7 +273,7 @@ struct ClaudeDayOverviewCard: View {
                     .padding(.vertical, 6)
                     .background {
                         Capsule()
-                            .fill(Color.orange)
+                            .fill(Color.modernAccent)
                     }
                 }
             }
@@ -305,14 +305,14 @@ struct ClaudeDayOverviewCard: View {
                     title: "新增知識",
                     value: "\(stats.newCount)",
                     icon: "plus.circle.fill",
-                    color: .orange
+                    color: Color.modernAccent
                 )
             }
         }
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -372,7 +372,7 @@ struct ClaudeAISummaryCard: View {
                 HStack(spacing: 8) {
                     Image(systemName: "sparkles")
                         .font(.appHeadline())
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                     
                     Text("AI 當日總結")
                         .font(.appHeadline(for: "AI 當日總結"))
@@ -392,7 +392,7 @@ struct ClaudeAISummaryCard: View {
                 VStack(spacing: 12) {
                     ProgressView()
                         .scaleEffect(0.9)
-                        .tint(Color.orange)
+                        .tint(Color.modernAccent)
                     
                     Text("AI正在分析您的學習表現...")
                         .font(.appBody(for: "AI正在分析您的學習表現..."))
@@ -407,7 +407,7 @@ struct ClaudeAISummaryCard: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("學習總結")
                             .font(.appCallout(for: "學習總結"))
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                         
                         Text(summary.summary)
                             .font(.appBody(for: summary.summary))
@@ -468,7 +468,7 @@ struct ClaudeAISummaryCard: View {
                             .padding(12)
                             .background {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.orange.opacity(0.1))
+                                    .fill(Color.modernAccent.opacity(0.1))
                             }
                     }
                 }
@@ -487,7 +487,7 @@ struct ClaudeAISummaryCard: View {
                     .padding(.vertical, 12)
                     .background {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.orange)
+                            .fill(Color.modernAccent)
                     }
                 }
             }
@@ -495,10 +495,10 @@ struct ClaudeAISummaryCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                        .stroke(Color.modernAccent.opacity(0.2), lineWidth: 1)
                 }
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
@@ -534,7 +534,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
                     ClaudeKnowledgeSection(
                         title: "新增掌握",
                         points: newPoints,
-                        color: .orange,
+                        color: Color.modernAccent,
                         icon: "plus.circle.fill"
                     )
                 }
@@ -543,7 +543,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -629,7 +629,7 @@ struct ClaudeLearningInsightsCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }

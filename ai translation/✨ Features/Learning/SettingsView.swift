@@ -93,10 +93,10 @@ struct SettingsView: View {
                     // 說明區塊
                     ClaudeInfoCard()
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("⚙️ 個人化設定")
+            .background(Color.modernBackground)
+            .navigationTitle("個人化設定")
             .navigationBarTitleDisplayMode(.large)
             .onAppear {
                 syncSettings()
@@ -144,20 +144,20 @@ struct ClaudeSettingsCard<Content: View>: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.appHeadline(for: "設定圖示"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text(title)
                     .font(.appTitle3(for: "設定標題"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
             }
             
             content
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -173,11 +173,11 @@ struct ClaudeStepperSetting: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.appCallout(for: "設定項目"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(description)
                     .font(.appCaption(for: "設定說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineSpacing(1)
             }
             
@@ -192,18 +192,18 @@ struct ClaudeStepperSetting: View {
                     }) {
                         Image(systemName: "minus")
                             .font(.appCallout(for: "設定項目"))
-                            .foregroundStyle(value > range.lowerBound ? Color.orange : .secondary)
+                            .foregroundStyle(value > range.lowerBound ? Color.modernAccent : .secondary)
                             .frame(width: 32, height: 32)
                             .background {
                                 Circle()
-                                    .fill(Color(.systemGray6))
+                                    .fill(Color.modernSurface.opacity(0.7))
                             }
                     }
                     .disabled(value <= range.lowerBound)
                     
                     Text("\(value)")
                         .font(.appTitle3(for: "設定標題"))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.modernTextPrimary)
                         .frame(minWidth: 30)
                     
                     Button(action: {
@@ -213,11 +213,11 @@ struct ClaudeStepperSetting: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.appCallout(for: "設定項目"))
-                            .foregroundStyle(value < range.upperBound ? Color.orange : .secondary)
+                            .foregroundStyle(value < range.upperBound ? Color.modernAccent : .secondary)
                             .frame(width: 32, height: 32)
                             .background {
                                 Circle()
-                                    .fill(Color(.systemGray6))
+                                    .fill(Color.modernSurface.opacity(0.7))
                             }
                     }
                     .disabled(value >= range.upperBound)
@@ -226,10 +226,10 @@ struct ClaudeStepperSetting: View {
                 Spacer()
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+                .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
@@ -246,31 +246,31 @@ struct ClaudeSliderSetting: View {
                 HStack {
                     Text(title)
                         .font(.appCallout(for: "設定項目"))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.modernTextPrimary)
                     
                     Spacer()
                     
                     Text("\(value)")
                         .font(.appCallout(for: "設定值"))
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
                         .background {
                             Capsule()
-                                .fill(Color.orange.opacity(0.15))
+                                .fill(Color.modernAccent.opacity(0.15))
                         }
                 }
                 
                 Text(description)
                     .font(.appCaption(for: "設定說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineSpacing(1)
             }
             
             HStack(spacing: 12) {
                 Text("\(range.lowerBound)")
                     .font(.appCaption(for: "小標題"))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(Color.modernTextTertiary)
                 
                 Slider(
                     value: Binding(
@@ -286,17 +286,17 @@ struct ClaudeSliderSetting: View {
                 } maximumValueLabel: {
                     EmptyView()
                 }
-                .tint(Color.orange)
+                .tint(Color.modernAccent)
                 
                 Text("\(range.upperBound)")
                     .font(.appCaption(for: "小標題"))
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(Color.modernTextTertiary)
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+                .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
@@ -311,11 +311,11 @@ struct ClaudePickerSetting: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.appCallout(for: "設定項目"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(description)
                     .font(.appCaption(for: "設定說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineSpacing(1)
             }
             
@@ -332,18 +332,18 @@ struct ClaudePickerSetting: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
                             .background {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(value == option ? Color.orange : Color(.systemBackground))
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .fill(value == option ? Color.modernAccent : Color(.systemBackground))
                             }
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+                .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
@@ -358,11 +358,11 @@ struct ClaudeAIModelSetting: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.appCallout(for: "設定項目"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(description)
                     .font(.appCaption(for: "設定說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineSpacing(1)
             }
             
@@ -376,27 +376,27 @@ struct ClaudeAIModelSetting: View {
                         HStack {
                             Text(model.displayName)
                                 .font(.appSubheadline(for: "選項"))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.modernTextPrimary)
                             
                             Spacer()
                             
                             if value == model {
                                 Image(systemName: "checkmark.circle.fill")
                                     .font(.appCallout(for: "模型選項"))
-                                    .foregroundStyle(Color.orange)
+                                    .foregroundStyle(Color.modernAccent)
                             } else {
                                 Image(systemName: "circle")
                                     .font(.appCallout(for: "模型選項"))
-                                    .foregroundStyle(.tertiary)
+                                    .foregroundStyle(Color.modernTextTertiary)
                             }
                         }
-                        .padding(12)
+                        .padding(ModernSpacing.sm + 4)
                         .background {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(value == model ? Color.orange.opacity(0.1) : Color(.systemBackground))
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                .fill(value == model ? Color.modernAccent.opacity(0.1) : Color(.systemBackground))
                                 .overlay {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(value == model ? Color.orange.opacity(0.3) : Color.clear, lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                        .stroke(value == model ? Color.modernAccent.opacity(0.3) : Color.clear, lineWidth: 1)
                                 }
                         }
                     }
@@ -404,10 +404,10 @@ struct ClaudeAIModelSetting: View {
                 }
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+                .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
@@ -419,17 +419,17 @@ struct ClaudeInfoBox: View {
         HStack(spacing: 12) {
             Image(systemName: "info.circle.fill")
                 .font(.appSubheadline(for: "說明文字"))
-                .foregroundStyle(Color.blue)
+                .foregroundStyle(Color.modernSpecial)
             
             Text(text)
                 .font(.appSubheadline(for: text))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .lineSpacing(1)
         }
-        .padding(12)
+        .padding(ModernSpacing.sm + 4)
         .background {
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.blue.opacity(0.1))
+                .fill(Color.modernSpecialSoft)
         }
     }
 }
@@ -440,11 +440,11 @@ struct ClaudeInfoCard: View {
             HStack(spacing: 12) {
                 Image(systemName: "lightbulb.fill")
                     .font(.appHeadline(for: "設定圖示"))
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(Color.modernWarning)
                 
                 Text("使用提示")
                     .font(.appHeadline(for: "使用提示"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
             }
             
             VStack(alignment: .leading, spacing: 12) {
@@ -464,11 +464,11 @@ struct ClaudeInfoCard: View {
                 )
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -481,12 +481,12 @@ struct ClaudeInfoTip: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.appCallout())
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
                 .padding(.top, 1)
             
             Text(text)
                 .font(.appSubheadline(for: "說明文字"))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .lineSpacing(1)
         }
     }
@@ -502,11 +502,11 @@ struct ClaudeUserProfileCard: View {
             HStack(spacing: 12) {
                 Image(systemName: "person.crop.circle.fill")
                     .font(.appHeadline(for: "使用者頭像"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("使用者資料")
                     .font(.appTitle3(for: "使用者資料"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
             }
             
             VStack(spacing: 16) {
@@ -515,11 +515,11 @@ struct ClaudeUserProfileCard: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(user.displayName ?? user.username)
                             .font(.appTitle2(for: "使用者名稱"))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                         
                         Text(user.email)
                             .font(.appSubheadline(for: "電子郵件"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                     }
                     
                     Spacer()
@@ -527,11 +527,11 @@ struct ClaudeUserProfileCard: View {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("學習時間")
                             .font(.appCaption(for: "標籤"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         
                         Text(formatLearningTime(user.totalLearningTime))
                             .font(.appHeadline(for: "學習時間"))
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                     }
                 }
                 
@@ -569,26 +569,26 @@ struct ClaudeUserProfileCard: View {
                         Text("登出")
                             .font(.appCallout(for: "登出按鈕"))
                     }
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.modernError)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.red.opacity(0.1))
+                        RoundedRectangle(cornerRadius: ModernRadius.sm)
+                            .fill(Color.modernError.opacity(0.1))
                             .overlay {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                             }
                     }
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
     
@@ -613,23 +613,23 @@ struct ClaudeUserStatCard: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.appSubheadline(for: "統計圖示"))
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
             
             Text(value)
                 .font(.appCallout(for: "統計數值"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
                 .lineLimit(1)
             
             Text(title)
                 .font(.appCaption(for: "統計標題"))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background {
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.systemGray6))
+                .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }

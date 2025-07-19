@@ -264,9 +264,9 @@ struct ClaudeStatCard: View {
         .frame(maxWidth: .infinity, minHeight: 80)
         .padding()
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -282,16 +282,16 @@ struct ClaudeMasteryCard: View {
                 .foregroundStyle(Color.modernTextPrimary)
             
             VStack(spacing: 12) {
-                ClaudeMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color(.systemRed))
-                ClaudeMasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: Color(.systemOrange))
-                ClaudeMasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: Color(.systemGreen))
+                ClaudeMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color.modernError)
+                ClaudeMasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: Color.modernWarning)
+                ClaudeMasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: Color.modernSuccess)
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -316,7 +316,7 @@ struct ClaudeMasteryBar: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color(.systemGray5))
+                        .fill(Color.modernDivider)
                         .frame(height: 6)
                     
                     RoundedRectangle(cornerRadius: 3)
@@ -352,7 +352,7 @@ struct ClaudeFocusCard: View {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle")
                         .font(.appLargeTitle(for: "✅"))
-                        .foregroundStyle(Color(.systemGreen))
+                        .foregroundStyle(Color.modernSuccess)
                     Text("所有知識點都很穩固！")
                         .font(.appSubheadline(for: "所有知識點都很穩固！"))
                         .foregroundStyle(Color.modernTextSecondary)
@@ -383,7 +383,7 @@ struct ClaudeFocusCard: View {
                             }
                             .padding(.vertical, 12)
                             .padding(.horizontal, 16)
-                            .background(index % 2 == 0 ? Color(.systemBackground) : Color(.systemGray6))
+                            .background(index % 2 == 0 ? Color.modernSurface : Color.modernSurface.opacity(0.7))
                         }
                         .buttonStyle(.plain)
                         
@@ -393,15 +393,15 @@ struct ClaudeFocusCard: View {
                         }
                     }
                 }
-                .background(Color(.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .background(Color.modernSurface)
+                .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -472,11 +472,11 @@ struct ClaudeCategoryCard: View {
                     .foregroundStyle(Color.modernTextSecondary)
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -525,11 +525,11 @@ struct ClaudeProgressCard: View {
                     .frame(width: 60)
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -595,24 +595,24 @@ struct ClaudeScheduleCard: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(formatDate(point.next_review_date ?? ""))
                     .font(.appCaption())
-                    .foregroundStyle(isOverdue ? Color(.systemRed) : .primary)
+                    .foregroundStyle(isOverdue ? Color.modernError : .primary)
                 
                 Text(isOverdue ? "已逾期" : "待複習")
                     .font(.appCaption2(for: isOverdue ? "已逾期" : "待複習"))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
-                    .background(isOverdue ? Color(.systemRed).opacity(0.1) : Color(.systemGray5))
-                    .foregroundStyle(isOverdue ? Color(.systemRed) : .secondary)
+                    .background(isOverdue ? Color.modernError.opacity(0.1) : Color.modernDivider)
+                    .foregroundStyle(isOverdue ? Color.modernError : .secondary)
                     .clipShape(Capsule())
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.systemBackground))
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(isOverdue ? Color(.systemRed).opacity(0.2) : Color.clear, lineWidth: 1)
+                        .stroke(isOverdue ? Color.modernError.opacity(0.2) : Color.clear, lineWidth: 1)
                 }
                 .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
@@ -625,7 +625,7 @@ struct ClaudeLoadingView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.1)
-                .tint(Color.orange)
+                .tint(Color.modernAccent)
             
             Text("正在載入數據...")
                 .font(.appSubheadline(for: "正在載入數據..."))
@@ -643,7 +643,7 @@ struct ClaudeErrorView: View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.appLargeTitle(for: "⚠️"))
-                .foregroundStyle(Color(.systemOrange))
+                .foregroundStyle(Color.modernWarning)
             
             Text("載入失敗")
                 .font(.appTitle3(for: "載入失敗"))
@@ -659,7 +659,7 @@ struct ClaudeErrorView: View {
                 .font(.appSubheadline(for: "重新載入"))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
-                .background(Color.orange)
+                .background(Color.modernAccent)
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
         }
@@ -672,7 +672,7 @@ struct ClaudeEmptyStateView: View {
         VStack(spacing: 20) {
             Image(systemName: "brain.head.profile")
                 .font(.appLargeTitle(for: "🧠"))
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
             
             Text("開始您的學習之旅")
                 .font(.appTitle3(for: "開始您的學習之旅"))

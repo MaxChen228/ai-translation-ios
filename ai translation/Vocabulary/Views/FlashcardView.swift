@@ -181,7 +181,7 @@ struct FlashcardView: View {
             VStack(spacing: 8) {
                 Image(systemName: "brain.head.profile")
                     .font(.title)
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.modernAccent)
                 
                 Text("你知道這個單字的意思嗎？")
                     .font(.subheadline)
@@ -191,7 +191,7 @@ struct FlashcardView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(24)
-        .background(Color(.systemBackground))
+        .background(Color.modernSurface)
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
@@ -278,7 +278,7 @@ struct FlashcardView: View {
             .padding(24)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
+        .background(Color.modernSurface)
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
     }

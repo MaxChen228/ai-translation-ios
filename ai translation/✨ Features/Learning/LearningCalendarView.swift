@@ -40,14 +40,14 @@ struct LearningCalendarView: View {
                 }
                 .padding(20)
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("📅 學習日曆")
+            .background(Color.modernBackground)
+            .navigationTitle("學習日曆")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: loadDataForCurrentMonth) {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                     }
                 }
             }
@@ -134,7 +134,7 @@ struct ClaudeMonthStatsCard: View {
             HStack {
                 Text(monthText)
                     .font(.appTitle2(for: "月份"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 Spacer()
                 
                 // 達成率指示器
@@ -155,8 +155,8 @@ struct ClaudeMonthStatsCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -170,17 +170,17 @@ struct ClaudeStatMini: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.appCallout(for: "統計標籤"))
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
                 .frame(width: 20)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(value)
                     .font(.appCallout(for: "統計數值"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(title)
                     .font(.appCaption2(for: "小標籤"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             }
             
             Spacer()
@@ -188,7 +188,7 @@ struct ClaudeStatMini: View {
         .padding(12)
         .background {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6))
+                .fill(Color.modernSurface)
         }
     }
 }
@@ -210,7 +210,7 @@ struct ClaudeGoalIndicator: View {
                 
                 Circle()
                     .trim(from: 0, to: percentage)
-                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .stroke(Color.modernAccent, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                     .frame(width: 32, height: 32)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.5), value: percentage)
@@ -219,11 +219,11 @@ struct ClaudeGoalIndicator: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("\(Int(percentage * 100))%")
                     .font(.appSubheadline(for: "星期"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text("達標率")
                     .font(.appCaption2(for: "星期簡稱"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             }
         }
     }
@@ -253,8 +253,8 @@ struct ClaudeCalendarCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
@@ -274,11 +274,11 @@ struct ClaudeMonthNavigation: View {
             Button(action: { changeMonth(by: -1) }) {
                 Image(systemName: "chevron.left")
                     .font(.appCallout(for: "統計數值"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                     .frame(width: 32, height: 32)
                     .background {
                         Circle()
-                            .fill(Color(.systemGray6))
+                            .fill(Color.modernSurface)
                     }
             }
             
@@ -286,18 +286,18 @@ struct ClaudeMonthNavigation: View {
             
             Text(monthYearText)
                 .font(.appTitle3(for: "詳細標題"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Spacer()
             
             Button(action: { changeMonth(by: 1) }) {
                 Image(systemName: "chevron.right")
                     .font(.appCallout(for: "統計數值"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                     .frame(width: 32, height: 32)
                     .background {
                         Circle()
-                            .fill(Color(.systemGray6))
+                            .fill(Color.modernSurface)
                     }
             }
         }
@@ -319,7 +319,7 @@ struct ClaudeWeekdayHeader: View {
             ForEach(weekdays, id: \.self) { day in
                 Text(day)
                     .font(.appCaption(for: "日期數字"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .frame(maxWidth: .infinity)
             }
         }
@@ -408,17 +408,17 @@ struct ClaudeDateCell: View {
             VStack(spacing: 4) {
                 Text(dayNumber)
                     .font(.appSubheadline(for: "日期"))
-                    .foregroundStyle(isToday ? Color.orange : .primary)
+                    .foregroundStyle(isToday ? Color.modernAccent : .primary)
                 
                 if count > 0 {
                     Text("\(count)")
                         .font(.appCaption2(for: "進度點"))
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background {
                             Capsule()
-                                .fill(Color.orange.opacity(0.15))
+                                .fill(Color.modernAccent.opacity(0.15))
                         }
                 }
             }
@@ -426,11 +426,11 @@ struct ClaudeDateCell: View {
             .frame(maxWidth: .infinity)
             .background {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(count > 0 ? Color.orange.opacity(backgroundOpacity) : Color.clear)
+                    .fill(count > 0 ? Color.modernAccent.opacity(backgroundOpacity) : Color.clear)
                     .overlay {
                         if isToday {
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.orange, lineWidth: 2)
+                                .stroke(Color.modernAccent, lineWidth: 2)
                         }
                     }
             }

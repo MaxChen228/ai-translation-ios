@@ -1,4 +1,4 @@
-// VocabularyAreaView.swift - 單字記憶庫佔位界面
+// VocabularyAreaView.swift - 單字記憶庫
 
 import SwiftUI
 
@@ -37,7 +37,7 @@ struct VocabularyAreaView: View {
                         .font(.appCaption())
                 }
         }
-        .accentColor(.blue) // 單字庫使用藍色主題
+        .accentColor(Color.modernAccent)
     }
 }
 
@@ -46,50 +46,67 @@ struct VocabularyAreaView: View {
 struct VocabularyLibraryView: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                // 佔位圖示
-                Image(systemName: "book.closed")
-                    .font(.appLargeTitle())
-                    .foregroundStyle(.secondary)
-                
-                VStack(spacing: 16) {
-                    Text("單字記憶庫")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
-                    
-                    Text("這裡將會是您的個人單字記憶庫\n敬請期待後續功能開發")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                }
-                
-                // 佔位按鈕
-                VStack(spacing: 12) {
-                    Button(action: {
-                        // 待實作：新增單字功能
-                    }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "plus.circle.fill")
-                            Text("新增單字")
+            ScrollView {
+                VStack(spacing: ModernSpacing.xxl) {
+                    VStack(spacing: ModernSpacing.lg) {
+                        // 佔位圖示
+                        Image(systemName: "book.closed")
+                            .font(.system(size: 60, weight: .light))
+                            .foregroundStyle(Color.modernAccent)
+                            .padding(.top, ModernSpacing.xl)
+                        
+                        VStack(spacing: ModernSpacing.md) {
+                            Text("單字記憶庫")
+                                .font(.appLargeTitle(for: "頁面標題"))
+                                .foregroundStyle(Color.modernTextPrimary)
+                            
+                            Text("這裡將會是您的個人單字記憶庫\n敬請期待後續功能開發")
+                                .font(.appBody(for: "描述文字"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
                         }
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(.blue)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-                    .disabled(true)
                     
-                    Text("功能開發中...")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                    // 現代風卡片設計
+                    VStack(spacing: ModernSpacing.md) {
+                        Button(action: {
+                            // 待實作：新增單字功能
+                        }) {
+                            HStack(spacing: ModernSpacing.sm) {
+                                Image(systemName: "plus.circle")
+                                    .font(.appHeadline(for: "按鈕圖示"))
+                                
+                                Text("新增單字")
+                                    .font(.appHeadline(for: "按鈕文字"))
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, ModernSpacing.lg)
+                            .padding(.vertical, ModernSpacing.md)
+                            .background {
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .fill(Color.modernAccent.opacity(0.6))
+                            }
+                        }
+                        .disabled(true)
+                        
+                        Text("功能開發中")
+                            .font(.appCaption(for: "狀態文字"))
+                            .foregroundStyle(Color.modernTextTertiary)
+                    }
+                    .padding(ModernSpacing.lg)
+                    .background {
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
+                            .fill(Color.modernSurface)
+                            .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
+                    }
+                    .padding(.horizontal, ModernSpacing.lg)
+                    
+                    Spacer(minLength: ModernSpacing.xl)
                 }
             }
-            .padding(20)
-            .navigationTitle("📚 單字庫")
+            .background(Color.modernBackground)
+            .navigationTitle("單字庫")
             .navigationBarTitleDisplayMode(.large)
         }
     }
@@ -100,40 +117,47 @@ struct VocabularyLibraryView: View {
 struct VocabularyReviewView: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                Image(systemName: "repeat.circle")
-                    .font(.appLargeTitle())
-                    .foregroundStyle(.secondary)
-                
-                VStack(spacing: 16) {
-                    Text("複習計劃")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+            ScrollView {
+                VStack(spacing: ModernSpacing.xxl) {
+                    VStack(spacing: ModernSpacing.lg) {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 60, weight: .light))
+                            .foregroundStyle(Color.modernAccent)
+                            .padding(.top, ModernSpacing.xl)
+                        
+                        VStack(spacing: ModernSpacing.md) {
+                            Text("複習計劃")
+                                .font(.appLargeTitle(for: "頁面標題"))
+                                .foregroundStyle(Color.modernTextPrimary)
+                            
+                            Text("智能複習系統將幫助您\n有效記憶和複習單字")
+                                .font(.appBody(for: "描述文字"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                    }
                     
-                    Text("智能複習系統將幫助您\n有效記憶和複習單字")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                }
-                
-                VStack(spacing: 16) {
-                    EmptyStateCard(
-                        icon: "calendar",
-                        title: "今日複習",
-                        subtitle: "0 個單字待複習"
-                    )
+                    VStack(spacing: ModernSpacing.md) {
+                        ModernEmptyStateCard(
+                            icon: "calendar",
+                            title: "今日複習",
+                            subtitle: "0 個單字待複習"
+                        )
+                        
+                        ModernEmptyStateCard(
+                            icon: "clock",
+                            title: "下次複習",
+                            subtitle: "無排程"
+                        )
+                    }
+                    .padding(.horizontal, ModernSpacing.lg)
                     
-                    EmptyStateCard(
-                        icon: "clock",
-                        title: "下次複習",
-                        subtitle: "無排程"
-                    )
+                    Spacer(minLength: ModernSpacing.xl)
                 }
             }
-            .padding(20)
-            .navigationTitle("🔄 複習計劃")
+            .background(Color.modernBackground)
+            .navigationTitle("複習計劃")
             .navigationBarTitleDisplayMode(.large)
         }
     }
@@ -144,46 +168,53 @@ struct VocabularyReviewView: View {
 struct VocabularyProgressView: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.appLargeTitle())
-                    .foregroundStyle(.secondary)
-                
-                VStack(spacing: 16) {
-                    Text("學習進度")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+            ScrollView {
+                VStack(spacing: ModernSpacing.xxl) {
+                    VStack(spacing: ModernSpacing.lg) {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.system(size: 60, weight: .light))
+                            .foregroundStyle(Color.modernAccent)
+                            .padding(.top, ModernSpacing.xl)
+                        
+                        VStack(spacing: ModernSpacing.md) {
+                            Text("學習進度")
+                                .font(.appLargeTitle(for: "頁面標題"))
+                                .foregroundStyle(Color.modernTextPrimary)
+                            
+                            Text("追蹤您的單字學習成果\n和記憶效果統計")
+                                .font(.appBody(for: "描述文字"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                    }
                     
-                    Text("追蹤您的單字學習成果\n和記憶效果統計")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                }
-                
-                VStack(spacing: 16) {
-                    ProgressCard(
-                        title: "總單字數",
-                        value: "0",
-                        icon: "book.closed"
-                    )
+                    VStack(spacing: ModernSpacing.md) {
+                        ModernProgressCard(
+                            title: "總單字數",
+                            value: "0",
+                            icon: "book.closed"
+                        )
+                        
+                        ModernProgressCard(
+                            title: "已掌握",
+                            value: "0",
+                            icon: "checkmark.circle"
+                        )
+                        
+                        ModernProgressCard(
+                            title: "學習中",
+                            value: "0",
+                            icon: "clock"
+                        )
+                    }
+                    .padding(.horizontal, ModernSpacing.lg)
                     
-                    ProgressCard(
-                        title: "已掌握",
-                        value: "0",
-                        icon: "checkmark.circle"
-                    )
-                    
-                    ProgressCard(
-                        title: "學習中",
-                        value: "0",
-                        icon: "clock"
-                    )
+                    Spacer(minLength: ModernSpacing.xl)
                 }
             }
-            .padding(20)
-            .navigationTitle("📊 學習進度")
+            .background(Color.modernBackground)
+            .navigationTitle("學習進度")
             .navigationBarTitleDisplayMode(.large)
         }
     }
@@ -194,125 +225,144 @@ struct VocabularyProgressView: View {
 struct VocabularySettingsView: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                Image(systemName: "gearshape")
-                    .font(.appLargeTitle())
-                    .foregroundStyle(.secondary)
-                
-                VStack(spacing: 16) {
-                    Text("單字庫設定")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.primary)
+            ScrollView {
+                VStack(spacing: ModernSpacing.xxl) {
+                    VStack(spacing: ModernSpacing.lg) {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 60, weight: .light))
+                            .foregroundStyle(Color.modernAccent)
+                            .padding(.top, ModernSpacing.xl)
+                        
+                        VStack(spacing: ModernSpacing.md) {
+                            Text("單字庫設定")
+                                .font(.appLargeTitle(for: "頁面標題"))
+                                .foregroundStyle(Color.modernTextPrimary)
+                            
+                            Text("自訂您的單字學習偏好\n和複習排程設定")
+                                .font(.appBody(for: "描述文字"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                    }
                     
-                    Text("自訂您的單字學習偏好\n和複習排程設定")
-                        .font(.body)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                }
-                
-                VStack(spacing: 12) {
-                    SettingsPlaceholderRow(title: "複習提醒", icon: "bell")
-                    SettingsPlaceholderRow(title: "學習目標", icon: "target")
-                    SettingsPlaceholderRow(title: "難度設定", icon: "slider.horizontal.3")
-                    SettingsPlaceholderRow(title: "匯入/匯出", icon: "arrow.up.arrow.down")
+                    VStack(spacing: ModernSpacing.sm) {
+                        ModernSettingsRow(title: "複習提醒", icon: "bell")
+                        ModernSettingsRow(title: "學習目標", icon: "target")
+                        ModernSettingsRow(title: "難度設定", icon: "slider.horizontal.3")
+                        ModernSettingsRow(title: "匯入/匯出", icon: "arrow.up.arrow.down")
+                    }
+                    .padding(.horizontal, ModernSpacing.lg)
+                    
+                    Spacer(minLength: ModernSpacing.xl)
                 }
             }
-            .padding(20)
-            .navigationTitle("⚙️ 設定")
+            .background(Color.modernBackground)
+            .navigationTitle("設定")
             .navigationBarTitleDisplayMode(.large)
         }
     }
 }
 
-// MARK: - 輔助視圖組件
+// MARK: - 現代風輔助視圖組件
 
-struct EmptyStateCard: View {
+struct ModernEmptyStateCard: View {
     let icon: String
     let title: String
     let subtitle: String
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: ModernSpacing.md) {
             Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(.blue)
+                .font(.appTitle2(for: "卡片圖示"))
+                .foregroundStyle(Color.modernAccent)
                 .frame(width: 40)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+                    .font(.appHeadline(for: "卡片標題"))
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(.appSubheadline(for: "卡片副標題"))
+                    .foregroundStyle(Color.modernTextSecondary)
             }
             
             Spacer()
         }
-        .padding(16)
-        .background(.quaternary.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(ModernSpacing.md)
+        .background {
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
+        }
     }
 }
 
-struct ProgressCard: View {
+struct ModernProgressCard: View {
     let title: String
     let value: String
     let icon: String
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: ModernSpacing.md) {
             Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(.blue)
+                .font(.appTitle2(for: "進度圖示"))
+                .foregroundStyle(Color.modernAccent)
                 .frame(width: 40)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+                    .font(.appHeadline(for: "進度標題"))
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(value)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.blue)
+                    .font(.appTitle2(for: "進度數值"))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.modernAccent)
             }
             
             Spacer()
         }
-        .padding(16)
-        .background(.blue.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(ModernSpacing.md)
+        .background {
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernAccentSoft)
+                .overlay {
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
+                        .stroke(Color.modernAccent.opacity(0.2), lineWidth: 1)
+                }
+        }
     }
 }
 
-struct SettingsPlaceholderRow: View {
+struct ModernSettingsRow: View {
     let title: String
     let icon: String
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: ModernSpacing.md) {
             Image(systemName: icon)
-                .font(.headline)
-                .foregroundStyle(.blue)
+                .font(.appHeadline(for: "設定圖示"))
+                .foregroundStyle(Color.modernAccent)
                 .frame(width: 24)
             
             Text(title)
-                .font(.body)
-                .foregroundStyle(.primary)
+                .font(.appBody(for: "設定項目"))
+                .foregroundStyle(Color.modernTextPrimary)
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+                .font(.appCaption(for: "箭頭"))
+                .foregroundStyle(Color.modernTextTertiary)
         }
-        .padding(16)
-        .background(.quaternary.opacity(0.3))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(ModernSpacing.md)
+        .background {
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                .fill(Color.modernSurface)
+                .shadow(color: ModernShadow.subtle.color, radius: ModernShadow.subtle.radius, x: ModernShadow.subtle.x, y: ModernShadow.subtle.y)
+        }
     }
 }
 
