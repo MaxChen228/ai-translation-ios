@@ -403,7 +403,7 @@ struct ClaudeInfoBox: View {
                 .foregroundStyle(Color.blue)
             
             Text(text)
-                .font(.system(size: 13))
+                .font(.appSubheadline(for: text))
                 .foregroundStyle(.secondary)
                 .lineSpacing(1)
         }
@@ -424,7 +424,7 @@ struct ClaudeInfoCard: View {
                     .foregroundStyle(.yellow)
                 
                 Text("使用提示")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appHeadline(for: "使用提示"))
                     .foregroundStyle(.primary)
             }
             
@@ -461,7 +461,7 @@ struct ClaudeInfoTip: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+                .font(.appCallout())
                 .foregroundStyle(Color.orange)
                 .padding(.top, 1)
             

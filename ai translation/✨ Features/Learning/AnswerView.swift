@@ -286,11 +286,11 @@ struct ClaudeHintCard: View {
                                     .tint(Color.blue)
                             } else {
                                 Image(systemName: "sparkles")
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(.appCallout())
                             }
                             
                             Text(isLoadingSmartHint ? "思考中..." : "AI智慧提示")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.appCallout())
                         }
                         .foregroundStyle(Color.blue)
                         .padding(.horizontal, 16)
@@ -313,11 +313,11 @@ struct ClaudeHintCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 8) {
                         Image(systemName: "lightbulb.fill")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.appHeadline())
                             .foregroundStyle(.yellow)
                         
                         Text("考點提示")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.appHeadline())
                             .foregroundStyle(.primary)
                         
                         Spacer()
@@ -328,13 +328,13 @@ struct ClaudeHintCard: View {
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 16))
+                                .font(.appHeadline())
                                 .foregroundStyle(.secondary)
                         }
                     }
                     
                     Text(hintText)
-                        .font(.system(size: 15))
+                        .font(.appBody())
                         .foregroundStyle(.primary)
                         .lineSpacing(2)
                 }
@@ -358,11 +358,11 @@ struct ClaudeHintCard: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.appHeadline())
                             .foregroundStyle(.blue)
                         
                         Text("AI 智慧引導")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.appHeadline())
                             .foregroundStyle(.primary)
                         
                         Spacer()
@@ -373,7 +373,7 @@ struct ClaudeHintCard: View {
                             }
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 16))
+                                .font(.appHeadline())
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -384,7 +384,7 @@ struct ClaudeHintCard: View {
                         VStack(alignment: .leading, spacing: 16) {
                             // 主要引導提示
                             Text(smartHint.smart_hint)
-                                .font(.system(size: 15))
+                                .font(.appBody())
                                 .foregroundStyle(.primary)
                                 .lineSpacing(2)
                             
@@ -392,17 +392,17 @@ struct ClaudeHintCard: View {
                             if !smartHint.thinking_questions.isEmpty {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("🤔 思考一下：")
-                                        .font(.system(size: 14, weight: .semibold))
+                                        .font(.appCallout())
                                         .foregroundStyle(.blue)
                                     
                                     ForEach(Array(smartHint.thinking_questions.enumerated()), id: \.offset) { index, question in
                                         HStack(alignment: .top, spacing: 8) {
                                             Text("\(index + 1).")
-                                                .font(.system(size: 13, weight: .medium))
+                                                .font(.appSubheadline())
                                                 .foregroundStyle(.blue)
                                             
                                             Text(question)
-                                                .font(.system(size: 13))
+                                                .font(.appSubheadline())
                                                 .foregroundStyle(.primary)
                                                 .lineSpacing(1)
                                         }
@@ -413,7 +413,7 @@ struct ClaudeHintCard: View {
                             // 鼓勵話語
                             if !smartHint.encouragement.isEmpty {
                                 Text("💪 " + smartHint.encouragement)
-                                    .font(.system(size: 13, weight: .medium, design: .serif))
+                                    .font(.appSubheadline())
                                     .foregroundStyle(.secondary)
                                     .italic()
                                     .padding(10)
@@ -596,12 +596,12 @@ struct ClaudeErrorMessage: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 14, weight: .medium))
+                .font(.appCallout())
                 .foregroundStyle(.red)
                 .padding(.top, 1)
             
             Text(message)
-                .font(.system(size: 13))
+                .font(.appSubheadline())
                 .foregroundStyle(.red)
                 .lineSpacing(1)
         }
@@ -742,11 +742,11 @@ struct ClaudeOverallAssessment: View {
             // 標題
             HStack {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.appTitle3())
                     .foregroundStyle(Color.orange)
                 
                 Text("AI 家教點評")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appTitle3())
                     .foregroundStyle(.primary)
                 
                 Spacer()
@@ -768,18 +768,18 @@ struct ClaudeOverallAssessment: View {
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                        .font(.system(size: 24, weight: .medium))
+                        .font(.appTitle2())
                         .foregroundStyle(feedback.is_generally_correct ? .green : .orange)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(feedback.is_generally_correct ? "整體大致正確" : "存在主要錯誤")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.appHeadline())
                         .foregroundStyle(.primary)
                     
                     // 【修改】根據題目類型顯示不同的描述
                     Text(questionData.type == "review" ? "複習題批改完成" : "AI 已完成詳細分析")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.appSubheadline())
                         .foregroundStyle(.secondary)
                 }
                 
@@ -789,11 +789,11 @@ struct ClaudeOverallAssessment: View {
             // 建議翻譯
             VStack(alignment: .leading, spacing: 8) {
                 Text("整體建議翻譯：")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.appCallout())
                     .foregroundStyle(.secondary)
                 
                 Text(feedback.overall_suggestion)
-                    .font(.system(size: 15))
+                    .font(.appBody())
                     .foregroundStyle(.primary)
                     .lineSpacing(2)
                     .padding(16)
@@ -843,7 +843,7 @@ struct ClaudeReviewResultCard: View {
             // 複習題標示
             HStack {
                 Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.appCallout())
                     .foregroundStyle(.green)
                 
                 Text("複習題結果")
@@ -855,11 +855,11 @@ struct ClaudeReviewResultCard: View {
                 // 【明顯標示】正確/錯誤指示器
                 HStack(spacing: 6) {
                     Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.appHeadline())
                         .foregroundStyle(feedback.is_generally_correct ? .green : .red)
                     
                     Text(feedback.is_generally_correct ? "答對" : "答錯")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.appCallout())
                         .foregroundStyle(feedback.is_generally_correct ? .green : .red)
                 }
                 .padding(.horizontal, 12)
@@ -874,11 +874,11 @@ struct ClaudeReviewResultCard: View {
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("學習成果")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.appCaption())
                         .foregroundStyle(.secondary)
                     
                     Text(masteryChange)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.appCallout())
                         .foregroundStyle(masteryColor)
                 }
                 
@@ -888,12 +888,12 @@ struct ClaudeReviewResultCard: View {
                 if let masteryLevel = questionData.mastery_level {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("熟練度")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.appCaption())
                             .foregroundStyle(.secondary)
                         
                         HStack(spacing: 4) {
                             Text("\(Int(masteryLevel * 100))%")
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.appCaption())
                                 .foregroundStyle(masteryColor)
                             
                             ProgressView(value: masteryLevel, total: 1.0)
@@ -932,7 +932,7 @@ struct ClaudeErrorAnalysisCard: View {
             // 標題和控制按鈕
             HStack {
                 Text("詳細錯誤分析")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appTitle3())
                     .foregroundStyle(.primary)
                 
                 Spacer()
@@ -951,10 +951,10 @@ struct ClaudeErrorAnalysisCard: View {
                                             .scaleEffect(0.7)
                                     } else {
                                         Image(systemName: "arrow.triangle.merge")
-                                            .font(.system(size: 12, weight: .medium))
+                                            .font(.appCaption())
                                     }
                                     Text("合併")
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(.appCaption())
                                 }
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 12)
@@ -976,7 +976,7 @@ struct ClaudeErrorAnalysisCard: View {
                             }
                         }) {
                             Text(isEditMode ? "完成" : "編輯")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.appCallout())
                                 .foregroundStyle(Color.orange)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
@@ -1050,7 +1050,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onTap) {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 20))
+                        .font(.appTitle3())
                         .foregroundStyle(isSelected ? Color.blue : Color.secondary.opacity(0.6))
                 }
                 .padding(.trailing, 16)
@@ -1061,10 +1061,10 @@ struct ClaudeErrorAnalysisRow: View {
                 // 分類標籤
                 HStack(spacing: 8) {
                     Image(systemName: error.categoryIcon)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.appCaption())
                     
                     Text(error.categoryName)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.appCaption())
                 }
                 .foregroundStyle(error.categoryColor)
                 .padding(.horizontal, 10)
@@ -1078,36 +1078,36 @@ struct ClaudeErrorAnalysisRow: View {
                 
                 // 核心觀念
                 Text(error.key_point_summary)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appHeadline())
                     .foregroundStyle(.primary)
                 
                 // 錯誤與修正
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .top, spacing: 8) {
                         Text("原文：")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.appSubheadline())
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.original_phrase)\"")
-                            .font(.system(size: 13, design: .monospaced))
+                            .font(.appSubheadline())
                             .foregroundStyle(.red)
                             .strikethrough(color: .red)
                     }
                     
                     HStack(alignment: .top, spacing: 8) {
                         Text("修正：")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.appSubheadline())
                             .foregroundStyle(.secondary)
                         
                         Text("\"\(error.correction)\"")
-                            .font(.system(size: 13, design: .monospaced))
+                            .font(.appSubheadline())
                             .foregroundStyle(.green)
                     }
                 }
                 
                 // 解釋
                 Text(error.explanation)
-                    .font(.system(size: 13))
+                    .font(.appSubheadline())
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }
@@ -1117,7 +1117,7 @@ struct ClaudeErrorAnalysisRow: View {
             if isEditMode {
                 Button(action: onDelete) {
                     Image(systemName: "trash.fill")
-                        .font(.system(size: 16))
+                        .font(.appHeadline())
                         .foregroundStyle(.red)
                 }
                 .padding(.leading, 16)
@@ -1141,15 +1141,15 @@ struct ClaudeNoErrorsCard: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 40))
+                .font(.appLargeTitle())
                 .foregroundStyle(.green)
             
             Text("🎉 恭喜！")
-                .font(.system(size: 20, weight: .bold))
+                .font(.appTitle2())
                 .foregroundStyle(.primary)
             
             Text("AI 沒有發現任何錯誤")
-                .font(.system(size: 15))
+                .font(.appBody())
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -1182,11 +1182,11 @@ struct ClaudeSaveSection: View {
                         Text("儲存中...")
                     } else {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.appHeadline())
                         Text("確認儲存到知識庫")
                     }
                 }
-                .font(.system(size: 16, weight: .semibold))
+                .font(.appHeadline())
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
@@ -1199,7 +1199,7 @@ struct ClaudeSaveSection: View {
             
             if let saveMessage = saveMessage {
                 Text(saveMessage)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.appSubheadline())
                     .foregroundStyle(saveMessage.contains("✅") ? .green : .red)
                     .padding(12)
                     .background {

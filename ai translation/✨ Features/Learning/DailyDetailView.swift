@@ -192,7 +192,7 @@ struct ClaudeLoadingCard: View {
                 .tint(Color.orange)
             
             Text("正在分析您的學習紀錄...")
-                .font(.system(size: 15, weight: .medium))
+                .font(.appBody(for: "正在分析您的學習紀錄..."))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -215,15 +215,15 @@ struct ClaudeNoDataCard: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: isToday ? "moon.zzz" : "calendar.badge.minus")
-                .font(.system(size: 40))
+                .font(.appLargeTitle())
                 .foregroundStyle(Color.orange.opacity(0.7))
             
             Text(isToday ? "今天還沒有學習紀錄" : "這天沒有學習紀錄")
-                .font(.system(size: 18, weight: .semibold))
+                .font(.appHeadline(for: isToday ? "今天還沒有學習紀錄" : "這天沒有學習紀錄"))
                 .foregroundStyle(.primary)
             
             Text(isToday ? "開始今天的第一道練習題吧！" : "在其他日子裡努力學習吧")
-                .font(.system(size: 14))
+                .font(.appBody(for: isToday ? "開始今天的第一道練習題吧！" : "在其他日子裡努力學習吧"))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
@@ -248,12 +248,12 @@ struct ClaudeDayOverviewCard: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(isToday ? "今日學習概覽" : "學習概覽")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.appTitle2(for: isToday ? "今日學習概覽" : "學習概覽"))
                         .foregroundStyle(.primary)
                     
                     if stats.totalKnowledgePoints > 0 {
                         Text("共掌握 \(stats.totalKnowledgePoints) 個知識點")
-                            .font(.system(size: 14))
+                            .font(.appBody())
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -264,9 +264,9 @@ struct ClaudeDayOverviewCard: View {
                 Button(action: onAISummaryTap) {
                     HStack(spacing: 6) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.appCallout())
                         Text("AI總結")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.appCallout(for: "AI總結"))
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
@@ -337,16 +337,16 @@ struct ClaudeStatBox: View {
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 20, weight: .medium))
+                .font(.appTitle3())
                 .foregroundStyle(color)
             
             VStack(spacing: 4) {
                 Text(value)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.appHeadline())
                     .foregroundStyle(.primary)
                 
                 Text(title)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.appCaption())
                     .foregroundStyle(.secondary)
             }
         }
@@ -371,11 +371,11 @@ struct ClaudeAISummaryCard: View {
             HStack {
                 HStack(spacing: 8) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.appHeadline())
                         .foregroundStyle(Color.orange)
                     
                     Text("AI 當日總結")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.appHeadline(for: "AI 當日總結"))
                         .foregroundStyle(.primary)
                 }
                 
@@ -395,7 +395,7 @@ struct ClaudeAISummaryCard: View {
                         .tint(Color.orange)
                     
                     Text("AI正在分析您的學習表現...")
-                        .font(.system(size: 14))
+                        .font(.appBody(for: "AI正在分析您的學習表現..."))
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
@@ -406,11 +406,11 @@ struct ClaudeAISummaryCard: View {
                     // 主要總結
                     VStack(alignment: .leading, spacing: 8) {
                         Text("學習總結")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.appCallout(for: "學習總結"))
                             .foregroundStyle(Color.orange)
                         
                         Text(summary.summary)
-                            .font(.system(size: 15))
+                            .font(.appBody(for: summary.summary))
                             .foregroundStyle(.primary)
                             .lineSpacing(2)
                     }
@@ -419,18 +419,18 @@ struct ClaudeAISummaryCard: View {
                     if !summary.key_achievements.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("今日亮點")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.appCallout(for: "今日亮點"))
                                 .foregroundStyle(Color.green)
                             
                             ForEach(summary.key_achievements, id: \.self) { achievement in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "star.fill")
-                                        .font(.system(size: 10))
+                                        .font(.appCaption())
                                         .foregroundStyle(Color.yellow)
                                         .padding(.top, 3)
                                     
                                     Text(achievement)
-                                        .font(.system(size: 13))
+                                        .font(.appSubheadline(for: achievement))
                                         .foregroundStyle(.primary)
                                 }
                             }
@@ -441,18 +441,18 @@ struct ClaudeAISummaryCard: View {
                     if !summary.improvement_suggestions.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("改進建議")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.appCallout(for: "改進建議"))
                                 .foregroundStyle(Color.blue)
                             
                             ForEach(summary.improvement_suggestions, id: \.self) { suggestion in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "lightbulb.fill")
-                                        .font(.system(size: 10))
+                                        .font(.appCaption())
                                         .foregroundStyle(Color.yellow)
                                         .padding(.top, 3)
                                     
                                     Text(suggestion)
-                                        .font(.system(size: 13))
+                                        .font(.appSubheadline(for: suggestion))
                                         .foregroundStyle(.primary)
                                 }
                             }
@@ -462,7 +462,7 @@ struct ClaudeAISummaryCard: View {
                     // 激勵訊息
                     if !summary.motivational_message.isEmpty {
                         Text(summary.motivational_message)
-                            .font(.system(size: 14, weight: .medium, design: .serif))
+                            .font(.appBody(for: summary.motivational_message))
                             .foregroundStyle(.secondary)
                             .italic()
                             .padding(12)
@@ -477,10 +477,10 @@ struct ClaudeAISummaryCard: View {
                 Button(action: onGenerate) {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.appCallout())
                         
                         Text("生成AI總結")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.appBody(for: "生成AI總結"))
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -513,7 +513,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
         VStack(spacing: 20) {
             HStack {
                 Text("知識點分析")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appHeadline(for: "知識點分析"))
                     .foregroundStyle(.primary)
                 Spacer()
             }
@@ -559,17 +559,17 @@ struct ClaudeKnowledgeSection: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.appCallout())
                     .foregroundStyle(color)
                 
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.appHeadline(for: title))
                     .foregroundStyle(.primary)
                 
                 Spacer()
                 
                 Text("\(points.reduce(0) { $0 + $1.count }) 個")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.appCaption())
                     .foregroundStyle(.secondary)
             }
             
@@ -577,13 +577,13 @@ struct ClaudeKnowledgeSection: View {
                 ForEach(points) { point in
                     HStack {
                         Text(point.summary)
-                            .font(.system(size: 14))
+                            .font(.appBody(for: point.summary))
                             .foregroundStyle(.primary)
                         
                         Spacer()
                         
                         Text("×\(point.count)")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.appCaption())
                             .foregroundStyle(color)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
@@ -615,7 +615,7 @@ struct ClaudeLearningInsightsCard: View {
         VStack(spacing: 16) {
             HStack {
                 Text("學習洞察")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.appHeadline(for: "學習洞察"))
                     .foregroundStyle(.primary)
                 Spacer()
             }
@@ -701,17 +701,17 @@ struct ClaudeInsightRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: insight.icon)
-                .font(.system(size: 16, weight: .medium))
+                .font(.appHeadline())
                 .foregroundStyle(insight.color)
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(insight.title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.appCallout(for: insight.title))
                     .foregroundStyle(.primary)
                 
                 Text(insight.description)
-                    .font(.system(size: 13))
+                    .font(.appSubheadline(for: insight.description))
                     .foregroundStyle(.secondary)
                     .lineSpacing(1)
             }

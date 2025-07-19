@@ -22,7 +22,7 @@ struct MainContentView: View {
     var body: some View {
         TabView {
             // 單字記憶庫 - 替換原本的閱讀功能
-            VocabularyAreaView()
+            VocabularyHomeView()
                 .tabItem {
                     Image(systemName: "book.fill")
                     Text("單字庫")

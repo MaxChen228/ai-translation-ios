@@ -141,7 +141,7 @@ struct QuizView: View {
             if type == .multipleChoice {
                 VStack(spacing: 12) {
                     Text(question.word)
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(.appLargeTitle())
                         .foregroundColor(.primary)
                     
                     if let pronunciation = question.pronunciation {
@@ -409,7 +409,7 @@ struct QuizView: View {
     private var studyCompleteView: some View {
         VStack(spacing: 24) {
             Image(systemName: "trophy.fill")
-                .font(.system(size: 80))
+                .font(.appLargeTitle())
                 .foregroundColor(.orange)
             
             Text("🎉 測驗完成！")

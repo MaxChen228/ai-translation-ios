@@ -45,7 +45,7 @@ struct VocabularyLibraryView: View {
             VStack(spacing: 40) {
                 // 佔位圖示
                 Image(systemName: "book.closed")
-                    .font(.system(size: 80))
+                    .font(.appLargeTitle())
                     .foregroundStyle(.secondary)
                 
                 VStack(spacing: 16) {
@@ -98,7 +98,7 @@ struct VocabularyReviewView: View {
         NavigationView {
             VStack(spacing: 40) {
                 Image(systemName: "repeat.circle")
-                    .font(.system(size: 80))
+                    .font(.appLargeTitle())
                     .foregroundStyle(.secondary)
                 
                 VStack(spacing: 16) {
@@ -142,7 +142,7 @@ struct VocabularyProgressView: View {
         NavigationView {
             VStack(spacing: 40) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 80))
+                    .font(.appLargeTitle())
                     .foregroundStyle(.secondary)
                 
                 VStack(spacing: 16) {
@@ -192,7 +192,7 @@ struct VocabularySettingsView: View {
         NavigationView {
             VStack(spacing: 40) {
                 Image(systemName: "gearshape")
-                    .font(.system(size: 80))
+                    .font(.appLargeTitle())
                     .foregroundStyle(.secondary)
                 
                 VStack(spacing: 16) {

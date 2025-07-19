@@ -68,7 +68,7 @@ struct StudySummaryView: View {
                     .shadow(color: achievementColor.opacity(0.3), radius: 10)
                 
                 Image(systemName: achievementIcon)
-                    .font(.system(size: 50, weight: .bold))
+                    .font(.appLargeTitle())
                     .foregroundColor(.white)
             }
             .scaleEffect(animateProgress ? 1.0 : 0.8)
