@@ -24,8 +24,9 @@ struct MainContentView: View {
             // 單字記憶庫 - 替換原本的閱讀功能
             VocabularyHomeView()
                 .tabItem {
-                    Image(systemName: "book.fill")
+                    Image(systemName: "book.closed.fill")
                     Text("單字庫")
+                        .font(.appCaption())
                 }
             
             // 學習區域 - 完全獨立
@@ -33,8 +34,10 @@ struct MainContentView: View {
                 .tabItem {
                     Image(systemName: "graduationcap.fill")
                     Text("學習")
+                        .font(.appCaption())
                 }
         }
+        .accentColor(.blue)
         .environmentObject(sessionManager)
     }
 }

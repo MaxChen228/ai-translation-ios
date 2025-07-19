@@ -10,30 +10,34 @@ struct LearningAreaView: View {
             // AI 家教 - 學習主頁
             AITutorView()
                 .tabItem {
-                    Image(systemName: "brain.head.profile")
+                    Image(systemName: "brain.head.profile.fill")
                     Text("AI 家教")
+                        .font(.appCaption())
                 }
                 .environmentObject(sessionManager)
             
             // 學習日曆
             LearningCalendarView()
                 .tabItem {
-                    Image(systemName: "calendar")
+                    Image(systemName: "calendar.circle.fill")
                     Text("日曆")
+                        .font(.appCaption())
                 }
             
             // 知識點儀表板
             DashboardView()
                 .tabItem {
-                    Image(systemName: "chart.bar.xaxis")
+                    Image(systemName: "chart.bar.xaxis.ascending")
                     Text("儀表板")
+                        .font(.appCaption())
                 }
             
             // 學習統計
             LearningStatsView()
                 .tabItem {
-                    Image(systemName: "chart.pie")
+                    Image(systemName: "chart.pie.fill")
                     Text("統計")
+                        .font(.appCaption())
                 }
             
             // 學習設定
@@ -41,9 +45,10 @@ struct LearningAreaView: View {
                 .tabItem {
                     Image(systemName: "gearshape.fill")
                     Text("設定")
+                        .font(.appCaption())
                 }
         }
-        .accentColor(.orange) // 學習區使用橙色主題
+        .accentColor(.blue) // 學習區使用橙色主題
     }
 }
 

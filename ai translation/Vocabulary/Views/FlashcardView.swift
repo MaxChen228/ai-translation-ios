@@ -204,7 +204,7 @@ struct FlashcardView: View {
                 // 單字和音標
                 VStack(spacing: 8) {
                     Text(question.word)
-                        .font(.appTitle1(for: question.word))
+                        .font(.appTitle(for: question.word))
                         .foregroundColor(.primary)
                     
                     if let pronunciation = question.pronunciation {

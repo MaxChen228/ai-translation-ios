@@ -10,20 +10,23 @@ struct VocabularyAreaView: View {
                 .tabItem {
                     Image(systemName: "book.closed.fill")
                     Text("單字庫")
+                        .font(.appCaption())
                 }
             
             // 複習計劃
             VocabularyReviewView()
                 .tabItem {
-                    Image(systemName: "repeat.circle.fill")
+                    Image(systemName: "arrow.clockwise.circle.fill")
                     Text("複習")
+                        .font(.appCaption())
                 }
             
             // 學習進度
             VocabularyProgressView()
                 .tabItem {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
+                    Image(systemName: "chart.line.uptrend.xyaxis.circle.fill")
                     Text("進度")
+                        .font(.appCaption())
                 }
             
             // 單字設定
@@ -31,6 +34,7 @@ struct VocabularyAreaView: View {
                 .tabItem {
                     Image(systemName: "gearshape.fill")
                     Text("設定")
+                        .font(.appCaption())
                 }
         }
         .accentColor(.blue) // 單字庫使用藍色主題
