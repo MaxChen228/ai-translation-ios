@@ -83,7 +83,7 @@ struct LearningStatsView: View {
                 .padding(20)
             }
             .background(Color.modernBackground)
-            .navigationTitle("📊 學習統計")
+            .navigationTitle("學習統計")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -195,8 +195,8 @@ struct MonthlyOverviewCard: View {
                         
                         HStack(spacing: 4) {
                             Image(systemName: "flame.fill")
-                                .font(.appCallout(for: "🔥"))
-                                .foregroundStyle(.orange)
+                                .font(.appCallout(for: "熱度"))
+                                .foregroundStyle(Color.modernAccent)
                             
                             Text("\(stats.currentStreak)天")
                                 .font(.appHeadline())

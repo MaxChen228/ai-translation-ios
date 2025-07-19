@@ -37,7 +37,7 @@ struct VocabularyHomeView: View {
                 }
                 .padding(ModernSpacing.lg)
             }
-            .navigationTitle("📚 單字庫")
+            .navigationTitle("單字庫")
             .refreshable {
                 await loadStatistics()
             }

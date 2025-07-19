@@ -56,7 +56,7 @@ struct AITutorView: View {
                 .padding(20)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("🎯 AI 英文家教")
+            .navigationTitle("AI 英文家教")
             .navigationBarTitleDisplayMode(.large)
         }
     }

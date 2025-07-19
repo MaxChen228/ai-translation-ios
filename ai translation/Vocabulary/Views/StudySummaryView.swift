@@ -78,18 +78,18 @@ struct StudySummaryView: View {
             Text(achievementTitle)
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(Color.modernTextPrimary)
                 .multilineTextAlignment(.center)
             
             // 成就描述
             Text(achievementDescription)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(20)
+        .background(Color.modernSurface.opacity(0.7))
+        .cornerRadius(ModernRadius.lg)
     }
     
     // MARK: - 主要統計
@@ -109,7 +109,7 @@ struct StudySummaryView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundColor(.blue)
+                .foregroundColor(Color.modernAccent)
             }
             
             // 進度圓環
@@ -118,7 +118,7 @@ struct StudySummaryView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 8)
+                            .stroke(Color.modernTextTertiary.opacity(0.3), lineWidth: 8)
                             .frame(width: 80, height: 80)
                         
                         Circle()
@@ -136,7 +136,7 @@ struct StudySummaryView: View {
                     
                     Text("正確率")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.modernTextSecondary)
                 }
                 
                 // 統計數字
@@ -145,21 +145,21 @@ struct StudySummaryView: View {
                         icon: "checkmark.circle.fill",
                         label: "答對題數",
                         value: "\(summary.correctAnswers)/\(summary.totalQuestions)",
-                        color: .green
+                        color: Color.modernSuccess
                     )
                     
                     StatRow(
                         icon: "clock.fill",
                         label: "學習時間",
                         value: formatTime(summary.studyTime),
-                        color: .blue
+                        color: Color.modernAccent
                     )
                     
                     StatRow(
                         icon: "book.fill",
                         label: "學習單字",
                         value: "\(summary.wordsStudied.count)",
-                        color: .purple
+                        color: Color.modernSpecial
                     )
                 }
                 
@@ -167,9 +167,9 @@ struct StudySummaryView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 詳細統計
@@ -185,7 +185,7 @@ struct StudySummaryView: View {
                     title: "平均回答時間",
                     value: "\(String(format: "%.1f", summary.studyTime / Double(summary.totalQuestions)))秒/題",
                     progress: min(summary.studyTime / Double(summary.totalQuestions) / 30.0, 1.0), // 假設30秒為滿分
-                    color: .orange
+                    color: Color.modernSuccess
                 )
                 
                 DetailedStatRow(
@@ -200,15 +200,15 @@ struct StudySummaryView: View {
                         title: "新掌握單字",
                         value: "\(summary.newMasteryAchievements.count)個",
                         progress: Double(summary.newMasteryAchievements.count) / Double(summary.totalQuestions),
-                        color: .blue
+                        color: Color.modernAccent
                     )
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 單字列表
@@ -224,7 +224,7 @@ struct StudySummaryView: View {
                 
                 Text("共 \(summary.wordsStudied.count) 個")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
             }
             
             LazyVStack(spacing: 8) {
@@ -241,9 +241,9 @@ struct StudySummaryView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 掌握成就
@@ -252,7 +252,7 @@ struct StudySummaryView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "trophy.fill")
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.modernWarning)
                 
                 Text("新掌握成就")
                     .font(.headline)
@@ -261,13 +261,13 @@ struct StudySummaryView: View {
             
             Text("恭喜！你在這次學習中掌握了以下單字：")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.modernTextSecondary)
             
             LazyVStack(spacing: 8) {
                 ForEach(summary.newMasteryAchievements, id: \.id) { word in
                     HStack {
                         Image(systemName: "crown.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(Color.modernWarning)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(word.word)
@@ -276,7 +276,7 @@ struct StudySummaryView: View {
                             
                             Text(word.definitionZH)
                                 .font(.caption)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color.modernTextSecondary)
                         }
                         
                         Spacer()
@@ -287,19 +287,19 @@ struct StudySummaryView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.orange)
-                            .cornerRadius(8)
+                            .background(Color.modernWarning)
+                            .cornerRadius(ModernRadius.sm)
                     }
                     .padding()
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(12)
+                    .background(Color.modernWarning.opacity(0.1))
+                    .cornerRadius(ModernRadius.sm + 4)
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 底部按鈕
@@ -318,8 +318,8 @@ struct StudySummaryView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(Color.blue)
-                .cornerRadius(16)
+                .background(Color.modernAccent)
+                .cornerRadius(ModernRadius.md)
             }
             
             Button(action: {
@@ -331,11 +331,11 @@ struct StudySummaryView: View {
                     Text("查看單字庫")
                         .fontWeight(.medium)
                 }
-                .foregroundColor(.blue)
+                .foregroundColor(Color.modernAccent)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Color.blue.opacity(0.1))
-                .cornerRadius(12)
+                .background(Color.modernAccent.opacity(0.1))
+                .cornerRadius(ModernRadius.sm + 4)
             }
         }
     }
@@ -343,9 +343,9 @@ struct StudySummaryView: View {
     // MARK: - 計算屬性
     
     private var achievementColor: Color {
-        if summary.accuracyRate >= 90 { return .green }
-        else if summary.accuracyRate >= 70 { return .orange }
-        else { return .blue }
+        if summary.accuracyRate >= 90 { return Color.modernSuccess }
+        else if summary.accuracyRate >= 70 { return Color.modernWarning }
+        else { return Color.modernAccent }
     }
     
     private var achievementIcon: String {
@@ -371,9 +371,9 @@ struct StudySummaryView: View {
     }
     
     private var accuracyColor: Color {
-        if summary.accuracyRate >= 80 { return .green }
-        else if summary.accuracyRate >= 60 { return .orange }
-        else { return .red }
+        if summary.accuracyRate >= 80 { return Color.modernSuccess }
+        else if summary.accuracyRate >= 60 { return Color.modernWarning }
+        else { return Color.modernError }
     }
     
     private var efficiency: String {
@@ -409,14 +409,14 @@ struct StatRow: View {
             
             Text(label)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.modernTextSecondary)
             
             Spacer()
             
             Text(value)
                 .font(.caption)
                 .fontWeight(.semibold)
-                .foregroundColor(.primary)
+                .foregroundColor(Color.modernTextPrimary)
         }
     }
 }
@@ -432,7 +432,7 @@ struct DetailedStatRow: View {
             HStack {
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color.modernTextPrimary)
                 
                 Spacer()
                 
@@ -445,7 +445,7 @@ struct DetailedStatRow: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Rectangle()
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(Color.modernTextTertiary.opacity(0.2))
                         .frame(height: 4)
                         .cornerRadius(2)
                     
@@ -472,7 +472,7 @@ struct WordSummaryRow: View {
                 .fontWeight(.medium)
                 .foregroundColor(.white)
                 .frame(width: 20, height: 20)
-                .background(Color.blue)
+                .background(Color.modernAccent)
                 .clipShape(Circle())
             
             // 單字資訊
@@ -483,7 +483,7 @@ struct WordSummaryRow: View {
                 
                 Text(word.definitionZH)
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
                     .lineLimit(1)
             }
             
@@ -503,7 +503,7 @@ struct WordSummaryRow: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
-        .background(Color(.systemGray6))
+        .background(Color.modernSurface.opacity(0.7))
         .cornerRadius(8)
     }
     
@@ -514,8 +514,8 @@ struct WordSummaryRow: View {
     }
     
     private func masteryColor(for level: Double) -> Color {
-        if level >= 4.0 { return .green }
-        else if level >= 2.0 { return .orange }
-        else { return .blue }
+        if level >= 4.0 { return Color.modernSuccess }
+        else if level >= 2.0 { return Color.modernWarning }
+        else { return Color.modernAccent }
     }
 }

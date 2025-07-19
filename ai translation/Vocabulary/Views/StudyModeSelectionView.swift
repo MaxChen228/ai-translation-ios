@@ -67,7 +67,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "graduationcap")
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.modernAccent)
                 Text("學習模式")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -84,9 +84,9 @@ struct StudyModeSelectionView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 練習類型選擇
@@ -95,7 +95,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "gamecontroller")
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.modernAccent)
                 Text("練習類型")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -112,9 +112,9 @@ struct StudyModeSelectionView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 設定區域
@@ -123,7 +123,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "slider.horizontal.3")
-                    .foregroundColor(.orange)
+                    .foregroundColor(Color.modernAccent)
                 Text("學習設定")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -140,24 +140,24 @@ struct StudyModeSelectionView: View {
                         get: { Double(wordCount) },
                         set: { wordCount = Int($0) }
                     ), in: 5...20, step: 5)
-                    .accentColor(.blue)
+                    .accentColor(Color.modernAccent)
                     
                     HStack {
                         Text("5")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                         Spacer()
                         Text("10")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                         Spacer()
                         Text("15")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                         Spacer()
                         Text("20")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                     }
                 }
                 
@@ -188,15 +188,15 @@ struct StudyModeSelectionView: View {
                         
                         Text("1=簡單, 5=困難")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                     }
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
+        .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
     // MARK: - 開始按鈕
@@ -206,7 +206,7 @@ struct StudyModeSelectionView: View {
             if let errorMessage = errorMessage {
                 Text(errorMessage)
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color.modernError)
                     .multilineTextAlignment(.center)
             }
             
@@ -226,14 +226,14 @@ struct StudyModeSelectionView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(isStartingStudy ? Color.gray : Color.blue)
-                .cornerRadius(16)
+                .background(isStartingStudy ? Color.modernTextSecondary : Color.modernAccent)
+                .cornerRadius(ModernRadius.md)
             }
             .disabled(isStartingStudy)
             
             Text("根據你的選擇，將生成 \(wordCount) 個單字的 \(selectedPracticeType.displayName)")
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
     }
@@ -292,18 +292,18 @@ struct StudyModeCard: View {
             HStack(spacing: 16) {
                 Image(systemName: mode.systemImageName)
                     .font(.title2)
-                    .foregroundColor(isSelected ? .white : .blue)
+                    .foregroundColor(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(mode.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
-                        .foregroundColor(isSelected ? .white : .primary)
+                        .foregroundColor(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(mode.description)
                         .font(.caption)
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
                 Spacer()
@@ -314,8 +314,8 @@ struct StudyModeCard: View {
                 }
             }
             .padding()
-            .background(isSelected ? Color.blue : Color(.systemGray6))
-            .cornerRadius(12)
+            .background(isSelected ? Color.modernAccent : Color.modernSurface.opacity(0.7))
+            .cornerRadius(ModernRadius.sm + 4)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -331,18 +331,18 @@ struct PracticeTypeCard: View {
             HStack(spacing: 16) {
                 Image(systemName: type.systemImageName)
                     .font(.title2)
-                    .foregroundColor(isSelected ? .white : .green)
+                    .foregroundColor(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(type.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
-                        .foregroundColor(isSelected ? .white : .primary)
+                        .foregroundColor(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(practiceDescription(for: type))
                         .font(.caption)
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : .gray)
+                        .foregroundColor(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
                 Spacer()
@@ -353,8 +353,8 @@ struct PracticeTypeCard: View {
                 }
             }
             .padding()
-            .background(isSelected ? Color.green : Color(.systemGray6))
-            .cornerRadius(12)
+            .background(isSelected ? Color.modernAccent : Color.modernSurface.opacity(0.7))
+            .cornerRadius(ModernRadius.sm + 4)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -378,11 +378,11 @@ struct DifficultyButtonStyle: ButtonStyle {
         configuration.label
             .font(.caption)
             .fontWeight(.medium)
-            .foregroundColor(isSelected ? .white : .orange)
+            .foregroundColor(isSelected ? .white : Color.modernAccent)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(isSelected ? Color.orange : Color.orange.opacity(0.1))
-            .cornerRadius(8)
+            .background(isSelected ? Color.modernAccent : Color.modernAccent.opacity(0.1))
+            .cornerRadius(ModernRadius.sm)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }

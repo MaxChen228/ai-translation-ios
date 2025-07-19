@@ -412,7 +412,7 @@ struct QuizView: View {
                 .font(.appLargeTitle())
                 .foregroundColor(.orange)
             
-            Text("🎉 測驗完成！")
+            Text("測驗完成！")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
