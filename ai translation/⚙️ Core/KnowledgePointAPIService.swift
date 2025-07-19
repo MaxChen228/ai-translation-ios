@@ -374,6 +374,48 @@ struct KnowledgePointAPIService {
         try await performRequest(request: request)
     }
     
+    /// 歸檔知識點
+    static func archiveKnowledgePoint(id: Int) async throws {
+        let urlString = "\(baseURL)/knowledge_point/\(id)/archive"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        addAuthHeader(to: &request)
+        
+        try await performRequest(request: request)
+    }
+    
+    /// 取消歸檔知識點
+    static func unarchiveKnowledgePoint(id: Int) async throws {
+        let urlString = "\(baseURL)/knowledge_point/\(id)/unarchive"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        addAuthHeader(to: &request)
+        
+        try await performRequest(request: request)
+    }
+    
+    /// 刪除知識點
+    static func deleteKnowledgePoint(id: Int) async throws {
+        let urlString = "\(baseURL)/knowledge_point/\(id)"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        addAuthHeader(to: &request)
+        
+        try await performRequest(request: request)
+    }
+    
     static func mergeErrors(error1: ErrorAnalysis, error2: ErrorAnalysis) async throws -> ErrorAnalysis {
         let urlString = "\(baseURL)/merge_errors"
         guard let url = URL(string: urlString) else {

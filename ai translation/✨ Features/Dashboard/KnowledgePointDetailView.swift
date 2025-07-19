@@ -540,58 +540,80 @@ struct KnowledgePointDetailView: View {
     }
     
     private func performAIReview() {
-        isAIReviewing = true
-        
-        // 模擬 AI 審閱
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            // 創建模擬的審閱結果
-            aiReviewResult = AIReviewResult(
-                overall_assessment: "這個知識點的解釋清楚明瞭，有助於學習者理解",
-                accuracy_score: 85,
-                clarity_score: 90,
-                teaching_effectiveness: 88,
-                improvement_suggestions: ["可以增加更多例句", "建議添加常見錯誤對比"],
-                potential_confusions: ["注意時態變化", "區分相似句型"],
-                recommended_category: "Grammar",
-                additional_examples: ["She has been working here for 5 years.", "They have been playing tennis since morning."]
-            )
+        Task {
+            isAIReviewing = true
             
-            isAIReviewing = false
-            showAIReviewSheet = true
+            do {
+                let result = try await KnowledgePointAPIService.aiReviewKnowledgePoint(id: point.id)
+                
+                await MainActor.run {
+                    aiReviewResult = result
+                    isAIReviewing = false
+                    showAIReviewSheet = true
+                }
+            } catch {
+                await MainActor.run {
+                    isAIReviewing = false
+                    saveMessage = "❌ AI審閱失敗：\(error.localizedDescription)"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        saveMessage = nil
+                    }
+                }
+            }
         }
     }
     
     private func toggleArchiveStatus() {
-        // 切換本地狀態
-        localIsArchived.toggle()
-        
-        // 在實際應用中，這裡應該調用 API 來更新歸檔狀態
-        // Task {
-        //     do {
-        //         if localIsArchived {
-        //             try await KnowledgePointAPIService.archivePoint(id: point.id)
-        //         } else {
-        //             try await KnowledgePointAPIService.unarchivePoint(id: point.id)
-        //         }
-        //     } catch {
-        //         // 如果 API 調用失敗，恢復本地狀態
-        //         localIsArchived.toggle()
-        //         saveMessage = "❌ 操作失敗，請稍後再試"
-        //     }
-        // }
-        
-        // 顯示成功訊息
-        saveMessage = localIsArchived ? "✅ 已歸檔" : "✅ 已取消歸檔"
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            saveMessage = nil
+        Task {
+            let originalStatus = localIsArchived
+            localIsArchived.toggle()
+            
+            do {
+                if localIsArchived {
+                    try await KnowledgePointAPIService.archiveKnowledgePoint(id: point.id)
+                } else {
+                    try await KnowledgePointAPIService.unarchiveKnowledgePoint(id: point.id)
+                }
+                
+                await MainActor.run {
+                    saveMessage = localIsArchived ? "✅ 已歸檔" : "✅ 已取消歸檔"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                        saveMessage = nil
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    // 如果 API 調用失敗，恢復本地狀態
+                    localIsArchived = originalStatus
+                    saveMessage = "❌ 操作失敗：\(error.localizedDescription)"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        saveMessage = nil
+                    }
+                }
+            }
         }
     }
     
     private func deleteKnowledgePoint() {
-        // 模擬刪除操作
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            dismiss()
+        Task {
+            do {
+                try await KnowledgePointAPIService.deleteKnowledgePoint(id: point.id)
+                
+                await MainActor.run {
+                    dismiss()
+                }
+            } catch {
+                await MainActor.run {
+                    saveMessage = "❌ 刪除失敗：\(error.localizedDescription)"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        saveMessage = nil
+                    }
+                }
+            }
         }
     }
 }
