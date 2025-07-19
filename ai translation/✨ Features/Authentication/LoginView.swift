@@ -131,7 +131,7 @@ struct LoginView: View {
                     
                     // 註冊連結
                     Button(action: {
-                        isShowingRegister = true
+                        NotificationCenter.default.post(name: NSNotification.Name("ShowRegister"), object: nil)
                     }) {
                         HStack(spacing: 8) {
                             Text("還沒有帳號？")
@@ -150,10 +150,6 @@ struct LoginView: View {
             }
         }
         .background(Color(.systemGroupedBackground))
-        .sheet(isPresented: $isShowingRegister) {
-            RegisterView()
-                .environmentObject(authManager)
-        }
         .onTapGesture {
             hideKeyboard()
         }

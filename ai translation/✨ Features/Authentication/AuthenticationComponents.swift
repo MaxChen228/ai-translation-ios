@@ -240,11 +240,29 @@ struct ClaudeWarningBox: View {
 
 // MARK: - 認證容器視圖
 struct AuthenticationContainerView: View {
-    @StateObject private var authManager = AuthenticationManager()
+    @EnvironmentObject var authManager: AuthenticationManager
+    @State private var showingRegister = false
     
     var body: some View {
-        LoginView()
-            .environmentObject(authManager)
+        NavigationView {
+            VStack {
+                if showingRegister {
+                    RegisterView()
+                        .transition(.slide)
+                } else {
+                    LoginView()
+                        .transition(.slide)
+                }
+            }
+            .animation(.easeInOut, value: showingRegister)
+        }
+        .environmentObject(authManager)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowRegister"))) { _ in
+            showingRegister = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowLogin"))) { _ in
+            showingRegister = false
+        }
     }
 }
 

@@ -140,9 +140,6 @@ struct RegisterView: View {
                                 targetLanguage: targetLanguage,
                                 learningLevel: learningLevel
                             )
-                            if authManager.isAuthenticated {
-                                dismiss()
-                            }
                         }
                     }
                     
@@ -154,8 +151,8 @@ struct RegisterView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") {
-                        dismiss()
+                    Button("返回登入") {
+                        NotificationCenter.default.post(name: NSNotification.Name("ShowLogin"), object: nil)
                     }
                     .foregroundStyle(Color.orange)
                 }
