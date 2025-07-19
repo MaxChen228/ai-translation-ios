@@ -157,8 +157,68 @@ struct SmartHintResponse: Codable {
 
 // MARK: - 認證相關資料結構
 
+// 認證狀態枚舉
+enum UserAuthState: Equatable {
+    case guest                          // 訪客模式
+    case authenticated(User)            // 已登入用戶
+    case unauthenticated               // 未登入（首次啟動）
+    
+    var isAuthenticated: Bool {
+        if case .authenticated = self { return true }
+        return false
+    }
+    
+    var isGuest: Bool {
+        if case .guest = self { return true }
+        return false
+    }
+    
+    var currentUser: User? {
+        if case .authenticated(let user) = self { return user }
+        return nil
+    }
+}
+
+// 訪客使用者資料
+struct GuestUser: Codable {
+    let id: String
+    let username: String
+    let displayName: String
+    let createdAt: Date
+    var totalLearningTime: Int
+    var knowledgePointsCount: Int
+    var sessionsCompleted: Int
+    
+    init() {
+        self.id = "guest_\(UUID().uuidString)"
+        self.username = "訪客用戶"
+        self.displayName = "訪客模式"
+        self.createdAt = Date()
+        self.totalLearningTime = 0
+        self.knowledgePointsCount = 0
+        self.sessionsCompleted = 0
+    }
+    
+    // 轉換為展示用的 User 格式
+    var asDisplayUser: User {
+        return User(
+            id: 0,
+            username: username,
+            email: "guest@example.com",
+            displayName: displayName,
+            nativeLanguage: "中文",
+            targetLanguage: "英文",
+            learningLevel: "體驗中",
+            totalLearningTime: totalLearningTime,
+            knowledgePointsCount: knowledgePointsCount,
+            createdAt: ISO8601DateFormatter().string(from: createdAt),
+            lastLoginAt: nil
+        )
+    }
+}
+
 // 使用者資料模型
-struct User: Codable, Identifiable {
+struct User: Codable, Identifiable, Equatable {
     let id: Int
     let username: String
     let email: String

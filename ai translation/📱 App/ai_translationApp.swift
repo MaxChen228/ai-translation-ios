@@ -9,14 +9,14 @@ struct ai_translationApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if authManager.isAuthenticated {
-                MainContentView()
-                    .environmentObject(sessionManager)
-                    .environmentObject(authManager)
-            } else {
-                AuthenticationContainerView()
-                    .environmentObject(authManager)
-            }
+            // 暫時直接進入主應用以解決後端認證問題
+            MainContentView()
+                .environmentObject(sessionManager)
+                .environmentObject(authManager)
+                .onAppear {
+                    // 啟動時自動進入訪客模式
+                    authManager.enterGuestMode()
+                }
         }
     }
 }

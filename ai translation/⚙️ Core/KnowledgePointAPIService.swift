@@ -468,13 +468,109 @@ struct KnowledgePointAPIService {
         return errors.count
     }
 
+    // MARK: - 訪客模式 API
+    
+    /// 訪客模式獲取範例題目
+    static func getGuestSampleQuestions(count: Int = 3) async throws -> QuestionsResponse {
+        let urlString = "\(baseURL)/guest/sample_questions?count=\(count)"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        addAuthHeader(to: &request, requireAuth: false)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.invalidResponse
+        }
+        
+        do {
+            let questionsResponse = try JSONDecoder().decode(QuestionsResponse.self, from: data)
+            return questionsResponse
+        } catch {
+            throw APIError.decodingError(error)
+        }
+    }
+    
+    /// 訪客模式提交答案（僅返回基本分析）
+    static func submitGuestAnswer(question: [String: Any], answer: String) async throws -> FeedbackResponse {
+        let urlString = "\(baseURL)/guest/submit_answer"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addAuthHeader(to: &request, requireAuth: false)
+        
+        let body: [String: Any] = [
+            "question": question,
+            "answer": answer
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
+               let message = errorBody["error"] {
+                throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)
+            }
+            throw APIError.serverError(statusCode: httpResponse.statusCode, message: "提交失敗")
+        }
+        
+        let feedbackResponse = try JSONDecoder().decode(FeedbackResponse.self, from: data)
+        return feedbackResponse
+    }
+    
+    /// 訪客模式獲取範例知識點
+    static func getGuestSampleKnowledgePoints() async throws -> [KnowledgePoint] {
+        let urlString = "\(baseURL)/guest/sample_knowledge_points"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        addAuthHeader(to: &request, requireAuth: false)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.invalidResponse
+        }
+        
+        do {
+            let dashboardResponse = try JSONDecoder().decode(DashboardResponse.self, from: data)
+            return dashboardResponse.knowledge_points
+        } catch {
+            throw APIError.decodingError(error)
+        }
+    }
+    
     // MARK: - 內部輔助函式
     
     // 為請求添加認證標頭
-    private static func addAuthHeader(to request: inout URLRequest) {
+    private static func addAuthHeader(to request: inout URLRequest, requireAuth: Bool = true) {
         if let token = KeychainManager().retrieve(.accessToken) {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else if requireAuth {
+            // 如果需要認證但沒有token，使用訪客標識
+            request.setValue("Guest", forHTTPHeaderField: "X-User-Type")
         }
+    }
+    
+    // 檢查是否為訪客模式
+    private static func isGuestMode() -> Bool {
+        // 可以通過 AuthenticationManager 或其他方式檢查
+        return KeychainManager().retrieve(.accessToken) == nil
     }
     
     private static func performRequest(request: URLRequest) async throws {

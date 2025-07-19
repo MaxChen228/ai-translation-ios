@@ -70,8 +70,49 @@ struct LoginView: View {
                     }
                 }
                 
-                // 註冊連結
-                VStack(spacing: 16) {
+                // 其他選項
+                VStack(spacing: 20) {
+                    // 訪客模式按鈕
+                    Button(action: {
+                        print("🔴 點擊訪客模式按鈕")
+                        authManager.enterGuestMode()
+                        print("🔴 按鈕動作完成")
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "eye")
+                                .font(.appCallout(for: "訪客圖示"))
+                                .foregroundStyle(Color.blue)
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("訪客體驗")
+                                    .font(.appCallout(for: "訪客按鈕"))
+                                    .foregroundStyle(Color.blue)
+                                
+                                Text("無需註冊，立即開始學習")
+                                    .font(.appCaption(for: "訪客說明"))
+                                    .foregroundStyle(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "arrow.right")
+                                .font(.appCaption(for: "箭頭"))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(16)
+                        .background {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.blue.opacity(0.1))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 20)
+                    
+                    // 分隔線
                     HStack {
                         Rectangle()
                             .fill(Color(.systemGray4))
@@ -86,7 +127,9 @@ struct LoginView: View {
                             .fill(Color(.systemGray4))
                             .frame(height: 1)
                     }
+                    .padding(.horizontal, 24)
                     
+                    // 註冊連結
                     Button(action: {
                         isShowingRegister = true
                     }) {
@@ -102,7 +145,6 @@ struct LoginView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 24)
                 
                 Spacer(minLength: 40)
             }
