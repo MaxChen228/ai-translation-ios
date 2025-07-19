@@ -46,7 +46,7 @@ struct MainContentView: View {
                         .font(.appCaption())
                 }
         }
-        .accentColor(.blue)
+        .accentColor(.modernAccent)
         .environmentObject(sessionManager)
     }
 }

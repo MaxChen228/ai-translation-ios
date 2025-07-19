@@ -16,7 +16,7 @@ struct LoginView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "brain.head.profile")
                         .font(.system(size: 60, weight: .light))
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                         .padding(.top, 40)
                     
                     VStack(spacing: 8) {
@@ -140,7 +140,7 @@ struct LoginView: View {
                             
                             Text("立即註冊")
                                 .font(.appSubheadline(for: "註冊連結"))
-                                .foregroundStyle(Color.orange)
+                                .foregroundStyle(Color.modernAccent)
                         }
                     }
                     .buttonStyle(.plain)
@@ -149,7 +149,7 @@ struct LoginView: View {
                 Spacer(minLength: 40)
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .onTapGesture {
             hideKeyboard()
         }

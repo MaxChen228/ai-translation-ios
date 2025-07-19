@@ -48,7 +48,7 @@ struct LearningAreaView: View {
                         .font(.appCaption())
                 }
         }
-        .accentColor(.blue) // 學習區使用橙色主題
+        .accentColor(.modernAccent) // 學習區使用現代橙棕主題
     }
 }
 

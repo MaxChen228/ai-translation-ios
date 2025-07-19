@@ -147,14 +147,14 @@ struct RegisterView: View {
                 }
                 .padding(20)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.modernBackground)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("返回登入") {
                         NotificationCenter.default.post(name: NSNotification.Name("ShowLogin"), object: nil)
                     }
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 }
             }
             .onTapGesture {
