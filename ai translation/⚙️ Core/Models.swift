@@ -154,3 +154,111 @@ struct SmartHintResponse: Codable {
     let thinking_questions: [String]
     let encouragement: String
 }
+
+// MARK: - 認證相關資料結構
+
+// 使用者資料模型
+struct User: Codable, Identifiable {
+    let id: Int
+    let username: String
+    let email: String
+    let displayName: String?
+    let nativeLanguage: String?
+    let targetLanguage: String?
+    let learningLevel: String?
+    let totalLearningTime: Int
+    let knowledgePointsCount: Int
+    let createdAt: String
+    let lastLoginAt: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case id, username, email
+        case displayName = "display_name"
+        case nativeLanguage = "native_language"
+        case targetLanguage = "target_language"
+        case learningLevel = "learning_level"
+        case totalLearningTime = "total_learning_time"
+        case knowledgePointsCount = "knowledge_points_count"
+        case createdAt = "created_at"
+        case lastLoginAt = "last_login_at"
+    }
+}
+
+// 登入請求
+struct LoginRequest: Codable {
+    let email: String
+    let password: String
+}
+
+// 註冊請求
+struct RegisterRequest: Codable {
+    let username: String
+    let email: String
+    let password: String
+    let displayName: String?
+    let nativeLanguage: String?
+    let targetLanguage: String?
+    let learningLevel: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case username, email, password
+        case displayName = "display_name"
+        case nativeLanguage = "native_language"
+        case targetLanguage = "target_language"
+        case learningLevel = "learning_level"
+    }
+}
+
+// 認證回應
+struct AuthResponse: Codable {
+    let user: User
+    let accessToken: String
+    let refreshToken: String
+    let expiresIn: Int
+    
+    private enum CodingKeys: String, CodingKey {
+        case user
+        case accessToken = "access_token"
+        case refreshToken = "refresh_token"
+        case expiresIn = "expires_in"
+    }
+}
+
+// Token 刷新請求
+struct RefreshTokenRequest: Codable {
+    let refreshToken: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case refreshToken = "refresh_token"
+    }
+}
+
+// 認證錯誤
+enum AuthError: Error, LocalizedError {
+    case invalidCredentials
+    case userAlreadyExists
+    case networkError
+    case tokenExpired
+    case invalidToken
+    case serverError(String)
+    case unknown
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidCredentials:
+            return "帳號或密碼錯誤"
+        case .userAlreadyExists:
+            return "使用者已存在"
+        case .networkError:
+            return "網路連線錯誤"
+        case .tokenExpired:
+            return "登入已過期，請重新登入"
+        case .invalidToken:
+            return "無效的認證憑證"
+        case .serverError(let message):
+            return "伺服器錯誤：\(message)"
+        case .unknown:
+            return "未知錯誤"
+        }
+    }
+}

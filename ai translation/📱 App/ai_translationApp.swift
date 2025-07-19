@@ -5,11 +5,18 @@ import SwiftUI
 @main
 struct ai_translationApp: App {
     @StateObject private var sessionManager = SessionManager()
+    @StateObject private var authManager = AuthenticationManager()
 
     var body: some Scene {
         WindowGroup {
-            MainContentView()
-                .environmentObject(sessionManager)
+            if authManager.isAuthenticated {
+                MainContentView()
+                    .environmentObject(sessionManager)
+                    .environmentObject(authManager)
+            } else {
+                AuthenticationContainerView()
+                    .environmentObject(authManager)
+            }
         }
     }
 }
@@ -45,4 +52,5 @@ struct MainContentView: View {
 #Preview {
     MainContentView()
         .environmentObject(SessionManager())
+        .environmentObject(AuthenticationManager())
 }

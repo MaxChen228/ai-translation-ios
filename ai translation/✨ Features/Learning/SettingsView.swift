@@ -3,6 +3,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var authManager: AuthenticationManager
     @State private var reviewCount: Int = SettingsManager.shared.reviewCount
     @State private var newCount: Int = SettingsManager.shared.newCount
     @State private var difficulty: Int = SettingsManager.shared.difficulty
@@ -10,11 +11,19 @@ struct SettingsView: View {
     @State private var dailyGoal: Int = SettingsManager.shared.dailyGoal
     @State private var generationModel: SettingsManager.AIModel = SettingsManager.shared.generationModel
     @State private var gradingModel: SettingsManager.AIModel = SettingsManager.shared.gradingModel
+    @State private var showLogoutAlert = false
 
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: 24) {
+                    // 使用者資料區塊
+                    if let user = authManager.currentUser {
+                        ClaudeUserProfileCard(user: user) {
+                            showLogoutAlert = true
+                        }
+                    }
+                    
                     // 學習題數設定
                     ClaudeSettingsCard(title: "學習題數設定", icon: "list.number") {
                         VStack(spacing: 20) {
@@ -99,6 +108,16 @@ struct SettingsView: View {
             .onChange(of: dailyGoal) { _, newValue in SettingsManager.shared.dailyGoal = newValue }
             .onChange(of: generationModel) { _, newValue in SettingsManager.shared.generationModel = newValue }
             .onChange(of: gradingModel) { _, newValue in SettingsManager.shared.gradingModel = newValue }
+            .alert("確認登出", isPresented: $showLogoutAlert) {
+                Button("取消", role: .cancel) { }
+                Button("登出", role: .destructive) {
+                    Task {
+                        await authManager.logout()
+                    }
+                }
+            } message: {
+                Text("您確定要登出嗎？登出後需要重新登入才能繼續使用。")
+            }
         }
     }
     
@@ -473,6 +492,149 @@ struct ClaudeInfoTip: View {
     }
 }
 
+// MARK: - 使用者資料卡片
+struct ClaudeUserProfileCard: View {
+    let user: User
+    let onLogout: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 12) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.appHeadline(for: "使用者頭像"))
+                    .foregroundStyle(Color.orange)
+                
+                Text("使用者資料")
+                    .font(.appTitle3(for: "使用者資料"))
+                    .foregroundStyle(.primary)
+            }
+            
+            VStack(spacing: 16) {
+                // 基本資訊
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(user.displayName ?? user.username)
+                            .font(.appTitle2(for: "使用者名稱"))
+                            .foregroundStyle(.primary)
+                        
+                        Text(user.email)
+                            .font(.appSubheadline(for: "電子郵件"))
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("學習時間")
+                            .font(.appCaption(for: "標籤"))
+                            .foregroundStyle(.secondary)
+                        
+                        Text(formatLearningTime(user.totalLearningTime))
+                            .font(.appHeadline(for: "學習時間"))
+                            .foregroundStyle(Color.orange)
+                    }
+                }
+                
+                // 學習統計
+                HStack(spacing: 20) {
+                    ClaudeUserStatCard(
+                        title: "知識點",
+                        value: "\(user.knowledgePointsCount)",
+                        icon: "brain.head.profile"
+                    )
+                    
+                    if let nativeLanguage = user.nativeLanguage {
+                        ClaudeUserStatCard(
+                            title: "母語",
+                            value: nativeLanguage,
+                            icon: "globe"
+                        )
+                    }
+                    
+                    if let targetLanguage = user.targetLanguage {
+                        ClaudeUserStatCard(
+                            title: "目標語言",
+                            value: targetLanguage,
+                            icon: "target"
+                        )
+                    }
+                }
+                
+                // 登出按鈕
+                Button(action: onLogout) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.right.square")
+                            .font(.appCallout(for: "登出圖示"))
+                        
+                        Text("登出")
+                            .font(.appCallout(for: "登出按鈕"))
+                    }
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.red.opacity(0.1))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                            }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+    
+    private func formatLearningTime(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        
+        if hours > 0 {
+            return "\(hours)小時\(minutes)分"
+        } else {
+            return "\(minutes)分鐘"
+        }
+    }
+}
+
+struct ClaudeUserStatCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.appSubheadline(for: "統計圖示"))
+                .foregroundStyle(Color.orange)
+            
+            Text(value)
+                .font(.appCallout(for: "統計數值"))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+            
+            Text(title)
+                .font(.appCaption(for: "統計標題"))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.systemGray6))
+        }
+    }
+}
+
 #Preview {
     SettingsView()
+        .environmentObject(AuthenticationManager())
 }
