@@ -156,7 +156,7 @@ struct FlashcardView: View {
         VStack(spacing: 20) {
             // 單字
             Text(question.word)
-                .font(.system(size: 48, weight: .bold, design: .rounded))
+                .font(.appLargeTitle(for: question.word))
                 .foregroundColor(.primary)
             
             // 音標
@@ -204,7 +204,7 @@ struct FlashcardView: View {
                 // 單字和音標
                 VStack(spacing: 8) {
                     Text(question.word)
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .font(.appTitle1(for: question.word))
                         .foregroundColor(.primary)
                     
                     if let pronunciation = question.pronunciation {
@@ -361,7 +361,7 @@ struct FlashcardView: View {
     private var studyCompleteView: some View {
         VStack(spacing: 24) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 80))
+                .font(.appLargeTitle())
                 .foregroundColor(.green)
             
             Text("🎉 練習完成！")

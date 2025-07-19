@@ -329,7 +329,6 @@ struct AchievementsCard: View {
                 
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
                     .font(.appCaption())
-                    .fontWeight(.medium)
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -378,7 +377,6 @@ struct LearningAdviceCard: View {
                     HStack(alignment: .top, spacing: 12) {
                         Text("\(index + 1)")
                             .font(.appCaption())
-                            .fontWeight(.bold)
                             .foregroundStyle(.white)
                             .frame(width: 20, height: 20)
                             .background(Circle().fill(Color.orange))
@@ -451,7 +449,6 @@ struct AchievementMiniCard: View {
             
             Text(achievement.title)
                 .font(.appCaption(for: achievement.title))
-                .fontWeight(.medium)
                 .foregroundStyle(achievement.isUnlocked ? .primary : .secondary)
                 .multilineTextAlignment(.center)
             

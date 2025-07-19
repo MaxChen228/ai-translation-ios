@@ -847,7 +847,7 @@ struct ClaudeReviewResultCard: View {
                     .foregroundStyle(.green)
                 
                 Text("複習題結果")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.appHeadline(for: "複習題結果"))
                     .foregroundStyle(.primary)
                 
                 Spacer()

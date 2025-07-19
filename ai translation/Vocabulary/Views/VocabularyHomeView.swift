@@ -82,14 +82,13 @@ struct VocabularyHomeView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("整體掌握度")
-                        .font(.headline)
+                        .font(.appHeadline(for: "整體掌握度"))
                         .foregroundColor(.primary)
                     
                     Spacer()
                     
                     Text("\(String(format: "%.1f", stats.masteryPercentage))%")
-                        .font(.title2)
-                        .fontWeight(.bold)
+                        .font(.appTitle2())
                         .foregroundColor(.green)
                 }
                 
@@ -99,13 +98,13 @@ struct VocabularyHomeView: View {
                 
                 HStack {
                     Label("\(stats.newWords) 新單字", systemImage: "plus.circle")
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundColor(.blue)
                     
                     Spacer()
                     
                     Label("\(stats.learningWords) 學習中", systemImage: "clock.circle")
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundColor(.orange)
                 }
             }
@@ -123,14 +122,13 @@ struct VocabularyHomeView: View {
                 Image(systemName: "calendar.badge.clock")
                     .foregroundColor(.orange)
                 Text("今日復習計劃")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                
+                    .font(.appHeadline())
+                                    
                 Spacer()
                 
                 if let stats = statistics, stats.dueToday > 0 {
                     Text("\(stats.dueToday)個單字待複習")
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundColor(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -184,9 +182,8 @@ struct VocabularyHomeView: View {
                 Image(systemName: "bolt.circle")
                     .foregroundColor(.blue)
                 Text("快速學習")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-            }
+                    .font(.appHeadline())
+                                }
             
             LazyVGrid(columns: [
                 GridItem(.flexible()),
@@ -210,12 +207,11 @@ struct VocabularyHomeView: View {
                 NavigationLink(destination: Text("單字管理")) {
                     VStack {
                         Image(systemName: "list.bullet.rectangle")
-                            .font(.title2)
+                            .font(.appTitle2())
                             .foregroundColor(.gray)
                         Text("單字管理")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.gray)
+                            .font(.appCaption())
+                                                        .foregroundColor(.gray)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
@@ -238,9 +234,8 @@ struct VocabularyHomeView: View {
                 Image(systemName: "chart.pie")
                     .foregroundColor(.purple)
                 Text("學習進度分布")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-            }
+                    .font(.appHeadline())
+                                }
             
             // 簡化的進度圓環
             HStack(spacing: 20) {
@@ -257,12 +252,11 @@ struct VocabularyHomeView: View {
                             .rotationEffect(.degrees(-90))
                         
                         Text("\(stats.masteredWords)")
-                            .font(.headline)
-                            .fontWeight(.bold)
-                    }
+                            .font(.appHeadline())
+                                                }
                     
                     Text("已掌握")
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundColor(.green)
                 }
                 
@@ -313,15 +307,15 @@ struct VocabularyHomeView: View {
     private var errorSection: some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
+                .font(.appLargeTitle())
                 .foregroundColor(.orange)
             
             Text("載入失敗")
-                .font(.headline)
+                .font(.appHeadline())
             
             if let error = errorMessage {
                 Text(error)
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
             }
@@ -363,16 +357,15 @@ struct StatCard: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
-                .font(.title2)
+                .font(.appTitle2())
                 .foregroundColor(color)
             
             Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .font(.appTitle2())
+                                .foregroundColor(.primary)
             
             Text(title)
-                .font(.caption)
+                .font(.appCaption())
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
         }
@@ -391,13 +384,12 @@ struct StudyModeButton: View {
         Button(action: action) {
             VStack {
                 Image(systemName: mode.systemImageName)
-                    .font(.title2)
+                    .font(.appTitle2())
                     .foregroundColor(.blue)
                 
                 Text(mode.displayName)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.primary)
+                    .font(.appCaption())
+                                        .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
@@ -423,15 +415,14 @@ struct ProgressBar: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(title)
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundColor(.gray)
                 
                 Spacer()
                 
                 Text("\(count)")
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(color)
+                    .font(.appCaption())
+                                        .foregroundColor(color)
             }
             
             GeometryReader { geometry in

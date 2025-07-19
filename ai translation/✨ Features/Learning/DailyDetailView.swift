@@ -383,7 +383,7 @@ struct ClaudeAISummaryCard: View {
                 
                 Button(action: onToggle) {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
+                        .font(.appTitle3())
                         .foregroundStyle(.secondary)
                 }
             }
