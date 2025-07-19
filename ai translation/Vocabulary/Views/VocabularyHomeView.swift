@@ -12,7 +12,7 @@ struct VocabularyHomeView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: ModernSpacing.lg) {
                     // 頂部統計卡片
                     if let stats = statistics {
                         statisticsSection(stats)
@@ -35,7 +35,7 @@ struct VocabularyHomeView: View {
                     
                     Spacer()
                 }
-                .padding()
+                .padding(ModernSpacing.lg)
             }
             .navigationTitle("📚 單字庫")
             .refreshable {
@@ -53,27 +53,27 @@ struct VocabularyHomeView: View {
     // MARK: - 統計區域
     
     private func statisticsSection(_ stats: VocabularyStatistics) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             // 主要統計
             HStack(spacing: 20) {
                 StatCard(
                     title: "總單字",
                     value: "\(stats.totalWords)",
-                    color: Color.blue,
+                    color: Color.modernSpecial,
                     icon: "book.fill"
                 )
                 
                 StatCard(
                     title: "已掌握",
                     value: "\(stats.masteredWords)",
-                    color: Color.green,
+                    color: Color.modernSuccess,
                     icon: "checkmark.circle.fill"
                 )
                 
                 StatCard(
                     title: "今日複習",
                     value: "\(stats.dueToday)",
-                    color: Color.orange,
+                    color: Color.modernAccent,
                     icon: "clock.fill"
                 )
             }
@@ -83,7 +83,7 @@ struct VocabularyHomeView: View {
                 HStack {
                     Text("整體掌握度")
                         .font(.appHeadline(for: "整體掌握度"))
-                        .foregroundColor(.primary)
+                        .foregroundColor(Color.modernTextPrimary)
                     
                     Spacer()
                     
@@ -109,7 +109,7 @@ struct VocabularyHomeView: View {
                 }
             }
             .padding()
-            .background(Color(.systemGray6))
+            .background(Color.modernSurface)
             .cornerRadius(12)
         }
     }
@@ -132,7 +132,7 @@ struct VocabularyHomeView: View {
                         .foregroundColor(.orange)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.orange.opacity(0.1))
+                        .background(Color.modernAccent.opacity(0.1))
                         .cornerRadius(8)
                 }
             }
@@ -151,7 +151,7 @@ struct VocabularyHomeView: View {
                         }
                         .foregroundColor(.white)
                         .padding()
-                        .background(Color.orange)
+                        .background(Color.modernAccent)
                         .cornerRadius(12)
                     }
                 } else {
@@ -163,13 +163,13 @@ struct VocabularyHomeView: View {
                         Spacer()
                     }
                     .padding()
-                    .background(Color.green.opacity(0.1))
+                    .background(Color.modernSuccess.opacity(0.1))
                     .cornerRadius(12)
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.modernSurface)
         .cornerRadius(16)
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
@@ -208,20 +208,20 @@ struct VocabularyHomeView: View {
                     VStack {
                         Image(systemName: "list.bullet.rectangle")
                             .font(.appTitle2())
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                         Text("單字管理")
                             .font(.appCaption())
-                                                        .foregroundColor(.gray)
+                                                        .foregroundColor(Color.modernTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
-                    .background(Color(.systemGray6))
+                    .background(Color.modernSurface)
                     .cornerRadius(12)
                 }
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.modernSurface)
         .cornerRadius(16)
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
@@ -247,7 +247,7 @@ struct VocabularyHomeView: View {
                         
                         Circle()
                             .trim(from: 0, to: CGFloat(stats.masteredWords) / max(CGFloat(stats.totalWords), 1))
-                            .stroke(Color.green, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .stroke(Color.modernSuccess, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                             .frame(width: 80, height: 80)
                             .rotationEffect(.degrees(-90))
                         
@@ -287,7 +287,7 @@ struct VocabularyHomeView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.modernSurface)
         .cornerRadius(16)
         .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
     }
@@ -362,7 +362,7 @@ struct StatCard: View {
             
             Text(value)
                 .font(.appTitle2())
-                                .foregroundColor(.primary)
+                                .foregroundColor(Color.modernTextPrimary)
             
             Text(title)
                 .font(.appCaption())
@@ -371,7 +371,7 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color(.systemGray6))
+        .background(Color.modernSurface)
         .cornerRadius(12)
     }
 }
@@ -389,12 +389,12 @@ struct StudyModeButton: View {
                 
                 Text(mode.displayName)
                     .font(.appCaption())
-                                        .foregroundColor(.primary)
+                                        .foregroundColor(Color.modernTextPrimary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 80)
-            .background(Color(.systemGray6))
+            .background(Color.modernSurface)
             .cornerRadius(12)
         }
     }

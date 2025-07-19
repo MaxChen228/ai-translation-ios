@@ -11,30 +11,30 @@ struct LoginView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 32) {
+            VStack(spacing: ModernSpacing.xxl) {
                 // Logo 和標題區域
-                VStack(spacing: 16) {
+                VStack(spacing: ModernSpacing.md) {
                     Image(systemName: "brain.head.profile")
                         .font(.system(size: 60, weight: .light))
                         .foregroundStyle(Color.modernAccent)
-                        .padding(.top, 40)
+                        .padding(.top, ModernSpacing.xl + 8)
                     
-                    VStack(spacing: 8) {
+                    VStack(spacing: ModernSpacing.sm) {
                         Text("AI 翻譯學習")
                             .font(.appLargeTitle(for: "應用標題"))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                         
                         Text("登入您的帳號開始個人化學習之旅")
                             .font(.appSubheadline(for: "登入描述"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                             .multilineTextAlignment(.center)
                     }
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, ModernSpacing.lg)
                 
                 // 登入表單
                 ClaudeAuthCard(title: "登入", icon: "person.crop.circle") {
-                    VStack(spacing: 20) {
+                    VStack(spacing: ModernSpacing.lg) {
                         // Email 輸入欄
                         ClaudeAuthInputField(
                             title: "電子郵件",
@@ -71,72 +71,68 @@ struct LoginView: View {
                 }
                 
                 // 其他選項
-                VStack(spacing: 20) {
+                VStack(spacing: ModernSpacing.lg) {
                     // 訪客模式按鈕
                     Button(action: {
                         print("🔴 點擊訪客模式按鈕")
                         authManager.enterGuestMode()
                         print("🔴 按鈕動作完成")
                     }) {
-                        HStack(spacing: 12) {
+                        HStack(spacing: ModernSpacing.sm) {
                             Image(systemName: "eye")
                                 .font(.appCallout(for: "訪客圖示"))
-                                .foregroundStyle(Color.blue)
+                                .foregroundStyle(Color.modernSpecial)
                             
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                                 Text("訪客體驗")
                                     .font(.appCallout(for: "訪客按鈕"))
-                                    .foregroundStyle(Color.blue)
+                                    .foregroundStyle(Color.modernSpecial)
                                 
                                 Text("無需註冊，立即開始學習")
                                     .font(.appCaption(for: "訪客說明"))
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.modernTextSecondary)
                             }
                             
                             Spacer()
                             
                             Image(systemName: "arrow.right")
                                 .font(.appCaption(for: "箭頭"))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                         }
-                        .padding(16)
+                        .padding(ModernSpacing.md)
                         .background {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.blue.opacity(0.1))
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                .fill(Color.modernSpecialSoft)
                                 .overlay {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                    RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                        .stroke(Color.modernSpecial.opacity(0.3), lineWidth: 1)
                                 }
                         }
                     }
                     .buttonStyle(.plain)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, ModernSpacing.lg)
                     
                     // 分隔線
                     HStack {
-                        Rectangle()
-                            .fill(Color(.systemGray4))
-                            .frame(height: 1)
+                        ModernDivider()
                         
                         Text("或")
                             .font(.appCaption(for: "分隔符"))
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 16)
+                            .foregroundStyle(Color.modernTextSecondary)
+                            .padding(.horizontal, ModernSpacing.md)
                         
-                        Rectangle()
-                            .fill(Color(.systemGray4))
-                            .frame(height: 1)
+                        ModernDivider()
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, ModernSpacing.lg)
                     
                     // 註冊連結
                     Button(action: {
                         NotificationCenter.default.post(name: NSNotification.Name("ShowRegister"), object: nil)
                     }) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: ModernSpacing.sm) {
                             Text("還沒有帳號？")
                                 .font(.appSubheadline(for: "註冊提示"))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                             
                             Text("立即註冊")
                                 .font(.appSubheadline(for: "註冊連結"))
@@ -146,7 +142,7 @@ struct LoginView: View {
                     .buttonStyle(.plain)
                 }
                 
-                Spacer(minLength: 40)
+                Spacer(minLength: ModernSpacing.xl + 8)
             }
         }
         .background(Color.modernBackground)

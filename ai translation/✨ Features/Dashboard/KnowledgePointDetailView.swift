@@ -35,7 +35,7 @@ struct KnowledgePointDetailView: View {
             }
             .padding(20)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .navigationTitle("知識點詳情")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {

@@ -20,9 +20,9 @@ enum ModernDashboardMode: String, CaseIterable, Identifiable {
         }
     }
     
-    // 【改為】簡約的主題色
+    // 現代化主題色
     var accentColor: Color {
-        return Color.orange // Claude 風格的橙色重點色
+        return Color.modernAccent
     }
 }
 
@@ -41,8 +41,8 @@ struct DashboardView: View {
             VStack(spacing: 0) {
                 // 【簡化】模式選擇器
                 ClaudeModeSelector(selectedMode: $selectedMode)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, ModernSpacing.lg)
+                    .padding(.top, ModernSpacing.md)
                 
                 if isLoading {
                     ClaudeLoadingView()
@@ -66,23 +66,23 @@ struct DashboardView: View {
                                 ScheduleSection(points: knowledgePoints)
                             }
                         }
-                        .padding(20)
+                        .padding(ModernSpacing.lg)
                     }
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.modernBackground)
             .navigationTitle("知識儀表板")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { Task { await fetchDashboardData() } }) {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                     }
                     
                     NavigationLink(destination: ArchivedPointsView()) {
                         Image(systemName: "archivebox")
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                     }
                 }
             }
@@ -185,8 +185,8 @@ struct ClaudeModeSelector: View {
             }
         }
         .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                .fill(Color.modernSurface)
         )
     }
 }
@@ -206,14 +206,14 @@ struct ClaudeModeButton: View {
                 Text(mode.rawValue)
                     .font(.appFootnote(for: mode.rawValue))
             }
-            .foregroundStyle(isSelected ? .white : Color(.label))
+            .foregroundStyle(isSelected ? .white : Color.modernTextPrimary)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 12)
+            .padding(.vertical, ModernSpacing.sm + 2)
+            .padding(.horizontal, ModernSpacing.sm + 4)
             .background {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.orange)
+                    RoundedRectangle(cornerRadius: ModernRadius.xs + 2)
+                        .fill(Color.modernAccent)
                         .matchedGeometryEffect(id: "selectedMode", in: animation)
                 }
             }
@@ -228,9 +228,9 @@ struct OverviewSection: View {
     let points: [KnowledgePoint]
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             // 簡約統計卡片
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
                 ClaudeStatCard(title: "總知識點", value: "\(stats.totalPoints)")
                 ClaudeStatCard(title: "平均熟練度", value: String(format: "%.1f", stats.averageMastery))
                 ClaudeStatCard(title: "今日需複習", value: "\(stats.needReviewToday)")
@@ -252,14 +252,14 @@ struct ClaudeStatCard: View {
     let value: String
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.sm) {
             Text(value)
                 .font(.appTitle2(for: value))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Text(title)
                 .font(.appCaption(for: title))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(maxWidth: .infinity, minHeight: 80)
         .padding()
@@ -279,7 +279,7 @@ struct ClaudeMasteryCard: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("熟練度分布")
                 .font(.appHeadline(for: "熟練度分布"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             VStack(spacing: 12) {
                 ClaudeMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color(.systemRed))
@@ -310,7 +310,7 @@ struct ClaudeMasteryBar: View {
         HStack {
             Text(label)
                 .font(.appSubheadline(for: label))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
                 .frame(width: 80, alignment: .leading)
             
             GeometryReader { geometry in
@@ -329,7 +329,7 @@ struct ClaudeMasteryBar: View {
             
             Text("\(count)")
                 .font(.appCaption())
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .frame(width: 30, alignment: .trailing)
         }
     }
@@ -344,7 +344,7 @@ struct ClaudeFocusCard: View {
             HStack {
                 Text("需要重點關注")
                     .font(.appHeadline(for: "需要重點關注"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 Spacer()
             }
             
@@ -355,7 +355,7 @@ struct ClaudeFocusCard: View {
                         .foregroundStyle(Color(.systemGreen))
                     Text("所有知識點都很穩固！")
                         .font(.appSubheadline(for: "所有知識點都很穩固！"))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.modernTextSecondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
@@ -367,12 +367,12 @@ struct ClaudeFocusCard: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(point.key_point_summary ?? "核心觀念")
                                         .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(Color.modernTextPrimary)
                                         .lineLimit(1)
                                     
                                     Text(point.correct_phrase)
                                         .font(.appCaption(for: point.correct_phrase))
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(Color.modernTextSecondary)
                                         .lineLimit(1)
                                 }
                                 
@@ -445,12 +445,12 @@ struct ClaudeCategoryCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(category)
                     .font(.appHeadline(for: category))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 HStack(spacing: 16) {
                     Label("\(points.count)", systemImage: "book.closed")
                         .font(.appCaption())
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.modernTextSecondary)
                     
                     if weakPointsCount > 0 {
                         Label("\(weakPointsCount) 需加強", systemImage: "exclamationmark.triangle")
@@ -465,11 +465,11 @@ struct ClaudeCategoryCard: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(String(format: "%.1f", averageMastery))
                     .font(.appTitle3())
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text("平均熟練度")
                     .font(.appCaption2(for: "平均熟練度"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             }
         }
         .padding(20)
@@ -505,12 +505,12 @@ struct ClaudeProgressCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(point.key_point_summary ?? "核心觀念")
                     .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                     .lineLimit(1)
                 
                 Text(point.correct_phrase)
                     .font(.appCaption(for: point.correct_phrase))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
             
@@ -519,7 +519,7 @@ struct ClaudeProgressCard: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(String(format: "%.1f", point.mastery_level))
                     .font(.appHeadline())
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 MasteryBarView(masteryLevel: point.mastery_level)
                     .frame(width: 60)
@@ -581,12 +581,12 @@ struct ClaudeScheduleCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(point.key_point_summary ?? "核心觀念")
                     .font(.appSubheadline(for: point.key_point_summary ?? "核心觀念"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                     .lineLimit(1)
                 
                 Text(point.correct_phrase)
                     .font(.appCaption(for: point.correct_phrase))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
             
@@ -629,7 +629,7 @@ struct ClaudeLoadingView: View {
             
             Text("正在載入數據...")
                 .font(.appSubheadline(for: "正在載入數據..."))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -647,11 +647,11 @@ struct ClaudeErrorView: View {
             
             Text("載入失敗")
                 .font(.appTitle3(for: "載入失敗"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Text(message)
                 .font(.appSubheadline(for: message))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             
@@ -676,11 +676,11 @@ struct ClaudeEmptyStateView: View {
             
             Text("開始您的學習之旅")
                 .font(.appTitle3(for: "開始您的學習之旅"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Text("完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！")
                 .font(.appSubheadline(for: "完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！"))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(2)
         }

@@ -54,7 +54,7 @@ struct FlashcardView: View {
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .onAppear {
             startTime = Date()
             cardStartTime = Date()
@@ -68,7 +68,7 @@ struct FlashcardView: View {
             Button("結束") {
                 dismiss()
             }
-            .foregroundColor(.red)
+            .foregroundColor(Color.modernError)
             
             Spacer()
             
@@ -80,7 +80,7 @@ struct FlashcardView: View {
             
             Text("\(currentIndex + 1)/\(quiz.questions.count)")
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(Color.modernTextSecondary)
         }
         .padding()
     }
@@ -90,19 +90,19 @@ struct FlashcardView: View {
     private var progressBar: some View {
         VStack(spacing: 8) {
             ProgressView(value: progress)
-                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                .progressViewStyle(LinearProgressViewStyle(tint: Color.modernSpecial))
                 .scaleEffect(x: 1, y: 2, anchor: .center)
             
             HStack {
                 Text("已完成 \(currentIndex)")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
                 
                 Spacer()
                 
                 Text("正確率: \(currentIndex > 0 ? Int(Double(correctAnswers) / Double(currentIndex) * 100) : 0)%")
                     .font(.caption)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.modernSpecial)
             }
         }
         .padding(.horizontal)
@@ -137,10 +137,10 @@ struct FlashcardView: View {
             if !isShowingAnswer {
                 HStack {
                     Image(systemName: "hand.tap")
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.modernTextSecondary)
                     Text("點擊卡片查看答案")
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(Color.modernTextSecondary)
                 }
                 .padding(.top, 16)
             }
@@ -163,7 +163,7 @@ struct FlashcardView: View {
             if let pronunciation = question.pronunciation {
                 Text("/\(pronunciation)/")
                     .font(.title2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.modernSpecial)
             }
             
             // 詞性
@@ -185,7 +185,7 @@ struct FlashcardView: View {
                 
                 Text("你知道這個單字的意思嗎？")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
                     .multilineTextAlignment(.center)
             }
         }
@@ -210,7 +210,7 @@ struct FlashcardView: View {
                     if let pronunciation = question.pronunciation {
                         Text("/\(pronunciation)/")
                             .font(.title3)
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.modernSpecial)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -222,7 +222,7 @@ struct FlashcardView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("中文意思")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                             .textCase(.uppercase)
                         
                         Text(definitionZH)
@@ -237,7 +237,7 @@ struct FlashcardView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("English Definition")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                             .textCase(.uppercase)
                         
                         Text(definitionEN)
@@ -251,7 +251,7 @@ struct FlashcardView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("例句")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Color.modernTextSecondary)
                             .textCase(.uppercase)
                         
                         ForEach(Array(examples.prefix(2).enumerated()), id: \.offset) { index, example in
@@ -263,7 +263,7 @@ struct FlashcardView: View {
                                 if let sentenceZH = example.sentenceZH {
                                     Text(sentenceZH)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(Color.modernTextSecondary)
                                 }
                             }
                             .padding(.vertical, 4)
@@ -375,11 +375,11 @@ struct FlashcardView: View {
                 
                 Text("共完成 \(quiz.questions.count) 個單字")
                     .font(.headline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
                 
                 Text("學習時間: \(formatStudyTime())")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color.modernTextSecondary)
             }
             
             Button(action: completeStudy) {

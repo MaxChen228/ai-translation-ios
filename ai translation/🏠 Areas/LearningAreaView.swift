@@ -82,14 +82,14 @@ struct LearningStatsView: View {
                 }
                 .padding(20)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.modernBackground)
             .navigationTitle("📊 學習統計")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: refreshStats) {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.modernAccent)
                     }
                 }
             }
@@ -170,7 +170,7 @@ struct MonthlyOverviewCard: View {
             HStack {
                 Image(systemName: "calendar")
                     .font(.appHeadline(for: "📅"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("本月學習概覽")
                     .font(.appTitle3(for: "本月學習概覽"))
@@ -191,7 +191,7 @@ struct MonthlyOverviewCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("當前連續")
                             .font(.appCaption(for: "當前連續"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         
                         HStack(spacing: 4) {
                             Image(systemName: "flame.fill")
@@ -200,7 +200,7 @@ struct MonthlyOverviewCard: View {
                             
                             Text("\(stats.currentStreak)天")
                                 .font(.appHeadline())
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.modernTextPrimary)
                         }
                     }
                     
@@ -209,24 +209,24 @@ struct MonthlyOverviewCard: View {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("最長紀錄")
                             .font(.appCaption(for: "最長紀錄"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         
                         Text("\(stats.longestStreak)天")
                             .font(.appCallout())
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                     }
                 }
                 .padding(.top, 8)
             } else {
                 Text("載入中...")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .frame(maxWidth: .infinity, minHeight: 100)
             }
         }
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -240,7 +240,7 @@ struct WeeklyTrendCard: View {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.appHeadline(for: "📈"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("近七天學習趨勢")
                     .font(.appTitle3(for: "近七天學習趨勢"))
@@ -250,7 +250,7 @@ struct WeeklyTrendCard: View {
             
             if weeklyData.isEmpty {
                 Text("暫無數據")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .frame(maxWidth: .infinity, minHeight: 100)
             } else {
                 VStack(spacing: 16) {
@@ -259,12 +259,12 @@ struct WeeklyTrendCard: View {
                         ForEach(weeklyData) { data in
                             VStack(spacing: 8) {
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.orange.opacity(0.8))
+                                    .fill(Color.modernAccent.opacity(0.8))
                                     .frame(width: 32, height: CGFloat(max(4, data.questionsCompleted * 8)))
                                 
                                 Text(data.date, formatter: dayFormatter)
                                     .font(.appCaption(for: "日期"))
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.modernTextSecondary)
                             }
                         }
                     }
@@ -275,11 +275,11 @@ struct WeeklyTrendCard: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("總題數")
                                 .font(.appCaption(for: "總題數"))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                             
                             Text("\(weeklyData.reduce(0) { $0 + $1.questionsCompleted })")
                                 .font(.appCallout())
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.modernTextPrimary)
                         }
                         
                         Spacer()
@@ -287,11 +287,11 @@ struct WeeklyTrendCard: View {
                         VStack(alignment: .trailing, spacing: 2) {
                             Text("平均每天")
                                 .font(.appCaption(for: "平均每天"))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                             
                             Text("\(weeklyData.reduce(0) { $0 + $1.questionsCompleted } / max(1, weeklyData.count))題")
                                 .font(.appCallout())
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.modernTextPrimary)
                         }
                     }
                 }
@@ -300,7 +300,7 @@ struct WeeklyTrendCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -325,7 +325,7 @@ struct AchievementsCard: View {
             HStack {
                 Image(systemName: "trophy.fill")
                     .font(.appHeadline(for: "🏆"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("學習成就")
                     .font(.appTitle3(for: "學習成就"))
@@ -337,7 +337,7 @@ struct AchievementsCard: View {
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.orange.opacity(0.15))
+                    .background(Color.modernAccent.opacity(0.15))
                     .clipShape(Capsule())
             }
             
@@ -350,7 +350,7 @@ struct AchievementsCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -369,7 +369,7 @@ struct LearningAdviceCard: View {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .font(.appHeadline(for: "💡"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("學習建議")
                     .font(.appTitle3(for: "學習建議"))
@@ -384,11 +384,11 @@ struct LearningAdviceCard: View {
                             .font(.appCaption())
                             .foregroundStyle(.white)
                             .frame(width: 20, height: 20)
-                            .background(Circle().fill(Color.orange))
+                            .background(Circle().fill(Color.modernAccent))
                         
                         Text(tip)
                             .font(.appBody(for: tip))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                             .lineSpacing(2)
                         
                         Spacer()
@@ -399,7 +399,7 @@ struct LearningAdviceCard: View {
         .padding(20)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+                .fill(Color.modernSurface)
                 .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
@@ -416,21 +416,21 @@ struct StatMiniCard: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.appTitle3(for: icon))
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
             
             Text(value)
                 .font(.appHeadline(for: value))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Text(title)
                 .font(.appCaption(for: title))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
         .background {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6))
+                .fill(Color.modernSurface)
         }
     }
 }
@@ -450,7 +450,7 @@ struct AchievementMiniCard: View {
         VStack(spacing: 8) {
             Image(systemName: achievement.icon)
                 .font(.appTitle2(for: achievement.icon))
-                .foregroundStyle(achievement.isUnlocked ? Color.orange : .secondary)
+                .foregroundStyle(achievement.isUnlocked ? Color.modernAccent : .secondary)
             
             Text(achievement.title)
                 .font(.appCaption(for: achievement.title))
@@ -459,7 +459,7 @@ struct AchievementMiniCard: View {
             
             Text(achievement.description)
                 .font(.appCaption2(for: achievement.description))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
         }
@@ -467,7 +467,7 @@ struct AchievementMiniCard: View {
         .padding(12)
         .background {
             RoundedRectangle(cornerRadius: 8)
-                .fill(achievement.isUnlocked ? Color.orange.opacity(0.1) : Color(.systemGray6))
+                .fill(achievement.isUnlocked ? Color.modernAccent.opacity(0.1) : Color.modernSurface)
                 .overlay {
                     if !achievement.isUnlocked {
                         RoundedRectangle(cornerRadius: 8)

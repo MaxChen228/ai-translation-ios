@@ -31,22 +31,22 @@ struct RegisterView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: ModernSpacing.lg) {
                     // 標題區域
-                    VStack(spacing: 8) {
+                    VStack(spacing: ModernSpacing.sm) {
                         Text("建立新帳號")
                             .font(.appLargeTitle(for: "註冊標題"))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                         
                         Text("設定您的個人學習資料")
                             .font(.appSubheadline(for: "註冊描述"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, ModernSpacing.lg)
                     
                     // 基本資料
                     ClaudeAuthCard(title: "基本資料", icon: "person.fill") {
-                        VStack(spacing: 20) {
+                        VStack(spacing: ModernSpacing.lg) {
                             ClaudeAuthInputField(
                                 title: "使用者名稱",
                                 placeholder: "請輸入使用者名稱",
@@ -70,7 +70,7 @@ struct RegisterView: View {
                     
                     // 密碼設定
                     ClaudeAuthCard(title: "密碼設定", icon: "lock.fill") {
-                        VStack(spacing: 20) {
+                        VStack(spacing: ModernSpacing.lg) {
                             ClaudeAuthPasswordField(
                                 title: "密碼",
                                 placeholder: "請輸入密碼（至少6位字符）",
@@ -97,7 +97,7 @@ struct RegisterView: View {
                     
                     // 學習偏好
                     ClaudeAuthCard(title: "學習偏好（選填）", icon: "graduationcap.fill") {
-                        VStack(spacing: 20) {
+                        VStack(spacing: ModernSpacing.lg) {
                             ClaudeAuthPickerField(
                                 title: "母語",
                                 selection: $nativeLanguage,
@@ -143,9 +143,9 @@ struct RegisterView: View {
                         }
                     }
                     
-                    Spacer(minLength: 40)
+                    Spacer(minLength: ModernSpacing.xl + 8)
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
             .background(Color.modernBackground)
             .navigationBarTitleDisplayMode(.inline)
