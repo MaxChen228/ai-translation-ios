@@ -10,13 +10,13 @@ struct ArchivedPointsView: View {
     var body: some View {
         ZStack {
             if isLoading {
-                VStack(spacing: 12) {
+                VStack(spacing: ModernSpacing.md) {
                     ProgressView()
                     Text("正在載入...")
                         .font(.appSubheadline(for: "正在載入..."))
                 }
             } else if let errorMessage = errorMessage {
-                VStack(spacing: 10) {
+                VStack(spacing: ModernSpacing.md) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .font(.appLargeTitle())
                         .foregroundStyle(Color.modernWarning)
@@ -34,7 +34,7 @@ struct ArchivedPointsView: View {
             } else {
                 List {
                     ForEach(archivedPoints) { point in
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                             Text(point.correct_phrase)
                                 .font(.appCallout(for: point.correct_phrase))
                                 .fontWeight(.medium)
@@ -42,7 +42,7 @@ struct ArchivedPointsView: View {
                                 .font(.appCaption(for: point.key_point_summary ?? "核心觀念"))
                                 .foregroundStyle(Color.modernTextSecondary)
                         }
-                        .padding(.vertical, 5)
+                        .padding(.vertical, ModernSpacing.sm)
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
                                 Task {

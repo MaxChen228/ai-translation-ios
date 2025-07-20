@@ -27,7 +27,7 @@ struct AllKnowledgePointsListView: View {
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
                         }
-                        .padding(.vertical, 6)
+                        .padding(.vertical, ModernSpacing.sm)
                     }
                     // 讓每個項目可以用它的資料庫 ID 來標識
                     .tag(point.id)

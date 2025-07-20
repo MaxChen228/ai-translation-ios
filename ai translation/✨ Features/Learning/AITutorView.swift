@@ -14,11 +14,11 @@ struct AITutorView: View {
             ScrollView {
                 LazyVStack(spacing: 24) {
                     if isLoading {
-                        ClaudeQuestionGenerationStatus()
+                        ModernQuestionGenerationStatus()
                     }
                     if showStartLearning && sessionManager.sessionQuestions.isEmpty {
                         // Claude 風格的開始學習卡片
-                        ClaudeStartLearningCard(
+                        ModernStartLearningCard(
                             isLoading: isLoading,
                             errorMessage: errorMessage,
                             onStartLearning: {
@@ -29,16 +29,16 @@ struct AITutorView: View {
                         )
                         
                         // Claude 風格的設定預覽卡片
-                        ClaudeSettingsPreviewCard()
+                        ModernSettingsPreviewCard()
                         
                     } else if sessionManager.sessionQuestions.isEmpty {
                         // 空狀態
-                        ClaudeEmptyLearningState {
+                        ModernEmptyLearningState {
                             showStartLearning = true
                         }
                     } else {
                         // Claude 風格的學習進度概覽
-                        ClaudeLearningProgressCard(
+                        ModernLearningProgressCard(
                             sessionQuestions: sessionManager.sessionQuestions,
                             onNewSession: {
                                 Task {
@@ -48,14 +48,14 @@ struct AITutorView: View {
                         )
                         
                         // Claude 風格的題目列表
-                        ClaudeQuestionListCard(
+                        ModernQuestionListCard(
                             sessionQuestions: sessionManager.sessionQuestions
                         )
                     }
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color.modernBackground)
             .navigationTitle("AI 英文家教")
             .navigationBarTitleDisplayMode(.large)
         }
@@ -109,7 +109,7 @@ struct AITutorView: View {
 
 // MARK: - Claude 風格組件
 
-struct ClaudeStartLearningCard: View {
+struct ModernStartLearningCard: View {
     let isLoading: Bool
     let errorMessage: String?
     let onStartLearning: () -> Void
@@ -137,7 +137,7 @@ struct ClaudeStartLearningCard: View {
             }
             
             // 快速設定概覽
-            ClaudeQuickStatsRow()
+            ModernQuickStatsRow()
             
             // 開始學習按鈕
             Button(action: onStartLearning) {
@@ -156,9 +156,9 @@ struct ClaudeStartLearningCard: View {
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
+                .padding(.vertical, ModernSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .fill(Color.modernAccent)
                 }
             }
@@ -177,27 +177,27 @@ struct ClaudeStartLearningCard: View {
                         .foregroundStyle(Color.modernError)
                         .lineSpacing(1)
                 }
-                .padding(12)
+                .padding(ModernSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: ModernRadius.sm)
                         .fill(Color.modernError.opacity(0.1))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
                                 .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                         }
                 }
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeQuickStatsRow: View {
+struct ModernQuickStatsRow: View {
     private var settings: (review: Int, new: Int, difficulty: Int, length: String) {
         (
             SettingsManager.shared.reviewCount,
@@ -209,20 +209,20 @@ struct ClaudeQuickStatsRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            ClaudeQuickStat(title: "複習題", value: "\(settings.review)")
-            ClaudeQuickStat(title: "新題目", value: "\(settings.new)")
-            ClaudeQuickStat(title: "難度", value: "\(settings.difficulty)")
-            ClaudeQuickStat(title: "長度", value: settings.length)
+            ModernQuickStat(title: "複習題", value: "\(settings.review)")
+            ModernQuickStat(title: "新題目", value: "\(settings.new)")
+            ModernQuickStat(title: "難度", value: "\(settings.difficulty)")
+            ModernQuickStat(title: "長度", value: settings.length)
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
         }
     }
 }
 
-struct ClaudeQuickStat: View {
+struct ModernQuickStat: View {
     let title: String
     let value: String
     
@@ -240,7 +240,7 @@ struct ClaudeQuickStat: View {
     }
 }
 
-struct ClaudeSettingsPreviewCard: View {
+struct ModernSettingsPreviewCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -266,16 +266,16 @@ struct ClaudeSettingsPreviewCard: View {
                 .foregroundStyle(.secondary)
                 .lineSpacing(2)
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeEmptyLearningState: View {
+struct ModernEmptyLearningState: View {
     let onRestart: () -> Void
     
     var body: some View {
@@ -300,8 +300,8 @@ struct ClaudeEmptyLearningState: View {
                         .font(.appSubheadline(for: "開始新回合"))
                 }
                 .foregroundStyle(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.horizontal, ModernSpacing.lg)
+                .padding(.vertical, ModernSpacing.md)
                 .background {
                     Capsule()
                         .fill(Color.modernAccent)
@@ -309,16 +309,16 @@ struct ClaudeEmptyLearningState: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(40)
+        .padding(ModernSpacing.xxl)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeLearningProgressCard: View {
+struct ModernLearningProgressCard: View {
     let sessionQuestions: [SessionQuestion]
     let onNewSession: () -> Void
     
@@ -352,8 +352,8 @@ struct ClaudeLearningProgressCard: View {
                             .font(.appSubheadline(for: "新回合"))
                     }
                     .foregroundStyle(Color.modernAccent)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, ModernSpacing.md)
+                    .padding(.vertical, ModernSpacing.sm)
                     .background {
                         Capsule()
                             .fill(Color.modernAccentSoft)
@@ -381,16 +381,16 @@ struct ClaudeLearningProgressCard: View {
                     .scaleEffect(y: 1.5)
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeQuestionListCard: View {
+struct ModernQuestionListCard: View {
     let sessionQuestions: [SessionQuestion]
     
     var body: some View {
@@ -409,23 +409,23 @@ struct ClaudeQuestionListCard: View {
             
             LazyVStack(spacing: 12) {
                 ForEach(Array(sessionQuestions.enumerated()), id: \.element.id) { index, sessionQuestion in
-                    ClaudeQuestionItem(
+                    ModernQuestionItem(
                         sessionQuestion: sessionQuestion,
                         questionNumber: index + 1
                     )
                 }
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeQuestionItem: View {
+struct ModernQuestionItem: View {
     let sessionQuestion: SessionQuestion
     let questionNumber: Int
     
@@ -494,11 +494,11 @@ struct ClaudeQuestionItem: View {
                 .font(.appCaption(for: "›"))
                 .foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .padding(.horizontal, ModernSpacing.lg)
+        .padding(.vertical, ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
         }
     }
 }
@@ -507,7 +507,7 @@ struct ClaudeQuestionItem: View {
     AITutorView()
         .environmentObject(SessionManager())
 }
-struct ClaudeQuestionGenerationStatus: View {
+struct ModernQuestionGenerationStatus: View {
     @State private var animationScale: CGFloat = 1.0
     
     var body: some View {
@@ -544,12 +544,12 @@ struct ClaudeQuestionGenerationStatus: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernAccentSoft)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: ModernRadius.lg)
                         .stroke(Color.modernAccent.opacity(0.3), lineWidth: 1.5)
                 }
         }

@@ -33,7 +33,7 @@ struct KnowledgePointDetailView: View {
                 // 操作按鈕
                 actionButtonsSection
             }
-            .padding(20)
+            .padding(ModernSpacing.lg)
         }
         .background(Color.modernBackground)
         .navigationTitle("知識點詳情")
@@ -81,10 +81,10 @@ struct KnowledgePointDetailView: View {
                 saveMessageView(saveMessage)
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
@@ -104,8 +104,8 @@ struct KnowledgePointDetailView: View {
                         .fontWeight(.semibold)
                         .foregroundStyle(Color.modernAccent)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, ModernSpacing.md)
+                .padding(.vertical, ModernSpacing.sm)
                 .background {
                     Capsule()
                         .fill(Color.modernAccentSoft)
@@ -170,8 +170,8 @@ struct KnowledgePointDetailView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(localIsArchived ? Color.modernTextSecondary : Color.modernSuccess)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, ModernSpacing.sm)
+        .padding(.vertical, ModernSpacing.xs)
         .background {
             Capsule()
                 .fill((localIsArchived ? Color.modernTextSecondary : Color.modernSuccess).opacity(0.1))
@@ -189,11 +189,11 @@ struct KnowledgePointDetailView: View {
                     
                     Text(userContextSentence)
                         .font(.appBody(for: userContextSentence))
-                        .padding(12)
+                        .padding(ModernSpacing.md)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemGray6))
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                .fill(Color.modernSurface)
                         }
                 }
             }
@@ -215,13 +215,13 @@ struct KnowledgePointDetailView: View {
                             .fontWeight(.medium)
                             .foregroundStyle(Color.modernError)
                             .strikethrough(color: Color.modernError)
-                            .padding(12)
+                            .padding(ModernSpacing.md)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background {
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
                                     .fill(Color.modernError.opacity(0.1))
                                     .overlay {
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: ModernRadius.sm)
                                             .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                                     }
                             }
@@ -269,13 +269,13 @@ struct KnowledgePointDetailView: View {
                         .font(.appBody(for: point.correct_phrase))
                         .fontWeight(.bold)
                         .foregroundStyle(Color.modernSuccess)
-                        .padding(12)
+                        .padding(ModernSpacing.md)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
                                 .fill(Color.modernSuccess.opacity(0.1))
                                 .overlay {
-                                    RoundedRectangle(cornerRadius: 8)
+                                    RoundedRectangle(cornerRadius: ModernRadius.sm)
                                         .stroke(Color.modernSuccess.opacity(0.3), lineWidth: 1)
                                 }
                         }
@@ -321,10 +321,10 @@ struct KnowledgePointDetailView: View {
                     
                     Text(aiReviewNotes)
                         .font(.appBody(for: aiReviewNotes))
-                        .padding(12)
+                        .padding(ModernSpacing.md)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
                                 .fill(Color.modernSpecial.opacity(0.1))
                         }
                 }
@@ -482,9 +482,9 @@ struct KnowledgePointDetailView: View {
                 .fontWeight(.medium)
                 .foregroundStyle(message.contains("成功") ? Color.modernSuccess : Color.modernError)
         }
-        .padding(12)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
                 .fill((message.contains("成功") ? Color.modernSuccess : Color.modernError).opacity(0.1))
         }
     }
@@ -664,8 +664,8 @@ struct AIReviewResultView: View {
                         Text(reviewResult.overall_assessment)
                             .font(.appBody(for: reviewResult.overall_assessment))
                             .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(10)
+                            .background(Color.modernSurface)
+                            .cornerRadius(ModernRadius.md)
                     }
                     
                     // 評分
@@ -708,13 +708,13 @@ struct AIReviewResultView: View {
                                 Text(example)
                                     .font(.appBody(for: example))
                                     .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(8)
+                                    .background(Color.modernSurface)
+                                    .cornerRadius(ModernRadius.sm)
                             }
                         }
                     }
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
             .navigationTitle("AI 審閱結果")
             .navigationBarTitleDisplayMode(.large)

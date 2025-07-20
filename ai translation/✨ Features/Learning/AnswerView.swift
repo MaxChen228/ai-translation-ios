@@ -22,7 +22,7 @@ struct AnswerView: View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 // Claude 風格的題目卡片
-                ClaudeQuestionCard(
+                ModernQuestionCard(
                     question: sessionQuestion.question,
                     questionNumber: getQuestionNumber(),
                     totalQuestions: sessionManager.sessionQuestions.count,
@@ -30,7 +30,7 @@ struct AnswerView: View {
                 )
                 
                 // Claude 風格的作答卡片
-                ClaudeAnswerCard(
+                ModernAnswerCard(
                     userAnswer: $userAnswer,
                     isLoading: isLoading,
                     errorMessage: errorMessage,
@@ -44,16 +44,16 @@ struct AnswerView: View {
                 
                 // Claude 風格的批改結果卡片
                 if let feedback = sessionQuestion.feedback {
-                    ClaudeFeedbackCard(
+                    FeedbackCard(
                         feedback: feedback,
                         questionData: sessionQuestion.question,
                         userAnswer: userAnswer
                     )
                 }
             }
-            .padding(20)
+            .padding(ModernSpacing.lg)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .navigationTitle("作答與批改")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -118,8 +118,8 @@ struct AnswerView: View {
 
 // MARK: - Claude 風格組件
 
-// 修改 ClaudeQuestionCard 結構，加入 userAnswer 參數
-struct ClaudeQuestionCard: View {
+// 修改 ModernQuestionCard 結構，加入 userAnswer 參數
+struct ModernQuestionCard: View {
     let question: Question
     let questionNumber: Int
     let totalQuestions: Int
@@ -156,7 +156,7 @@ struct ClaudeQuestionCard: View {
                 
                 Spacer()
                 
-                ClaudeQuestionTypeTag(type: question.type)
+                ModernQuestionTypeTag(type: question.type)
             }
             
             // 題目內容 (保持不變)
@@ -171,13 +171,13 @@ struct ClaudeQuestionCard: View {
                     .fontWeight(.medium)
                     .foregroundStyle(.primary)
                     .lineSpacing(4)
-                    .padding(20)
+                    .padding(ModernSpacing.lg)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
                             .fill(Color.modernAccent.opacity(0.08))
                             .overlay {
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: ModernRadius.md)
                                     .stroke(Color.modernAccent.opacity(0.25), lineWidth: 1)
                             }
                     }
@@ -185,23 +185,23 @@ struct ClaudeQuestionCard: View {
             
             // 提示區域 - 修改這裡，現在可以正確傳遞 userAnswer
             if let hint = question.hint_text, !hint.isEmpty {
-                ClaudeHintCard(
+                ModernHintCard(
                     hintText: hint,
                     chineseSentence: question.new_sentence,
                     userAnswer: $userAnswer  // 現在這個參數可以正確傳遞了
                 )
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }      
 }
 
-struct ClaudeQuestionTypeTag: View {
+struct ModernQuestionTypeTag: View {
     let type: String
     
     private var tagInfo: (text: String, color: Color, icon: String) {
@@ -231,7 +231,7 @@ struct ClaudeQuestionTypeTag: View {
     }
 }
 
-struct ClaudeHintCard: View {
+struct ModernHintCard: View {
     let hintText: String
     let chineseSentence: String
     @Binding var userAnswer: String
@@ -338,12 +338,12 @@ struct ClaudeHintCard: View {
                         .foregroundStyle(.primary)
                         .lineSpacing(2)
                 }
-                .padding(16)
+                .padding(ModernSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .fill(Color.modernWarning.opacity(0.1))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: ModernRadius.md)
                                 .stroke(Color.modernWarning.opacity(0.3), lineWidth: 1)
                         }
                 }
@@ -379,7 +379,7 @@ struct ClaudeHintCard: View {
                     }
                     
                     if let error = smartHintError {
-                        ClaudeErrorMessage(message: error)
+                        ModernErrorMessage(message: error)
                     } else if let smartHint = smartHintData {
                         VStack(alignment: .leading, spacing: 16) {
                             // 主要引導提示
@@ -416,21 +416,21 @@ struct ClaudeHintCard: View {
                                     .font(.appSubheadline())
                                     .foregroundStyle(.secondary)
                                     .italic()
-                                    .padding(10)
+                                    .padding(ModernSpacing.sm)
                                     .background {
-                                        RoundedRectangle(cornerRadius: 8)
+                                        RoundedRectangle(cornerRadius: ModernRadius.sm)
                                             .fill(Color.modernSpecial.opacity(0.08))
                                     }
                             }
                         }
                     }
                 }
-                .padding(16)
+                .padding(ModernSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .fill(Color.modernSpecial.opacity(0.1))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: ModernRadius.md)
                                 .stroke(Color.modernSpecial.opacity(0.3), lineWidth: 1)
                         }
                 }
@@ -487,7 +487,7 @@ struct ClaudeHintCard: View {
     }
 }
 
-struct ClaudeAnswerCard: View {
+struct ModernAnswerCard: View {
     @Binding var userAnswer: String
     let isLoading: Bool
     let errorMessage: String?
@@ -513,10 +513,10 @@ struct ClaudeAnswerCard: View {
             // 輸入區域
             VStack(spacing: 16) {
                 ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .fill(Color.modernSurface.opacity(0.7))
                         .overlay {
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: ModernRadius.md)
                                 .stroke(showKeyboard ? Color.modernAccent : Color.clear, lineWidth: 2)
                         }
                         .frame(minHeight: 120)
@@ -525,14 +525,14 @@ struct ClaudeAnswerCard: View {
                         Text("請在此輸入您的英文翻譯...")
                             .font(.appBody(for: "請在此輸入您的英文翻譯..."))
                             .foregroundStyle(Color.secondary.opacity(0.6))
-                            .padding(16)
+                            .padding(ModernSpacing.md)
                             .allowsHitTesting(false)
                     }
                     
                     TextEditor(text: $userAnswer)
                         .font(.appBody())
                         .scrollContentBackground(.hidden)
-                        .padding(12)
+                        .padding(ModernSpacing.sm + 4)
                         .onTapGesture {
                             showKeyboard = true
                         }
@@ -569,7 +569,7 @@ struct ClaudeAnswerCard: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .background {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
                             .fill(userAnswer.isEmpty ? Color.modernBorder : Color.modernAccent)
                     }
                 }
@@ -577,20 +577,20 @@ struct ClaudeAnswerCard: View {
                 
                 // 錯誤訊息
                 if let errorMessage = errorMessage {
-                    ClaudeErrorMessage(message: errorMessage)
+                    ModernErrorMessage(message: errorMessage)
                 }
             }
         }
-        .padding(24)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeErrorMessage: View {
+struct ModernErrorMessage: View {
     let message: String
     
     var body: some View {
@@ -605,19 +605,19 @@ struct ClaudeErrorMessage: View {
                 .foregroundStyle(Color.modernError)
                 .lineSpacing(1)
         }
-        .padding(12)
+        .padding(ModernSpacing.sm + 4)
         .background {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
                 .fill(Color.modernError.opacity(0.1))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: ModernRadius.sm)
                         .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                 }
         }
     }
 }
 
-struct ClaudeFeedbackCard: View {
+struct FeedbackCard: View {
     let feedback: FeedbackResponse
     let questionData: Question
     let userAnswer: String
@@ -634,11 +634,11 @@ struct ClaudeFeedbackCard: View {
     var body: some View {
         VStack(spacing: 24) {
             // 【修改】Claude 風格的整體評估 - 傳入 questionData 參數
-            ClaudeOverallAssessment(feedback: feedback, questionData: questionData)
+            ModernOverallAssessment(feedback: feedback, questionData: questionData)
             
             // Claude 風格的錯誤分析（保持不變）
             if !editableErrors.isEmpty {
-                ClaudeErrorAnalysisCard(
+                ErrorAnalysisCard(
                     editableErrors: $editableErrors,
                     isEditMode: $isEditMode,
                     selectedForMerge: $selectedForMerge,
@@ -648,14 +648,14 @@ struct ClaudeFeedbackCard: View {
                 )
                 
                 // Claude 風格的儲存區域（保持不變）
-                ClaudeSaveSection(
+                ModernSaveSection(
                     editableErrors: editableErrors,
                     isSaving: isSaving,
                     saveMessage: saveMessage,
                     onSave: { showSaveAlert = true }
                 )
             } else {
-                ClaudeNoErrorsCard()
+                ModernNoErrorsCard()
             }
         }
         .onAppear {
@@ -733,7 +733,7 @@ struct ClaudeFeedbackCard: View {
     }
 }
 
-struct ClaudeOverallAssessment: View {
+struct ModernOverallAssessment: View {
     let feedback: FeedbackResponse
     let questionData: Question  // 新增這個參數，用於判斷題目類型
     
@@ -754,7 +754,7 @@ struct ClaudeOverallAssessment: View {
             
             // 【新增】複習題專屬區域
             if questionData.type == "review" {
-                ClaudeReviewResultCard(
+                ModernReviewResultCard(
                     feedback: feedback,
                     questionData: questionData
                 )
@@ -796,24 +796,24 @@ struct ClaudeOverallAssessment: View {
                     .font(.appBody())
                     .foregroundStyle(.primary)
                     .lineSpacing(2)
-                    .padding(16)
+                    .padding(ModernSpacing.md)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
                             .fill(Color.modernSurface.opacity(0.7))
                     }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeReviewResultCard: View {
+struct ModernReviewResultCard: View {
     let feedback: FeedbackResponse
     let questionData: Question
     
@@ -906,12 +906,12 @@ struct ClaudeReviewResultCard: View {
                 }
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .stroke(masteryColor.opacity(0.3), lineWidth: 1.5)
                 }
         }
@@ -919,7 +919,7 @@ struct ClaudeReviewResultCard: View {
 }
 
 
-struct ClaudeErrorAnalysisCard: View {
+struct ErrorAnalysisCard: View {
     @Binding var editableErrors: [ErrorAnalysis]
     @Binding var isEditMode: Bool
     @Binding var selectedForMerge: Set<UUID>
@@ -991,13 +991,13 @@ struct ClaudeErrorAnalysisCard: View {
             
             // 合併錯誤訊息
             if let mergeError = mergeError {
-                ClaudeErrorMessage(message: mergeError)
+                ModernErrorMessage(message: mergeError)
             }
             
             // 錯誤列表
             LazyVStack(spacing: 12) {
                 ForEach(editableErrors) { error in
-                    ClaudeErrorAnalysisRow(
+                    ModernErrorAnalysisRow(
                         error: error,
                         isEditMode: isEditMode,
                         isSelected: selectedForMerge.contains(error.id),
@@ -1011,9 +1011,9 @@ struct ClaudeErrorAnalysisCard: View {
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -1037,7 +1037,7 @@ struct ClaudeErrorAnalysisCard: View {
     }
 }
 
-struct ClaudeErrorAnalysisRow: View {
+struct ModernErrorAnalysisRow: View {
     let error: ErrorAnalysis
     let isEditMode: Bool
     let isSelected: Bool
@@ -1123,13 +1123,13 @@ struct ClaudeErrorAnalysisRow: View {
                 .padding(.leading, 16)
             }
         }
-        .padding(16)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray6))
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
                 .overlay {
                     if isSelected {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
                             .stroke(Color.modernSpecial, lineWidth: 2)
                     }
                 }
@@ -1137,7 +1137,7 @@ struct ClaudeErrorAnalysisRow: View {
     }
 }
 
-struct ClaudeNoErrorsCard: View {
+struct ModernNoErrorsCard: View {
     var body: some View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
@@ -1153,19 +1153,19 @@ struct ClaudeNoErrorsCard: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(40)
+        .padding(ModernSpacing.xl)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSuccess.opacity(0.1))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: ModernRadius.lg)
                         .stroke(Color.modernSuccess.opacity(0.3), lineWidth: 1)
                 }
         }
     }
 }
 
-struct ClaudeSaveSection: View {
+struct ModernSaveSection: View {
     let editableErrors: [ErrorAnalysis]
     let isSaving: Bool
     let saveMessage: String?
@@ -1191,7 +1191,7 @@ struct ClaudeSaveSection: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .fill(editableErrors.isEmpty ? Color.modernBorder : Color.modernSuccess)
                 }
             }
@@ -1201,16 +1201,16 @@ struct ClaudeSaveSection: View {
                 Text(saveMessage)
                     .font(.appSubheadline())
                     .foregroundStyle(saveMessage.contains("成功") ? Color.modernSuccess : Color.modernError)
-                    .padding(12)
+                    .padding(ModernSpacing.sm + 4)
                     .background {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: ModernRadius.sm)
                             .fill((saveMessage.contains("成功") ? Color.modernSuccess : Color.modernError).opacity(0.1))
                     }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }

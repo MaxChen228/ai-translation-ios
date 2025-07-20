@@ -283,13 +283,13 @@ struct FontPreviewView: View {
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: ModernSpacing.lg) {
                 Text("字體系統預覽")
                     .font(.appTitle())
                     .padding(.bottom)
                 
                 ForEach(sampleTexts, id: \.self) { text in
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                         Text("原文：\(text)")
                             .font(.appCaption(for: "原文標籤"))
                             .foregroundStyle(.secondary)
@@ -298,7 +298,7 @@ struct FontPreviewView: View {
                             .font(.appFont(for: text, size: 16, weight: .regular))
                             .padding()
                             .background(Color.modernSurface)
-                            .cornerRadius(8)
+                            .cornerRadius(ModernRadius.sm)
                     }
                 }
             }

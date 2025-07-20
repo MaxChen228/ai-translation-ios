@@ -12,7 +12,7 @@ struct StudySummaryView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: ModernSpacing.lg) {
                     // 頂部成就區域
                     achievementSection
                     
@@ -59,7 +59,7 @@ struct StudySummaryView: View {
     // MARK: - 簡約總結區域
     
     private var achievementSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             // 簡化的結果指示器
             ZStack {
                 Circle()
@@ -95,7 +95,7 @@ struct StudySummaryView: View {
     // MARK: - 主要統計
     
     private var mainStatsSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             HStack {
                 Text("學習成果")
                     .font(.headline)
@@ -113,9 +113,9 @@ struct StudySummaryView: View {
             }
             
             // 進度圓環
-            HStack(spacing: 30) {
+            HStack(spacing: ModernSpacing.xl) {
                 // 正確率圓環
-                VStack(spacing: 8) {
+                VStack(spacing: ModernSpacing.sm) {
                     ZStack {
                         Circle()
                             .stroke(Color.modernTextTertiary.opacity(0.3), lineWidth: 8)
@@ -140,7 +140,7 @@ struct StudySummaryView: View {
                 }
                 
                 // 統計數字
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: ModernSpacing.md) {
                     StatRow(
                         icon: "checkmark.circle.fill",
                         label: "答對題數",
@@ -180,7 +180,7 @@ struct StudySummaryView: View {
                 .font(.headline)
                 .fontWeight(.semibold)
             
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.md) {
                 DetailedStatRow(
                     title: "平均回答時間",
                     value: "\(String(format: "%.1f", summary.studyTime / Double(summary.totalQuestions)))秒/題",
@@ -227,7 +227,7 @@ struct StudySummaryView: View {
                     .foregroundStyle(Color.modernTextSecondary)
             }
             
-            LazyVStack(spacing: 8) {
+            LazyVStack(spacing: ModernSpacing.sm) {
                 ForEach(Array(summary.wordsStudied.enumerated()), id: \.offset) { index, word in
                     WordSummaryRow(word: word, index: index)
                         .opacity(animateProgress ? 1.0 : 0.0)
@@ -255,10 +255,10 @@ struct StudySummaryView: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.modernTextPrimary)
             
-            LazyVStack(spacing: 8) {
+            LazyVStack(spacing: ModernSpacing.sm) {
                 ForEach(summary.newMasteryAchievements, id: \.id) { word in
                     HStack {
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                             Text(word.word)
                                 .font(.headline)
                                 .fontWeight(.semibold)
@@ -275,8 +275,8 @@ struct StudySummaryView: View {
                             .font(.caption)
                             .fontWeight(.medium)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, ModernSpacing.sm)
+                            .padding(.vertical, ModernSpacing.xs)
                             .background(Color.modernSuccess)
                             .cornerRadius(ModernRadius.sm)
                     }
@@ -325,7 +325,7 @@ struct StudySummaryView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
                 .background(Color.modernAccent.opacity(0.1))
-                .cornerRadius(ModernRadius.sm + 4)
+                .cornerRadius(ModernRadius.md)
             }
         }
     }
@@ -392,7 +392,7 @@ struct StatRow: View {
     let color: Color
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: ModernSpacing.sm) {
             Image(systemName: icon)
                 .foregroundStyle(color)
                 .frame(width: 16)
@@ -418,7 +418,7 @@ struct DetailedStatRow: View {
     let color: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: ModernSpacing.sm) {
             HStack {
                 Text(title)
                     .font(.subheadline)
@@ -437,12 +437,12 @@ struct DetailedStatRow: View {
                     Rectangle()
                         .fill(Color.modernTextTertiary.opacity(0.2))
                         .frame(height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(ModernRadius.xs)
                     
                     Rectangle()
                         .fill(color)
                         .frame(width: geometry.size.width * progress, height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(ModernRadius.xs)
                 }
             }
             .frame(height: 4)
@@ -455,7 +455,7 @@ struct WordSummaryRow: View {
     let index: Int
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: ModernSpacing.md) {
             // 序號
             Text("\(index + 1)")
                 .font(.caption)
@@ -466,7 +466,7 @@ struct WordSummaryRow: View {
                 .clipShape(Circle())
             
             // 單字資訊
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(word.word)
                     .font(.subheadline)
                     .fontWeight(.semibold)
@@ -480,7 +480,7 @@ struct WordSummaryRow: View {
             Spacer()
             
             // 掌握度指示器
-            HStack(spacing: 4) {
+            HStack(spacing: ModernSpacing.xs) {
                 Image(systemName: masteryIcon(for: word.masteryLevel))
                     .font(.caption)
                     .foregroundStyle(masteryColor(for: word.masteryLevel))
@@ -491,10 +491,10 @@ struct WordSummaryRow: View {
                     .foregroundStyle(masteryColor(for: word.masteryLevel))
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
+        .padding(.vertical, ModernSpacing.sm)
+        .padding(.horizontal, ModernSpacing.md)
         .background(Color.modernSurface.opacity(0.7))
-        .cornerRadius(8)
+        .cornerRadius(ModernRadius.sm)
     }
     
     private func masteryIcon(for level: Double) -> String {

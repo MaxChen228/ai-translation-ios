@@ -9,9 +9,9 @@ struct GuestFeatureLimitView: View {
     let onDismiss: () -> Void
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             // 圖示和標題
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.md) {
                 Image(systemName: featureIcon)
                     .font(.system(size: 48))
                     .foregroundStyle(Color.modernAccent)
@@ -27,12 +27,12 @@ struct GuestFeatureLimitView: View {
             }
             
             // 升級優勢說明
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: ModernSpacing.md) {
                 Text("註冊後享有完整功能：")
                     .font(.appHeadline(for: "升級標題"))
                     .foregroundStyle(Color.modernTextPrimary)
                 
-                VStack(spacing: 8) {
+                VStack(spacing: ModernSpacing.sm) {
                     GuestUpgradeBenefit(
                         icon: "icloud.and.arrow.up",
                         title: "雲端同步",
@@ -107,7 +107,7 @@ struct GuestUpgradeBenefit: View {
                 .foregroundStyle(Color.modernAccent)
                 .frame(width: 24)
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(title)
                     .font(.appCallout(for: "優勢標題"))
                     .foregroundStyle(Color.modernTextPrimary)
@@ -168,7 +168,7 @@ struct GuestRegistrationPromptView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 32) {
+                VStack(spacing: ModernSpacing.xl) {
                     // 慶祝圖示
                     VStack(spacing: ModernSpacing.md) {
                         Image(systemName: "star.circle.fill")

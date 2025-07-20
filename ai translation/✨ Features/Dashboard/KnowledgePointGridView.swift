@@ -53,16 +53,16 @@ struct KnowledgePointGridView: View {
     }
     
     private let columns: [GridItem] = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: ModernSpacing.md),
+        GridItem(.flexible(), spacing: ModernSpacing.md)
     ]
     
     var body: some View {
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 16) {
+                LazyVGrid(columns: columns, spacing: ModernSpacing.md) {
                     ForEach(filteredAndSortedPoints) { point in
                         NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                            VStack(alignment: .leading, spacing: 10) {
+                            VStack(alignment: .leading, spacing: ModernSpacing.md) {
                                 // 【核心修改】: 主要標題改為顯示 AI 生成的要點標題
                                 Text(point.key_point_summary ?? "核心觀念")
                                     .font(.appHeadline(for: point.key_point_summary ?? "核心觀念"))
@@ -84,15 +84,15 @@ struct KnowledgePointGridView: View {
                             }
                             .padding()
                             .frame(minHeight: 120)
-                            .background(Color(UIColor.secondarySystemBackground))
-                            .cornerRadius(12)
+                            .background(Color.modernSurface)
+                            .cornerRadius(ModernRadius.md)
                         }
                     }
                 }
                 .padding()
             }
             .navigationTitle(categoryTitle)
-            .background(Color(UIColor.systemGroupedBackground))
+            .background(Color.modernBackground)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {

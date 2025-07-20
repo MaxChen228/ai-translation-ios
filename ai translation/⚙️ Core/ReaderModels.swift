@@ -305,8 +305,8 @@ struct ReaderSettings: Codable {
         var color: Color {
             switch self {
             case .white: return .white
-            case .sepia: return Color(.systemBackground)
-            case .dark: return Color(.systemBackground)
+            case .sepia: return Color(red: 0.98, green: 0.96, blue: 0.91)
+            case .dark: return Color(red: 0.12, green: 0.12, blue: 0.14)
             }
         }
         

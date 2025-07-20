@@ -20,7 +20,7 @@ struct StudyModeSelectionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: ModernSpacing.lg) {
                     // 學習模式選擇
                     studyModeSection
                     
@@ -64,7 +64,7 @@ struct StudyModeSelectionView: View {
     // MARK: - 學習模式選擇
     
     private var studyModeSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "graduationcap")
                     .foregroundStyle(Color.modernAccent)
@@ -73,7 +73,7 @@ struct StudyModeSelectionView: View {
                     .fontWeight(.semibold)
             }
             
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.md) {
                 ForEach(StudyMode.allCases, id: \.self) { mode in
                     StudyModeCard(
                         mode: mode,
@@ -92,7 +92,7 @@ struct StudyModeSelectionView: View {
     // MARK: - 練習類型選擇
     
     private var practiceTypeSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "gamecontroller")
                     .foregroundStyle(Color.modernAccent)
@@ -101,7 +101,7 @@ struct StudyModeSelectionView: View {
                     .fontWeight(.semibold)
             }
             
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.md) {
                 ForEach(PracticeType.allCases, id: \.self) { type in
                     PracticeTypeCard(
                         type: type,
@@ -120,7 +120,7 @@ struct StudyModeSelectionView: View {
     // MARK: - 設定區域
     
     private var settingsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "slider.horizontal.3")
                     .foregroundStyle(Color.modernAccent)
@@ -129,9 +129,9 @@ struct StudyModeSelectionView: View {
                     .fontWeight(.semibold)
             }
             
-            VStack(spacing: 16) {
+            VStack(spacing: ModernSpacing.md) {
                 // 單字數量
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                     Text("單字數量: \(wordCount)")
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -165,12 +165,12 @@ struct StudyModeSelectionView: View {
                 
                 // 難度選擇（專項練習時顯示）
                 if selectedStudyMode == .targeted {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                         Text("難度等級")
                             .font(.subheadline)
                             .fontWeight(.medium)
                         
-                        HStack(spacing: 8) {
+                        HStack(spacing: ModernSpacing.sm) {
                             Button("全部") {
                                 selectedDifficulty = nil
                             }
@@ -289,13 +289,13 @@ struct StudyModeCard: View {
     
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 16) {
+            HStack(spacing: ModernSpacing.md) {
                 Image(systemName: mode.systemImageName)
                     .font(.title2)
                     .foregroundStyle(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text(mode.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
@@ -315,7 +315,7 @@ struct StudyModeCard: View {
             }
             .padding()
             .background(isSelected ? Color.modernAccent : Color.modernSurface.opacity(0.7))
-            .cornerRadius(ModernRadius.sm + 4)
+            .cornerRadius(ModernRadius.md)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -328,13 +328,13 @@ struct PracticeTypeCard: View {
     
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 16) {
+            HStack(spacing: ModernSpacing.md) {
                 Image(systemName: type.systemImageName)
                     .font(.title2)
                     .foregroundStyle(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text(type.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
@@ -354,7 +354,7 @@ struct PracticeTypeCard: View {
             }
             .padding()
             .background(isSelected ? Color.modernAccent : Color.modernSurface.opacity(0.7))
-            .cornerRadius(ModernRadius.sm + 4)
+            .cornerRadius(ModernRadius.md)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -379,8 +379,8 @@ struct DifficultyButtonStyle: ButtonStyle {
             .font(.caption)
             .fontWeight(.medium)
             .foregroundColor(isSelected ? .white : Color.modernAccent)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, ModernSpacing.md)
+            .padding(.vertical, ModernSpacing.sm)
             .background(isSelected ? Color.modernAccent : Color.modernAccent.opacity(0.1))
             .cornerRadius(ModernRadius.sm)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)

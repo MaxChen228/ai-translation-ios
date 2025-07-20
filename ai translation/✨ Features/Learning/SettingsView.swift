@@ -19,22 +19,22 @@ struct SettingsView: View {
                 LazyVStack(spacing: 24) {
                     // 使用者資料區塊
                     if let user = authManager.currentUser {
-                        ClaudeUserProfileCard(user: user) {
+                        ModernUserProfileCard(user: user) {
                             showLogoutAlert = true
                         }
                     }
                     
                     // 學習題數設定
-                    ClaudeSettingsCard(title: "學習題數設定", icon: "list.number") {
+                    ModernSettingsCard(title: "學習題數設定", icon: "list.number") {
                         VStack(spacing: 20) {
-                            ClaudeStepperSetting(
+                            ModernStepperSetting(
                                 title: "智慧複習題",
                                 description: "根據您的錯誤記錄安排的複習題目",
                                 value: $reviewCount,
                                 range: 0...10
                             )
                             
-                            ClaudeStepperSetting(
+                            ModernStepperSetting(
                                 title: "全新挑戰題",
                                 description: "基於文法句型生成的新題目",
                                 value: $newCount,
@@ -44,16 +44,16 @@ struct SettingsView: View {
                     }
                     
                     // 新題目設定
-                    ClaudeSettingsCard(title: "新題目客製化", icon: "sparkles") {
+                    ModernSettingsCard(title: "新題目客製化", icon: "sparkles") {
                         VStack(spacing: 20) {
-                            ClaudeSliderSetting(
+                            ModernSliderSetting(
                                 title: "題目難度",
                                 description: "數字越高，題目越具挑戰性",
                                 value: $difficulty,
                                 range: 1...5
                             )
                             
-                            ClaudePickerSetting(
+                            ModernPickerSetting(
                                 title: "句子長度",
                                 description: "選擇您偏好的練習句子類型",
                                 value: $length
@@ -62,27 +62,27 @@ struct SettingsView: View {
                     }
                     
                     // AI 模型設定
-                    ClaudeSettingsCard(title: "AI 模型設定", icon: "cpu") {
+                    ModernSettingsCard(title: "AI 模型設定", icon: "cpu") {
                         VStack(spacing: 20) {
-                            ClaudeAIModelSetting(
+                            ModernAIModelSetting(
                                 title: "出題模型",
                                 description: "負責生成練習題目的 AI 模型",
                                 value: $generationModel
                             )
                             
-                            ClaudeAIModelSetting(
+                            ModernAIModelSetting(
                                 title: "批改模型",
                                 description: "負責評分和提供建議的 AI 模型",
                                 value: $gradingModel
                             )
                         }
                         
-                        ClaudeInfoBox(text: "更強的模型通常更準確，但回應速度可能較慢。")
+                        ModernInfoBox(text: "更強的模型通常更準確，但回應速度可能較慢。")
                     }
                     
                     // 學習目標設定
-                    ClaudeSettingsCard(title: "學習目標", icon: "target") {
-                        ClaudeStepperSetting(
+                    ModernSettingsCard(title: "學習目標", icon: "target") {
+                        ModernStepperSetting(
                             title: "每日目標",
                             description: "設定您每天想要完成的題目數量",
                             value: $dailyGoal,
@@ -91,7 +91,7 @@ struct SettingsView: View {
                     }
                     
                     // 說明區塊
-                    ClaudeInfoCard()
+                    ModernInfoCard()
                 }
                 .padding(ModernSpacing.lg)
             }
@@ -134,7 +134,7 @@ struct SettingsView: View {
 
 // MARK: - Claude 風格設定組件
 
-struct ClaudeSettingsCard<Content: View>: View {
+struct ModernSettingsCard<Content: View>: View {
     let title: String
     let icon: String
     @ViewBuilder let content: Content
@@ -162,7 +162,7 @@ struct ClaudeSettingsCard<Content: View>: View {
     }
 }
 
-struct ClaudeStepperSetting: View {
+struct ModernStepperSetting: View {
     let title: String
     let description: String
     @Binding var value: Int
@@ -228,13 +228,13 @@ struct ClaudeStepperSetting: View {
         }
         .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
 
-struct ClaudeSliderSetting: View {
+struct ModernSliderSetting: View {
     let title: String
     let description: String
     @Binding var value: Int
@@ -253,8 +253,8 @@ struct ClaudeSliderSetting: View {
                     Text("\(value)")
                         .font(.appCallout(for: "設定值"))
                         .foregroundStyle(Color.modernAccent)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, ModernSpacing.md)
+                        .padding(.vertical, ModernSpacing.xs)
                         .background {
                             Capsule()
                                 .fill(Color.modernAccent.opacity(0.15))
@@ -295,13 +295,13 @@ struct ClaudeSliderSetting: View {
         }
         .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
 
-struct ClaudePickerSetting: View {
+struct ModernPickerSetting: View {
     let title: String
     let description: String
     @Binding var value: SettingsManager.SentenceLength
@@ -330,10 +330,10 @@ struct ClaudePickerSetting: View {
                             .font(.appSubheadline(for: "選項"))
                             .foregroundStyle(value == option ? .white : .primary)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .padding(.vertical, ModernSpacing.md)
                             .background {
                                 RoundedRectangle(cornerRadius: ModernRadius.sm)
-                                    .fill(value == option ? Color.modernAccent : Color(.systemBackground))
+                                    .fill(value == option ? Color.modernAccent : Color.modernSurface)
                             }
                     }
                     .buttonStyle(.plain)
@@ -342,13 +342,13 @@ struct ClaudePickerSetting: View {
         }
         .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
 
-struct ClaudeAIModelSetting: View {
+struct ModernAIModelSetting: View {
     let title: String
     let description: String
     @Binding var value: SettingsManager.AIModel
@@ -393,7 +393,7 @@ struct ClaudeAIModelSetting: View {
                         .padding(ModernSpacing.sm + 4)
                         .background {
                             RoundedRectangle(cornerRadius: ModernRadius.sm)
-                                .fill(value == model ? Color.modernAccent.opacity(0.1) : Color(.systemBackground))
+                                .fill(value == model ? Color.modernAccent.opacity(0.1) : Color.modernSurface)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: ModernRadius.sm)
                                         .stroke(value == model ? Color.modernAccent.opacity(0.3) : Color.clear, lineWidth: 1)
@@ -406,13 +406,13 @@ struct ClaudeAIModelSetting: View {
         }
         .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: ModernRadius.sm + 4)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface.opacity(0.7))
         }
     }
 }
 
-struct ClaudeInfoBox: View {
+struct ModernInfoBox: View {
     let text: String
     
     var body: some View {
@@ -428,13 +428,13 @@ struct ClaudeInfoBox: View {
         }
         .padding(ModernSpacing.sm + 4)
         .background {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
                 .fill(Color.modernSpecialSoft)
         }
     }
 }
 
-struct ClaudeInfoCard: View {
+struct ModernInfoCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
@@ -448,17 +448,17 @@ struct ClaudeInfoCard: View {
             }
             
             VStack(alignment: .leading, spacing: 12) {
-                ClaudeInfoTip(
+                ModernInfoTip(
                     icon: "1.circle.fill",
                     text: "設定將在下一次生成新題目時生效"
                 )
                 
-                ClaudeInfoTip(
+                ModernInfoTip(
                     icon: "2.circle.fill",
                     text: "建議複習題數量保持在 3-5 題，以達到最佳學習效果"
                 )
                 
-                ClaudeInfoTip(
+                ModernInfoTip(
                     icon: "3.circle.fill",
                     text: "較強的 AI 模型（如 Gemini 2.5 Pro）會提供更準確的分析"
                 )
@@ -473,7 +473,7 @@ struct ClaudeInfoCard: View {
     }
 }
 
-struct ClaudeInfoTip: View {
+struct ModernInfoTip: View {
     let icon: String
     let text: String
     
@@ -493,7 +493,7 @@ struct ClaudeInfoTip: View {
 }
 
 // MARK: - 使用者資料卡片
-struct ClaudeUserProfileCard: View {
+struct ModernUserProfileCard: View {
     let user: User
     let onLogout: () -> Void
     
@@ -537,14 +537,14 @@ struct ClaudeUserProfileCard: View {
                 
                 // 學習統計
                 HStack(spacing: 20) {
-                    ClaudeUserStatCard(
+                    ModernUserStatCard(
                         title: "知識點",
                         value: "\(user.knowledgePointsCount)",
                         icon: "brain.head.profile"
                     )
                     
                     if let nativeLanguage = user.nativeLanguage {
-                        ClaudeUserStatCard(
+                        ModernUserStatCard(
                             title: "母語",
                             value: nativeLanguage,
                             icon: "globe"
@@ -552,7 +552,7 @@ struct ClaudeUserProfileCard: View {
                     }
                     
                     if let targetLanguage = user.targetLanguage {
-                        ClaudeUserStatCard(
+                        ModernUserStatCard(
                             title: "目標語言",
                             value: targetLanguage,
                             icon: "target"
@@ -571,7 +571,7 @@ struct ClaudeUserProfileCard: View {
                     }
                     .foregroundStyle(Color.modernError)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, ModernSpacing.md)
                     .background {
                         RoundedRectangle(cornerRadius: ModernRadius.sm)
                             .fill(Color.modernError.opacity(0.1))
@@ -604,7 +604,7 @@ struct ClaudeUserProfileCard: View {
     }
 }
 
-struct ClaudeUserStatCard: View {
+struct ModernUserStatCard: View {
     let title: String
     let value: String
     let icon: String
@@ -626,9 +626,9 @@ struct ClaudeUserStatCard: View {
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
+        .padding(.vertical, ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
                 .fill(Color.modernSurface.opacity(0.7))
         }
     }

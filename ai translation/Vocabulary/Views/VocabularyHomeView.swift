@@ -55,7 +55,7 @@ struct VocabularyHomeView: View {
     private func statisticsSection(_ stats: VocabularyStatistics) -> some View {
         VStack(spacing: ModernSpacing.md) {
             // 主要統計
-            HStack(spacing: 20) {
+            HStack(spacing: ModernSpacing.lg) {
                 VocabularyStatCard(
                     title: "總單字",
                     value: "\(stats.totalWords)",
@@ -79,7 +79,7 @@ struct VocabularyHomeView: View {
             }
             
             // 掌握度進度條
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                 HStack {
                     Text("整體掌握度")
                         .font(.appHeadline(for: "整體掌握度"))
@@ -110,14 +110,14 @@ struct VocabularyHomeView: View {
             }
             .padding()
             .background(Color.modernSurface)
-            .cornerRadius(12)
+            .cornerRadius(ModernRadius.md)
         }
     }
     
     // MARK: - 今日計劃
     
     private var dailyPlanSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "calendar.badge.clock")
                     .foregroundStyle(Color.modernAccent)
@@ -130,10 +130,10 @@ struct VocabularyHomeView: View {
                     Text("\(stats.dueToday)個單字待複習")
                         .font(.appCaption())
                         .foregroundStyle(Color.modernAccent)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, ModernSpacing.sm)
+                        .padding(.vertical, ModernSpacing.xs)
                         .background(Color.modernAccent.opacity(0.1))
-                        .cornerRadius(8)
+                        .cornerRadius(ModernRadius.sm)
                 }
             }
             
@@ -152,7 +152,7 @@ struct VocabularyHomeView: View {
                         .foregroundStyle(.white)
                         .padding()
                         .background(Color.modernAccent)
-                        .cornerRadius(12)
+                        .cornerRadius(ModernRadius.md)
                     }
                 } else {
                     HStack {
@@ -164,20 +164,20 @@ struct VocabularyHomeView: View {
                     }
                     .padding()
                     .background(Color.modernSuccess.opacity(0.1))
-                    .cornerRadius(12)
+                    .cornerRadius(ModernRadius.md)
                 }
             }
         }
         .padding()
         .background(Color.modernSurface)
-        .cornerRadius(16)
+        .cornerRadius(ModernRadius.lg)
         .modernShadow()
     }
     
     // MARK: - 快速學習
     
     private var quickStudySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "bolt.circle")
                     .foregroundStyle(Color.modernSpecial)
@@ -188,7 +188,7 @@ struct VocabularyHomeView: View {
             LazyVGrid(columns: [
                 GridItem(.flexible()),
                 GridItem(.flexible())
-            ], spacing: 12) {
+            ], spacing: ModernSpacing.md) {
                 StudyModeButton(
                     mode: .review,
                     action: { showingStudyModeSelection = true }
@@ -216,20 +216,20 @@ struct VocabularyHomeView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
                     .background(Color.modernSurface)
-                    .cornerRadius(12)
+                    .cornerRadius(ModernRadius.md)
                 }
             }
         }
         .padding()
         .background(Color.modernSurface)
-        .cornerRadius(16)
+        .cornerRadius(ModernRadius.lg)
         .modernShadow()
     }
     
     // MARK: - 進度圖表
     
     private func progressSection(_ stats: VocabularyStatistics) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "chart.pie")
                     .foregroundStyle(Color.modernAccent)
@@ -238,7 +238,7 @@ struct VocabularyHomeView: View {
                                 }
             
             // 簡化的進度圓環
-            HStack(spacing: 20) {
+            HStack(spacing: ModernSpacing.lg) {
                 VStack {
                     ZStack {
                         Circle()
@@ -260,7 +260,7 @@ struct VocabularyHomeView: View {
                         .foregroundStyle(Color.modernSuccess)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     ProgressBar(
                         title: "新單字",
                         count: stats.newWords,
@@ -288,14 +288,14 @@ struct VocabularyHomeView: View {
         }
         .padding()
         .background(Color.modernSurface)
-        .cornerRadius(16)
+        .cornerRadius(ModernRadius.lg)
         .modernShadow()
     }
     
     // MARK: - 載入和錯誤狀態
     
     private var loadingSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             ProgressView()
                 .scaleEffect(1.5)
             Text("載入統計資料中...")
@@ -305,7 +305,7 @@ struct VocabularyHomeView: View {
     }
     
     private var errorSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.appLargeTitle())
                 .foregroundStyle(Color.modernAccent)
@@ -355,7 +355,7 @@ struct VocabularyStatCard: View {
     let icon: String
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.sm) {
             Image(systemName: icon)
                 .font(.appTitle2())
                 .foregroundStyle(color)
@@ -370,9 +370,9 @@ struct VocabularyStatCard: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, ModernSpacing.md)
         .background(Color.modernSurface)
-        .cornerRadius(12)
+        .cornerRadius(ModernRadius.md)
     }
 }
 
@@ -395,7 +395,7 @@ struct StudyModeButton: View {
             .frame(maxWidth: .infinity)
             .frame(height: 80)
             .background(Color.modernSurface)
-            .cornerRadius(12)
+            .cornerRadius(ModernRadius.md)
         }
     }
 }
@@ -430,12 +430,12 @@ struct ProgressBar: View {
                     Rectangle()
                         .fill(Color.modernBorder.opacity(0.3))
                         .frame(height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(ModernRadius.xs)
                     
                     Rectangle()
                         .fill(color)
                         .frame(width: geometry.size.width * percentage, height: 4)
-                        .cornerRadius(2)
+                        .cornerRadius(ModernRadius.xs)
                 }
             }
             .frame(height: 4)

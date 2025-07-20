@@ -26,19 +26,19 @@ struct LearningCalendarView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                LazyVStack(spacing: 24) {
-                    // Claude風格頂部統計卡片
-                    ClaudeMonthStatsCard(stats: monthStats, monthText: monthYearText)
+                LazyVStack(spacing: ModernSpacing.lg) {
+                    // 頂部統計卡片
+                    MonthStatsCard(stats: monthStats, monthText: monthYearText)
                     
-                    // Claude風格月曆主體
-                    ClaudeCalendarCard(
+                    // 月曆主體
+                    CalendarCard(
                         selectedDate: $selectedDate,
                         monthData: monthData,
                         dailyGoal: dailyGoal,
                         onMonthChange: loadDataForCurrentMonth
                     )
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
             .background(Color.modernBackground)
             .navigationTitle("學習日曆")
@@ -118,12 +118,12 @@ struct MonthStats {
     }
 }
 
-struct ClaudeMonthStatsCard: View {
+struct MonthStatsCard: View {
     let stats: MonthStats
     let monthText: String
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             // 月份標題
             HStack {
                 Text(monthText)
@@ -132,42 +132,42 @@ struct ClaudeMonthStatsCard: View {
                 Spacer()
                 
                 // 達成率指示器
-                ClaudeGoalIndicator(
+                GoalIndicator(
                     achieved: stats.goalAchievedDays,
                     total: max(1, stats.activeDays)
                 )
             }
             
             // 統計網格
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
-                ClaudeStatMini(title: "學習天數", value: "\(stats.activeDays)", icon: "calendar.badge.checkmark")
-                ClaudeStatMini(title: "總題數", value: "\(stats.totalQuestions)", icon: "list.number")
-                ClaudeStatMini(title: "日均題數", value: String(format: "%.1f", stats.averagePerDay), icon: "chart.line.uptrend.xyaxis")
-                ClaudeStatMini(title: "達標天數", value: "\(stats.goalAchievedDays)", icon: "target")
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
+                StatMini(title: "學習天數", value: "\(stats.activeDays)", icon: "calendar.badge.checkmark")
+                StatMini(title: "總題數", value: "\(stats.totalQuestions)", icon: "list.number")
+                StatMini(title: "日均題數", value: String(format: "%.1f", stats.averagePerDay), icon: "chart.line.uptrend.xyaxis")
+                StatMini(title: "達標天數", value: "\(stats.goalAchievedDays)", icon: "target")
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
 
-struct ClaudeStatMini: View {
+struct StatMini: View {
     let title: String
     let value: String
     let icon: String
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: ModernSpacing.md) {
             Image(systemName: icon)
                 .font(.appCallout(for: "統計標籤"))
                 .foregroundStyle(Color.modernAccent)
                 .frame(width: 20)
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(value)
                     .font(.appCallout(for: "統計數值"))
                     .foregroundStyle(Color.modernTextPrimary)
@@ -179,15 +179,15 @@ struct ClaudeStatMini: View {
             
             Spacer()
         }
-        .padding(12)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface)
         }
     }
 }
 
-struct ClaudeGoalIndicator: View {
+struct GoalIndicator: View {
     let achieved: Int
     let total: Int
     
@@ -196,10 +196,10 @@ struct ClaudeGoalIndicator: View {
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: ModernSpacing.sm) {
             ZStack {
                 Circle()
-                    .stroke(Color(.systemGray5), lineWidth: 3)
+                    .stroke(ModernDesignSystem.Colors.textTertiary.opacity(0.2), lineWidth: 3)
                     .frame(width: 32, height: 32)
                 
                 Circle()
@@ -210,7 +210,7 @@ struct ClaudeGoalIndicator: View {
                     .animation(.easeInOut(duration: 0.5), value: percentage)
             }
             
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text("\(Int(percentage * 100))%")
                     .font(.appSubheadline(for: "星期"))
                     .foregroundStyle(Color.modernTextPrimary)
@@ -223,37 +223,37 @@ struct ClaudeGoalIndicator: View {
     }
 }
 
-struct ClaudeCalendarCard: View {
+struct CalendarCard: View {
     @Binding var selectedDate: Date
     let monthData: [DateComponents: Int]
     let dailyGoal: Int
     let onMonthChange: () -> Void
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             // 月份導航
-            ClaudeMonthNavigation(selectedDate: $selectedDate, onMonthChange: onMonthChange)
+            MonthNavigation(selectedDate: $selectedDate, onMonthChange: onMonthChange)
             
             // 星期標頭
-            ClaudeWeekdayHeader()
+            WeekdayHeader()
             
             // 日期網格
-            ClaudeDateGrid(
+            DateGrid(
                 selectedDate: selectedDate,
                 monthData: monthData,
                 dailyGoal: dailyGoal
             )
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
         }
     }
 }
 
-struct ClaudeMonthNavigation: View {
+struct MonthNavigation: View {
     @Binding var selectedDate: Date
     let onMonthChange: () -> Void
     
@@ -305,11 +305,11 @@ struct ClaudeMonthNavigation: View {
     }
 }
 
-struct ClaudeWeekdayHeader: View {
+struct WeekdayHeader: View {
     private let weekdays = ["日", "一", "二", "三", "四", "五", "六"]
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: ModernSpacing.xs) {
             ForEach(weekdays, id: \.self) { day in
                 Text(day)
                     .font(.appCaption(for: "日期數字"))
@@ -320,7 +320,7 @@ struct ClaudeWeekdayHeader: View {
     }
 }
 
-struct ClaudeDateGrid: View {
+struct DateGrid: View {
     let selectedDate: Date
     let monthData: [DateComponents: Int]
     let dailyGoal: Int
@@ -330,10 +330,10 @@ struct ClaudeDateGrid: View {
     }
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.sm), count: 7), spacing: ModernSpacing.sm) {
             ForEach(0..<dateRange.count, id: \.self) { index in
                 if let date = dateRange[index] {
-                    ClaudeDateCell(
+                    DateCell(
                         date: date,
                         count: getCountForDate(date),
                         dailyGoal: dailyGoal
@@ -375,7 +375,7 @@ struct ClaudeDateGrid: View {
     }
 }
 
-struct ClaudeDateCell: View {
+struct DateCell: View {
     let date: Date
     let count: Int
     let dailyGoal: Int
@@ -399,7 +399,7 @@ struct ClaudeDateCell: View {
     
     var body: some View {
         NavigationLink(destination: DailyDetailView(selectedDate: date)) {
-            VStack(spacing: 4) {
+            VStack(spacing: ModernSpacing.xs) {
                 Text(dayNumber)
                     .font(.appSubheadline(for: "日期"))
                     .foregroundStyle(isToday ? Color.modernAccent : .primary)
@@ -408,8 +408,8 @@ struct ClaudeDateCell: View {
                     Text("\(count)")
                         .font(.appCaption2(for: "進度點"))
                         .foregroundStyle(Color.modernAccent)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, ModernSpacing.sm)
+                        .padding(.vertical, ModernSpacing.xs)
                         .background {
                             Capsule()
                                 .fill(Color.modernAccent.opacity(0.15))
@@ -419,11 +419,11 @@ struct ClaudeDateCell: View {
             .frame(height: 48)
             .frame(maxWidth: .infinity)
             .background {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: ModernRadius.sm)
                     .fill(count > 0 ? Color.modernAccent.opacity(backgroundOpacity) : Color.clear)
                     .overlay {
                         if isToday {
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
                                 .stroke(Color.modernAccent, lineWidth: 2)
                         }
                     }

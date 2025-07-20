@@ -33,10 +33,10 @@ struct LoginView: View {
                 .padding(.horizontal, ModernSpacing.lg)
                 
                 // 登入表單
-                ClaudeAuthCard(title: "登入", icon: "person.crop.circle") {
+                ModernCard(title: "登入", icon: "person.crop.circle", style: .elevated) {
                     VStack(spacing: ModernSpacing.lg) {
                         // Email 輸入欄
-                        ClaudeAuthInputField(
+                        ModernInputField(
                             title: "電子郵件",
                             placeholder: "請輸入您的電子郵件",
                             text: $email,
@@ -44,21 +44,23 @@ struct LoginView: View {
                         )
                         
                         // 密碼輸入欄
-                        ClaudeAuthPasswordField(
+                        ModernInputField(
                             title: "密碼",
                             placeholder: "請輸入您的密碼",
                             text: $password,
+                            isSecure: true,
                             showPassword: $showPassword
                         )
                         
                         // 錯誤訊息
                         if let errorMessage = authManager.errorMessage {
-                            ClaudeErrorBox(message: errorMessage)
+                            ModernStatusBox(message: errorMessage, type: .error)
                         }
                         
                         // 登入按鈕
-                        ClaudeAuthButton(
-                            title: "登入",
+                        ModernButton(
+                            "登入",
+                            style: .primary,
                             isLoading: authManager.isLoading,
                             isEnabled: !email.isEmpty && !password.isEmpty
                         ) {
@@ -67,6 +69,7 @@ struct LoginView: View {
                                 await authManager.login(email: email, password: password)
                             }
                         }
+                        .padding(.horizontal, ModernSpacing.md)
                     }
                 }
                 

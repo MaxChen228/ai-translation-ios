@@ -38,23 +38,23 @@ struct DashboardView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
+            VStack(spacing: ModernSpacing.xs) {
                 // 【簡化】模式選擇器
-                ClaudeModeSelector(selectedMode: $selectedMode)
+                ModernModeSelector(selectedMode: $selectedMode)
                     .padding(.horizontal, ModernSpacing.lg)
                     .padding(.top, ModernSpacing.md)
                 
                 if isLoading {
-                    ClaudeLoadingView()
+                    ModernLoadingView()
                 } else if let errorMessage = errorMessage {
-                    ClaudeErrorView(message: errorMessage) {
+                    ErrorView(message: errorMessage) {
                         Task { await fetchDashboardData() }
                     }
                 } else if knowledgePoints.isEmpty {
-                    ClaudeEmptyStateView()
+                    EmptyStateView()
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 24) {
+                        LazyVStack(spacing: ModernSpacing.lg) {
                             switch selectedMode {
                             case .overview:
                                 OverviewSection(stats: stats, points: knowledgePoints)
@@ -137,14 +137,14 @@ struct DashboardView: View {
 
 
 // 【重新設計】Claude 風格模式選擇器
-struct ClaudeModeSelector: View {
+struct ModernModeSelector: View {
     @Binding var selectedMode: ModernDashboardMode
     @Namespace private var animation
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: ModernSpacing.xs) {
             ForEach(ModernDashboardMode.allCases) { mode in
-                ClaudeModeButton(
+                ModernModeButton(
                     mode: mode,
                     isSelected: selectedMode == mode,
                     animation: animation
@@ -162,7 +162,7 @@ struct ClaudeModeSelector: View {
     }
 }
 
-struct ClaudeModeButton: View {
+struct ModernModeButton: View {
     let mode: ModernDashboardMode
     let isSelected: Bool
     let animation: Namespace.ID
@@ -170,7 +170,7 @@ struct ClaudeModeButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 6) {
+            HStack(spacing: ModernSpacing.sm) {
                 Image(systemName: mode.icon)
                     .font(.appFootnote())
                 
@@ -183,7 +183,7 @@ struct ClaudeModeButton: View {
             .padding(.horizontal, ModernSpacing.sm + 4)
             .background {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: ModernRadius.xs + 2)
+                    RoundedRectangle(cornerRadius: ModernRadius.sm)
                         .fill(Color.modernAccent)
                         .matchedGeometryEffect(id: "selectedMode", in: animation)
                 }
@@ -202,23 +202,23 @@ struct OverviewSection: View {
         VStack(spacing: ModernSpacing.lg) {
             // 簡約統計卡片
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
-                ClaudeStatCard(title: "總知識點", value: "\(stats.totalPoints)")
-                ClaudeStatCard(title: "平均熟練度", value: String(format: "%.1f", stats.averageMastery))
-                ClaudeStatCard(title: "今日需複習", value: "\(stats.needReviewToday)")
-                ClaudeStatCard(title: "分類數量", value: "\(stats.categoriesCount)")
+                ModernStatCard(title: "總知識點", value: "\(stats.totalPoints)")
+                ModernStatCard(title: "平均熟練度", value: String(format: "%.1f", stats.averageMastery))
+                ModernStatCard(title: "今日需複習", value: "\(stats.needReviewToday)")
+                ModernStatCard(title: "分類數量", value: "\(stats.categoriesCount)")
             }
             
             // 簡約分布圖
-            ClaudeMasteryCard(stats: stats)
+            ModernMasteryCard(stats: stats)
             
             // 關注區域
-            ClaudeFocusCard(points: points.filter { $0.mastery_level < 2.0 }.sorted { $0.mastery_level < $1.mastery_level }.prefix(5))
+            ModernFocusCard(points: points.filter { $0.mastery_level < 2.0 }.sorted { $0.mastery_level < $1.mastery_level }.prefix(5))
         }
     }
 }
 
 // 【重新設計】簡約統計卡片
-struct ClaudeStatCard: View {
+struct ModernStatCard: View {
     let title: String
     let value: String
     
@@ -243,19 +243,19 @@ struct ClaudeStatCard: View {
 }
 
 // 【重新設計】簡約熟練度卡片
-struct ClaudeMasteryCard: View {
+struct ModernMasteryCard: View {
     let stats: DashboardStats
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             Text("熟練度分布")
                 .font(.appHeadline(for: "熟練度分布"))
                 .foregroundStyle(Color.modernTextPrimary)
             
             VStack(spacing: 12) {
-                ClaudeMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color.modernError)
-                ClaudeMasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: Color.modernWarning)
-                ClaudeMasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: Color.modernSuccess)
+                ModernMasteryBar(label: "需加強", count: stats.weakPoints, total: stats.totalPoints, color: Color.modernError)
+                ModernMasteryBar(label: "中等程度", count: stats.mediumPoints, total: stats.totalPoints, color: Color.modernWarning)
+                ModernMasteryBar(label: "已掌握", count: stats.strongPoints, total: stats.totalPoints, color: Color.modernSuccess)
             }
         }
         .padding(ModernSpacing.lg)
@@ -267,7 +267,7 @@ struct ClaudeMasteryCard: View {
     }
 }
 
-struct ClaudeMasteryBar: View {
+struct ModernMasteryBar: View {
     let label: String
     let count: Int
     let total: Int
@@ -286,11 +286,11 @@ struct ClaudeMasteryBar: View {
             
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: ModernRadius.xs)
                         .fill(Color.modernDivider)
                         .frame(height: 6)
                     
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: ModernRadius.xs)
                         .fill(color)
                         .frame(width: geometry.size.width * percentage, height: 6)
                         .animation(.easeInOut(duration: 0.3), value: percentage)
@@ -307,11 +307,11 @@ struct ClaudeMasteryBar: View {
 }
 
 // 【重新設計】簡約關注卡片
-struct ClaudeFocusCard: View {
+struct ModernFocusCard: View {
     let points: ArraySlice<KnowledgePoint>
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Text("需要重點關注")
                     .font(.appHeadline(for: "需要重點關注"))
@@ -331,7 +331,7 @@ struct ClaudeFocusCard: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
             } else {
-                VStack(spacing: 0) {
+                VStack(spacing: ModernSpacing.xs) {
                     ForEach(Array(points.enumerated()), id: \.element.id) { index, point in
                         NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                             HStack {
@@ -390,7 +390,7 @@ struct CategoriesSection: View {
             ForEach(categorizedPoints.keys.sorted(), id: \.self) { category in
                 if let categoryPoints = categorizedPoints[category] {
                     NavigationLink(destination: KnowledgePointGridView(points: categoryPoints, categoryTitle: category)) {
-                        ClaudeCategoryCard(category: category, points: categoryPoints)
+                        ModernCategoryCard(category: category, points: categoryPoints)
                     }
                     .buttonStyle(.plain)
                 }
@@ -399,7 +399,7 @@ struct CategoriesSection: View {
     }
 }
 
-struct ClaudeCategoryCard: View {
+struct ModernCategoryCard: View {
     let category: String
     let points: [KnowledgePoint]
     
@@ -460,7 +460,7 @@ struct ProgressSection: View {
         VStack(spacing: 16) {
             ForEach(points.sorted { $0.mastery_level < $1.mastery_level }) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                    ClaudeProgressCard(point: point)
+                    ModernProgressCard(point: point)
                 }
                 .buttonStyle(.plain)
             }
@@ -468,7 +468,7 @@ struct ProgressSection: View {
     }
 }
 
-struct ClaudeProgressCard: View {
+struct ModernProgressCard: View {
     let point: KnowledgePoint
     
     var body: some View {
@@ -517,7 +517,7 @@ struct ScheduleSection: View {
         VStack(spacing: 16) {
             ForEach(scheduledPoints) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                    ClaudeScheduleCard(point: point)
+                    ModernScheduleCard(point: point)
                 }
                 .buttonStyle(.plain)
             }
@@ -525,7 +525,7 @@ struct ScheduleSection: View {
     }
 }
 
-struct ClaudeScheduleCard: View {
+struct ModernScheduleCard: View {
     let point: KnowledgePoint
     
     private func formatDate(_ dateString: String) -> String {
@@ -579,10 +579,10 @@ struct ClaudeScheduleCard: View {
         }
         .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .fill(Color.modernSurface)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
                         .stroke(isOverdue ? Color.modernError.opacity(0.2) : Color.clear, lineWidth: 1)
                 }
                 .modernShadow()
@@ -590,23 +590,9 @@ struct ClaudeScheduleCard: View {
     }
 }
 
-// 【重新設計】狀態視圖
-struct ClaudeLoadingView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.1)
-                .tint(Color.modernAccent)
-            
-            Text("正在載入數據...")
-                .font(.appSubheadline(for: "正在載入數據..."))
-                .foregroundStyle(Color.modernTextSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
+// ModernLoadingView 已移除，直接使用 ModernLoadingView
 
-struct ClaudeErrorView: View {
+struct ErrorView: View {
     let message: String
     let retry: () -> Void
     
@@ -632,13 +618,13 @@ struct ClaudeErrorView: View {
                 .padding(.vertical, 10)
                 .background(Color.modernAccent)
                 .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: ModernRadius.sm))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-struct ClaudeEmptyStateView: View {
+struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "brain.head.profile")

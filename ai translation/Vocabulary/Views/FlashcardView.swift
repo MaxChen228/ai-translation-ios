@@ -32,7 +32,7 @@ struct FlashcardView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
+            VStack(spacing: ModernSpacing.xs) {
                 // 頂部導航欄
                 topNavigationBar
                 
@@ -155,7 +155,7 @@ struct FlashcardView: View {
     // MARK: - 問題卡片
     
     private func questionCard(question: QuizQuestion) -> some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             // 單字
             Text(question.word)
                 .font(.appLargeTitle(for: question.word))
@@ -182,7 +182,7 @@ struct FlashcardView: View {
             }
             
             // 提示文字
-            VStack(spacing: 8) {
+            VStack(spacing: ModernSpacing.sm) {
                 Image(systemName: "brain.head.profile")
                     .font(.appTitle())
                     .foregroundStyle(Color.modernAccent)
@@ -202,9 +202,9 @@ struct FlashcardView: View {
     
     private func answerCard(question: QuizQuestion) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: ModernSpacing.md) {
                 // 單字和音標
-                VStack(spacing: 8) {
+                VStack(spacing: ModernSpacing.sm) {
                     Text(question.word)
                         .font(.appTitle(for: question.word))
                         .foregroundStyle(Color.modernTextPrimary)
@@ -221,7 +221,7 @@ struct FlashcardView: View {
                 
                 // 中文定義
                 if let definitionZH = question.definitionZH {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                         Text("中文意思")
                             .font(.appCaption(for: "標籤"))
                             .foregroundStyle(Color.modernTextSecondary)
@@ -236,7 +236,7 @@ struct FlashcardView: View {
                 
                 // 英文定義
                 if let definitionEN = question.definitionEN {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                         Text("English Definition")
                             .font(.appCaption(for: "English Definition"))
                             .foregroundStyle(Color.modernTextSecondary)
@@ -250,14 +250,14 @@ struct FlashcardView: View {
                 
                 // 例句
                 if let examples = question.examples, !examples.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                         Text("例句")
                             .font(.appCaption(for: "標籤"))
                             .foregroundStyle(Color.modernTextSecondary)
                             .textCase(.uppercase)
                         
                         ForEach(Array(examples.prefix(2).enumerated()), id: \.offset) { index, example in
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                                 Text(example.sentenceEN)
                                     .font(.appSubheadline(for: example.sentenceEN))
                                     .foregroundStyle(Color.modernTextPrimary)
@@ -268,7 +268,7 @@ struct FlashcardView: View {
                                         .foregroundStyle(Color.modernTextSecondary)
                                 }
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, ModernSpacing.xs)
                             
                             if index < examples.prefix(2).count - 1 {
                                 Divider()
@@ -286,15 +286,15 @@ struct FlashcardView: View {
     // MARK: - 底部控制區域
     
     private var bottomControlArea: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: ModernSpacing.lg) {
             if isShowingAnswer && !showingEvaluation {
                 // 評價按鈕
-                VStack(spacing: 16) {
+                VStack(spacing: ModernSpacing.md) {
                     Text("你答對了嗎？")
                         .font(.appHeadline(for: "評價提示"))
                         .foregroundStyle(Color.modernTextPrimary)
                     
-                    HStack(spacing: 20) {
+                    HStack(spacing: ModernSpacing.lg) {
                         // 錯誤按鈕
                         ModernButton(
                             "不知道",
@@ -335,7 +335,7 @@ struct FlashcardView: View {
     // MARK: - 完成頁面
     
     private var studyCompleteView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: ModernSpacing.lg) {
             Image(systemName: "star.circle.fill")
                 .font(.system(size: 64))
                 .foregroundStyle(Color.modernSpecial)
@@ -344,7 +344,7 @@ struct FlashcardView: View {
                 .font(.appLargeTitle(for: "完成標題"))
                 .foregroundStyle(Color.modernTextPrimary)
             
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.md) {
                 Text("答對率: \(Int(Double(correctAnswers) / Double(quiz.questions.count) * 100))%")
                     .font(.appTitle2(for: "答對率"))
                     .foregroundStyle(correctAnswers >= quiz.questions.count / 2 ? Color.modernSuccess : Color.modernWarning)

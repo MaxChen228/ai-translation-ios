@@ -62,7 +62,7 @@ struct LearningStatsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                LazyVStack(spacing: 24) {
+                LazyVStack(spacing: ModernSpacing.lg) {
                     if isLoading {
                         ProgressView("載入統計數據中...")
                             .frame(maxWidth: .infinity, minHeight: 200)
@@ -80,7 +80,7 @@ struct LearningStatsView: View {
                         LearningAdviceCard()
                     }
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
             .background(Color.modernBackground)
             .navigationTitle("學習統計")
@@ -166,7 +166,7 @@ struct MonthlyOverviewCard: View {
     let stats: MonthlyLearningStats?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: ModernSpacing.lg) {
             HStack {
                 Image(systemName: "calendar")
                     .font(.appHeadline())
@@ -179,7 +179,7 @@ struct MonthlyOverviewCard: View {
             }
             
             if let stats = stats {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
                     StatMiniCard(title: "完成題數", value: "\(stats.totalQuestions)", icon: "list.number")
                     StatMiniCard(title: "學習時間", value: "\(stats.totalTimeMinutes / 60)小時", icon: "clock")
                     StatMiniCard(title: "平均準確率", value: "\(Int(stats.averageAccuracy * 100))%", icon: "target")
@@ -188,12 +188,12 @@ struct MonthlyOverviewCard: View {
                 
                 // 連續學習天數
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                         Text("當前連續")
                             .font(.appCaption(for: "當前連續"))
                             .foregroundStyle(Color.modernTextSecondary)
                         
-                        HStack(spacing: 4) {
+                        HStack(spacing: ModernSpacing.xs) {
                             Image(systemName: "flame.fill")
                                 .font(.appCallout(for: "熱度"))
                                 .foregroundStyle(Color.modernAccent)
@@ -206,7 +206,7 @@ struct MonthlyOverviewCard: View {
                     
                     Spacer()
                     
-                    VStack(alignment: .trailing, spacing: 4) {
+                    VStack(alignment: .trailing, spacing: ModernSpacing.xs) {
                         Text("最長紀錄")
                             .font(.appCaption(for: "最長紀錄"))
                             .foregroundStyle(Color.modernTextSecondary)
@@ -223,9 +223,9 @@ struct MonthlyOverviewCard: View {
                     .frame(maxWidth: .infinity, minHeight: 100)
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -236,7 +236,7 @@ struct WeeklyTrendCard: View {
     let weeklyData: [WeeklyLearningData]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: ModernSpacing.lg) {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.appHeadline())
@@ -253,12 +253,12 @@ struct WeeklyTrendCard: View {
                     .foregroundStyle(Color.modernTextSecondary)
                     .frame(maxWidth: .infinity, minHeight: 100)
             } else {
-                VStack(spacing: 16) {
+                VStack(spacing: ModernSpacing.md) {
                     // 圖表
-                    HStack(alignment: .bottom, spacing: 8) {
+                    HStack(alignment: .bottom, spacing: ModernSpacing.sm) {
                         ForEach(weeklyData) { data in
-                            VStack(spacing: 8) {
-                                RoundedRectangle(cornerRadius: 4)
+                            VStack(spacing: ModernSpacing.sm) {
+                                RoundedRectangle(cornerRadius: ModernRadius.xs)
                                     .fill(Color.modernAccent.opacity(0.8))
                                     .frame(width: 32, height: CGFloat(max(4, data.questionsCompleted * 8)))
                                 
@@ -272,7 +272,7 @@ struct WeeklyTrendCard: View {
                     
                     // 統計資訊
                     HStack {
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                             Text("總題數")
                                 .font(.appCaption(for: "總題數"))
                                 .foregroundStyle(Color.modernTextSecondary)
@@ -284,7 +284,7 @@ struct WeeklyTrendCard: View {
                         
                         Spacer()
                         
-                        VStack(alignment: .trailing, spacing: 2) {
+                        VStack(alignment: .trailing, spacing: ModernSpacing.xs) {
                             Text("平均每天")
                                 .font(.appCaption(for: "平均每天"))
                                 .foregroundStyle(Color.modernTextSecondary)
@@ -297,9 +297,9 @@ struct WeeklyTrendCard: View {
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -321,7 +321,7 @@ struct AchievementsCard: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: ModernSpacing.lg) {
             HStack {
                 Image(systemName: "trophy.fill")
                     .font(.appHeadline())
@@ -335,21 +335,21 @@ struct AchievementsCard: View {
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
                     .font(.appCaption())
                     .foregroundStyle(Color.modernAccent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, ModernSpacing.sm)
+                    .padding(.vertical, ModernSpacing.xs)
                     .background(Color.modernAccent.opacity(0.15))
                     .clipShape(Capsule())
             }
             
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
                 ForEach(achievements) { achievement in
                     AchievementMiniCard(achievement: achievement)
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -365,7 +365,7 @@ struct LearningAdviceCard: View {
     ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: ModernSpacing.md) {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .font(.appHeadline())
@@ -377,9 +377,9 @@ struct LearningAdviceCard: View {
                 Spacer()
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: ModernSpacing.md) {
                 ForEach(Array(advice.enumerated()), id: \.offset) { index, tip in
-                    HStack(alignment: .top, spacing: 12) {
+                    HStack(alignment: .top, spacing: ModernSpacing.md) {
                         Text("\(index + 1)")
                             .font(.appCaption())
                             .foregroundStyle(.white)
@@ -396,9 +396,9 @@ struct LearningAdviceCard: View {
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -413,7 +413,7 @@ struct StatMiniCard: View {
     let icon: String
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.sm) {
             Image(systemName: icon)
                 .font(.appTitle3(for: icon))
                 .foregroundStyle(Color.modernAccent)
@@ -427,9 +427,9 @@ struct StatMiniCard: View {
                 .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(Color.modernSurface)
         }
     }
@@ -447,7 +447,7 @@ struct AchievementMiniCard: View {
     let achievement: Achievement
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.sm) {
             Image(systemName: achievement.icon)
                 .font(.appTitle2(for: achievement.icon))
                 .foregroundStyle(achievement.isUnlocked ? Color.modernAccent : .secondary)
@@ -464,14 +464,14 @@ struct AchievementMiniCard: View {
                 .lineLimit(2)
         }
         .frame(maxWidth: .infinity, minHeight: 80)
-        .padding(12)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
                 .fill(achievement.isUnlocked ? Color.modernAccent.opacity(0.1) : Color.modernSurface)
                 .overlay {
                     if !achievement.isUnlocked {
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color(.systemGray4), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        RoundedRectangle(cornerRadius: ModernRadius.sm)
+                            .stroke(ModernDesignSystem.Colors.textTertiary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
                     }
                 }
         }

@@ -42,11 +42,11 @@ struct DailyDetailView: View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 if isLoading {
-                    ClaudeLoadingCard()
+                    LoadingCard()
                 } else if let details = details {
                     // AI總結卡片（置頂）
                     if showAISummary || aiSummary != nil {
-                        ClaudeAISummaryCard(
+                        ModernAISummaryCard(
                             summary: aiSummary,
                             isLoading: isLoadingAISummary,
                             onGenerate: generateAISummary,
@@ -55,7 +55,7 @@ struct DailyDetailView: View {
                     }
                     
                     // 學習概覽卡片
-                    ClaudeDayOverviewCard(
+                    ModernDayOverviewCard(
                         stats: dayStats,
                         isToday: isToday,
                         onAISummaryTap: {
@@ -68,22 +68,22 @@ struct DailyDetailView: View {
                     
                     // 知識點分析卡片
                     if !details.reviewed_knowledge_points.isEmpty || !details.new_knowledge_points.isEmpty {
-                        ClaudeKnowledgeAnalysisCard(
+                        ModernKnowledgeAnalysisCard(
                             reviewedPoints: details.reviewed_knowledge_points,
                             newPoints: details.new_knowledge_points
                         )
                     }
                     
                     // 學習洞察卡片
-                    ClaudeLearningInsightsCard(stats: dayStats)
+                    ModernLearningInsightsCard(stats: dayStats)
                     
                 } else {
-                    ClaudeNoDataCard(date: selectedDate)
+                    ModernNoDataCard(date: selectedDate)
                 }
             }
-            .padding(20)
+            .padding(ModernSpacing.lg)
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .navigationTitle(navigationTitleString)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: loadDailyDetails)
@@ -184,7 +184,7 @@ struct DailySummaryResponse: Codable {
 
 // MARK: - Claude風格組件
 
-struct ClaudeLoadingCard: View {
+struct LoadingCard: View {
     var body: some View {
         VStack(spacing: 16) {
             ProgressView()
@@ -196,16 +196,16 @@ struct ClaudeLoadingCard: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(40)
+        .padding(ModernSpacing.xxl)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeNoDataCard: View {
+struct ModernNoDataCard: View {
     let date: Date
     
     private var isToday: Bool {
@@ -228,16 +228,16 @@ struct ClaudeNoDataCard: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(40)
+        .padding(ModernSpacing.xxl)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeDayOverviewCard: View {
+struct ModernDayOverviewCard: View {
     let stats: DayStats
     let isToday: Bool
     let onAISummaryTap: () -> Void
@@ -269,8 +269,8 @@ struct ClaudeDayOverviewCard: View {
                             .font(.appCallout(for: "AI總結"))
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, ModernSpacing.md)
+                    .padding(.vertical, ModernSpacing.sm)
                     .background {
                         Capsule()
                             .fill(Color.modernAccent)
@@ -280,28 +280,28 @@ struct ClaudeDayOverviewCard: View {
             
             // 統計網格
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
-                ClaudeStatBox(
+                ModernStatBox(
                     title: "學習時長",
                     value: formatTime(stats.totalTime),
                     icon: "clock.fill",
                     color: Color.modernSpecial
                 )
                 
-                ClaudeStatBox(
+                ModernStatBox(
                     title: "學習效率",
                     value: String(format: "%.1f/分", stats.efficiency),
                     icon: "speedometer",
                     color: Color.modernAccent
                 )
                 
-                ClaudeStatBox(
+                ModernStatBox(
                     title: "複習重點",
                     value: "\(stats.reviewedCount)",
                     icon: "arrow.clockwise.circle.fill",
                     color: Color.modernSuccess
                 )
                 
-                ClaudeStatBox(
+                ModernStatBox(
                     title: "新增知識",
                     value: "\(stats.newCount)",
                     icon: "plus.circle.fill",
@@ -309,9 +309,9 @@ struct ClaudeDayOverviewCard: View {
                 )
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -328,7 +328,7 @@ struct ClaudeDayOverviewCard: View {
     }
 }
 
-struct ClaudeStatBox: View {
+struct ModernStatBox: View {
     let title: String
     let value: String
     let icon: String
@@ -351,15 +351,15 @@ struct ClaudeStatBox: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(color.opacity(0.08))
         }
     }
 }
 
-struct ClaudeAISummaryCard: View {
+struct ModernAISummaryCard: View {
     let summary: DailySummaryResponse?
     let isLoading: Bool
     let onGenerate: () -> Void
@@ -399,7 +399,7 @@ struct ClaudeAISummaryCard: View {
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
+                .padding(.vertical, ModernSpacing.lg)
                 
             } else if let summary = summary {
                 VStack(alignment: .leading, spacing: 16) {
@@ -465,9 +465,9 @@ struct ClaudeAISummaryCard: View {
                             .font(.appBody(for: summary.motivational_message))
                             .foregroundStyle(.secondary)
                             .italic()
-                            .padding(12)
+                            .padding(ModernSpacing.md)
                             .background {
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
                                     .fill(Color.modernAccent.opacity(0.1))
                             }
                     }
@@ -484,20 +484,20 @@ struct ClaudeAISummaryCard: View {
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, ModernSpacing.md)
                     .background {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: ModernRadius.md)
                             .fill(Color.modernAccent)
                     }
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: ModernRadius.lg)
                         .stroke(Color.modernAccent.opacity(0.2), lineWidth: 1)
                 }
                 .modernShadow()
@@ -505,7 +505,7 @@ struct ClaudeAISummaryCard: View {
     }
 }
 
-struct ClaudeKnowledgeAnalysisCard: View {
+struct ModernKnowledgeAnalysisCard: View {
     let reviewedPoints: [LearnedPoint]
     let newPoints: [LearnedPoint]
     
@@ -521,7 +521,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
             VStack(spacing: 16) {
                 // 複習的知識點
                 if !reviewedPoints.isEmpty {
-                    ClaudeKnowledgeSection(
+                    ModernKnowledgeSection(
                         title: "強化複習",
                         points: reviewedPoints,
                         color: Color.modernSuccess,
@@ -531,7 +531,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
                 
                 // 新學的知識點
                 if !newPoints.isEmpty {
-                    ClaudeKnowledgeSection(
+                    ModernKnowledgeSection(
                         title: "新增掌握",
                         points: newPoints,
                         color: Color.modernAccent,
@@ -540,16 +540,16 @@ struct ClaudeKnowledgeAnalysisCard: View {
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
     }
 }
 
-struct ClaudeKnowledgeSection: View {
+struct ModernKnowledgeSection: View {
     let title: String
     let points: [LearnedPoint]
     let color: Color
@@ -585,18 +585,18 @@ struct ClaudeKnowledgeSection: View {
                         Text("×\(point.count)")
                             .font(.appCaption())
                             .foregroundStyle(color)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, ModernSpacing.sm)
+                            .padding(.vertical, ModernSpacing.xs)
                             .background {
                                 Capsule()
                                     .fill(color.opacity(0.15))
                             }
                     }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 12)
+                    .padding(.vertical, ModernSpacing.sm)
+                    .padding(.horizontal, ModernSpacing.md)
                     .background {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemGray6))
+                        RoundedRectangle(cornerRadius: ModernRadius.sm)
+                            .fill(Color.modernSurface)
                     }
                 }
             }
@@ -604,7 +604,7 @@ struct ClaudeKnowledgeSection: View {
     }
 }
 
-struct ClaudeLearningInsightsCard: View {
+struct ModernLearningInsightsCard: View {
     let stats: DayStats
     
     private var insights: [LearningInsight] {
@@ -622,13 +622,13 @@ struct ClaudeLearningInsightsCard: View {
             
             LazyVStack(spacing: 12) {
                 ForEach(insights) { insight in
-                    ClaudeInsightRow(insight: insight)
+                    ModernInsightRow(insight: insight)
                 }
             }
         }
-        .padding(20)
+        .padding(ModernSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
@@ -695,7 +695,7 @@ struct LearningInsight: Identifiable {
     let color: Color
 }
 
-struct ClaudeInsightRow: View {
+struct ModernInsightRow: View {
     let insight: LearningInsight
     
     var body: some View {
@@ -718,9 +718,9 @@ struct ClaudeInsightRow: View {
             
             Spacer()
         }
-        .padding(12)
+        .padding(ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: ModernRadius.md)
                 .fill(insight.color.opacity(0.08))
         }
     }

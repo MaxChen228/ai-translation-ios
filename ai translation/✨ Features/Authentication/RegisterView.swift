@@ -45,21 +45,21 @@ struct RegisterView: View {
                     .padding(.top, ModernSpacing.lg)
                     
                     // 基本資料
-                    ClaudeAuthCard(title: "基本資料", icon: "person.fill") {
+                    ModernCard(title: "基本資料", icon: "person.fill", style: .elevated) {
                         VStack(spacing: ModernSpacing.lg) {
-                            ClaudeAuthInputField(
+                            ModernInputField(
                                 title: "使用者名稱",
                                 placeholder: "請輸入使用者名稱",
                                 text: $username
                             )
                             
-                            ClaudeAuthInputField(
+                            ModernInputField(
                                 title: "顯示名稱（選填）",
                                 placeholder: "請輸入顯示名稱",
                                 text: $displayName
                             )
                             
-                            ClaudeAuthInputField(
+                            ModernInputField(
                                 title: "電子郵件",
                                 placeholder: "請輸入您的電子郵件",
                                 text: $email,
@@ -69,48 +69,50 @@ struct RegisterView: View {
                     }
                     
                     // 密碼設定
-                    ClaudeAuthCard(title: "密碼設定", icon: "lock.fill") {
+                    ModernCard(title: "密碼設定", icon: "lock.fill", style: .elevated) {
                         VStack(spacing: ModernSpacing.lg) {
-                            ClaudeAuthPasswordField(
+                            ModernInputField(
                                 title: "密碼",
                                 placeholder: "請輸入密碼（至少6位字符）",
                                 text: $password,
+                                isSecure: true,
                                 showPassword: $showPassword
                             )
                             
-                            ClaudeAuthPasswordField(
+                            ModernInputField(
                                 title: "確認密碼",
                                 placeholder: "請再次輸入密碼",
                                 text: $confirmPassword,
+                                isSecure: true,
                                 showPassword: $showConfirmPassword
                             )
                             
                             if !password.isEmpty && !confirmPassword.isEmpty && password != confirmPassword {
-                                ClaudeErrorBox(message: "密碼不匹配")
+                                ModernStatusBox(message: "密碼不匹配", type: .error)
                             }
                             
                             if !password.isEmpty && password.count < 6 {
-                                ClaudeWarningBox(message: "密碼長度至少需要6位字符")
+                                ModernStatusBox(message: "密碼長度至少需要6位字符", type: .warning)
                             }
                         }
                     }
                     
                     // 學習偏好
-                    ClaudeAuthCard(title: "學習偏好（選填）", icon: "graduationcap.fill") {
+                    ModernCard(title: "學習偏好（選填）", icon: "graduationcap.fill", style: .elevated) {
                         VStack(spacing: ModernSpacing.lg) {
-                            ClaudeAuthPickerField(
+                            ModernPickerField(
                                 title: "母語",
                                 selection: $nativeLanguage,
                                 options: languages
                             )
                             
-                            ClaudeAuthPickerField(
+                            ModernPickerField(
                                 title: "目標語言",
                                 selection: $targetLanguage,
                                 options: languages
                             )
                             
-                            ClaudeAuthPickerField(
+                            ModernPickerField(
                                 title: "學習程度",
                                 selection: $learningLevel,
                                 options: levels
@@ -120,12 +122,13 @@ struct RegisterView: View {
                     
                     // 錯誤訊息
                     if let errorMessage = authManager.errorMessage {
-                        ClaudeErrorBox(message: errorMessage)
+                        ModernStatusBox(message: errorMessage, type: .error)
                     }
                     
                     // 註冊按鈕
-                    ClaudeAuthButton(
-                        title: "建立帳號",
+                    ModernButton(
+                        "建立帳號",
+                        style: .primary,
                         isLoading: authManager.isLoading,
                         isEnabled: isFormValid
                     ) {
@@ -142,6 +145,7 @@ struct RegisterView: View {
                             )
                         }
                     }
+                    .padding(.horizontal, ModernSpacing.md)
                     
                     Spacer(minLength: ModernSpacing.xl + 8)
                 }
