@@ -68,16 +68,8 @@ struct LearningCalendarView: View {
     }
     
     private func fetchHeatmapData(year: Int, month: Int) async {
-        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/data/get_calendar_heatmap") else { return }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "year", value: String(year)),
-            URLQueryItem(name: "month", value: String(month))
-        ]
-        guard let url = urlComponents.url else { return }
-
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(HeatmapResponse.self, from: data)
+            let response = try await KnowledgePointAPIService.getCalendarHeatmap(year: year, month: month)
             
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withFullDate]
@@ -95,6 +87,8 @@ struct LearningCalendarView: View {
                     self.monthData = newMonthData
                 }
             }
+        } catch APIError.serverError(let statusCode, let message) {
+            print("伺服器錯誤 (\(statusCode)): \(message)")
         } catch {
             print("無法載入熱力圖數據: \(error)")
         }

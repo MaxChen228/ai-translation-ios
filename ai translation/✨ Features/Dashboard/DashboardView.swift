@@ -114,18 +114,16 @@ struct DashboardView: View {
         isLoading = true
         errorMessage = nil
         
-        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/data/get_dashboard") else {
-            errorMessage = "無效的網址"
-            isLoading = false
-            return
-        }
-        
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let decodedResponse = try JSONDecoder().decode(DashboardResponse.self, from: data)
+            let dashboardResponse = try await KnowledgePointAPIService.getDashboard()
             withAnimation(.easeInOut(duration: 0.3)) {
-                self.knowledgePoints = decodedResponse.knowledge_points
+                self.knowledgePoints = dashboardResponse.knowledge_points
             }
+        } catch APIError.serverError(let statusCode, let message) {
+            self.errorMessage = "伺服器錯誤 (\(statusCode)): \(message)"
+        } catch APIError.decodingError(let error) {
+            self.errorMessage = "數據解析錯誤，請稍後再試。"
+            print("Dashboard 解析錯誤: \(error)")
         } catch {
             self.errorMessage = "無法獲取數據，請稍後再試。"
             print("獲取儀表板數據時發生錯誤: \(error)")
