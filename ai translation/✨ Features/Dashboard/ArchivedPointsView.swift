@@ -93,7 +93,7 @@ struct ArchivedPointsView: View {
         do {
             try await KnowledgePointAPIService.unarchivePoint(id: id)
             // 重新載入資料
-            await fetchArchivedPoints()
+            fetchArchivedPoints()
         } catch {
             print("取消封存失敗: \(error)")
         }

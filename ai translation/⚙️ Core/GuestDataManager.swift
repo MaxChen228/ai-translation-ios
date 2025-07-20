@@ -124,7 +124,7 @@ class GuestDataManager: ObservableObject {
     
     func prepareDataForMigration() -> [String: Any] {
         return [
-            "guestUser": try? JSONEncoder().encode(guestUser),
+            "guestUser": (try? JSONEncoder().encode(guestUser)) ?? Data(),
             "knowledgePoints": getGuestKnowledgePoints(),
             "learningSessions": getGuestLearningSessions(),
             "migrationTimestamp": ISO8601DateFormatter().string(from: Date())

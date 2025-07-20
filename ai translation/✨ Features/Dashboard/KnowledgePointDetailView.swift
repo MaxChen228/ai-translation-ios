@@ -295,8 +295,8 @@ struct KnowledgePointDetailView: View {
                             .font(.appBody())
                             .lineLimit(3...6)
                     } else {
-                        Text(explanation ?? "")
-                            .font(.appBody(for: explanation ?? ""))
+                        Text(explanation)
+                            .font(.appBody(for: explanation))
                             .lineSpacing(2)
                     }
                 }

@@ -460,7 +460,7 @@ struct ProgressSection: View {
         VStack(spacing: 16) {
             ForEach(points.sorted { $0.mastery_level < $1.mastery_level }) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
-                    ModernProgressCard(point: point)
+                    KnowledgePointProgressCard(point: point)
                 }
                 .buttonStyle(.plain)
             }
@@ -468,7 +468,7 @@ struct ProgressSection: View {
     }
 }
 
-struct ModernProgressCard: View {
+struct KnowledgePointProgressCard: View {
     let point: KnowledgePoint
     
     var body: some View {

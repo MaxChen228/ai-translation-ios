@@ -34,9 +34,9 @@ class DashboardViewModel: ObservableObject {
     private let authManager: AuthenticationManager
     
     // MARK: - Initialization
-    init(repository: KnowledgePointRepository = KnowledgePointRepository.shared,
+    init(repository: KnowledgePointRepository? = nil,
          authManager: AuthenticationManager) {
-        self.repository = repository
+        self.repository = repository ?? KnowledgePointRepository.shared
         self.authManager = authManager
     }
     

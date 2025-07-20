@@ -471,7 +471,7 @@ struct AchievementMiniCard: View {
                 .overlay {
                     if !achievement.isUnlocked {
                         RoundedRectangle(cornerRadius: ModernRadius.sm)
-                            .stroke(ModernDesignSystem.Colors.textTertiary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                            .stroke(Color.modernTextTertiary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
                     }
                 }
         }

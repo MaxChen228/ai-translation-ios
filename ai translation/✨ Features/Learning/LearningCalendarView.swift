@@ -199,7 +199,7 @@ struct GoalIndicator: View {
         HStack(spacing: ModernSpacing.sm) {
             ZStack {
                 Circle()
-                    .stroke(ModernDesignSystem.Colors.textTertiary.opacity(0.2), lineWidth: 3)
+                    .stroke(Color.modernTextTertiary.opacity(0.2), lineWidth: 3)
                     .frame(width: 32, height: 32)
                 
                 Circle()
