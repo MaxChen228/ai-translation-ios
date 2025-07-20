@@ -193,7 +193,7 @@ class AuthenticationManager: ObservableObject {
     
     // MARK: - 檢查認證狀態
     private func checkAuthenticationStatus() async {
-        guard let accessToken = keychain.retrieve(.accessToken) else {
+        guard keychain.retrieve(.accessToken) != nil else {
             authState = .unauthenticated
             return
         }
@@ -269,10 +269,10 @@ class AuthenticationManager: ObservableObject {
     
     // MARK: - 數據遷移
     func migrateGuestDataToUser() async -> Bool {
-        guard case .authenticated(let user) = authState else { return false }
+        guard case .authenticated(_) = authState else { return false }
         
         // 準備遷移數據
-        let migrationData = guestDataManager.prepareDataForMigration()
+        _ = guestDataManager.prepareDataForMigration()
         
         // 這裡可以實作將訪客數據上傳到用戶帳戶的邏輯
         // 目前先簡單清除訪客數據

@@ -77,9 +77,11 @@ struct ModernButton: View {
                     ProgressView()
                         .scaleEffect(0.8)
                         .progressViewStyle(CircularProgressViewStyle(tint: style.textColor))
+                        .accessibilityLabel("載入中")
                 } else if let icon = icon {
                     Image(systemName: icon)
                         .font(.appBody())
+                        .accessibilityHidden(true) // 避免重複讀取圖示
                 }
                 
                 Text(title)
@@ -93,6 +95,10 @@ struct ModernButton: View {
         .disabled(!isEnabled || isLoading)
         .opacity(isEnabled && !isLoading ? 1.0 : 0.6)
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(isLoading ? "正在處理請求" : "輕點以執行操作")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityRemoveTraits(isEnabled ? [] : .isButton)
     }
 }
 
@@ -128,13 +134,18 @@ struct ModernInputField: View {
             Text(title)
                 .font(.appCallout(for: "輸入欄位標題"))
                 .foregroundStyle(Color.modernTextPrimary)
+                .accessibilityAddTraits(.isHeader)
             
             HStack {
                 Group {
                     if isSecure && !(showPassword?.wrappedValue ?? internalShowPassword) {
                         SecureField(placeholder, text: $text)
+                            .accessibilityLabel("\(title)，安全輸入欄位")
+                            .accessibilityHint("請輸入您的\(title.lowercased())")
                     } else {
                         TextField(placeholder, text: $text)
+                            .accessibilityLabel("\(title)，輸入欄位")
+                            .accessibilityHint("請輸入您的\(title.lowercased())")
                     }
                 }
                 .font(.appBody(for: "輸入內容"))
@@ -143,6 +154,7 @@ struct ModernInputField: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .focused($isFocused)
+                .accessibilityValue(text.isEmpty ? "空白" : text)
                 
                 if isSecure {
                     Button(action: {
@@ -158,10 +170,14 @@ struct ModernInputField: View {
                             .foregroundStyle(Color.modernTextSecondary)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel((showPassword?.wrappedValue ?? internalShowPassword) ? "隱藏密碼" : "顯示密碼")
+                    .accessibilityHint("輕點以切換密碼顯示狀態")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
             .modernInput(isFocused: isFocused)
         }
+        .accessibilityElement(children: .contain)
     }
 }
 

@@ -56,21 +56,21 @@ struct VocabularyHomeView: View {
         VStack(spacing: ModernSpacing.md) {
             // 主要統計
             HStack(spacing: 20) {
-                StatCard(
+                VocabularyStatCard(
                     title: "總單字",
                     value: "\(stats.totalWords)",
                     color: Color.modernSpecial,
                     icon: "book.fill"
                 )
                 
-                StatCard(
+                VocabularyStatCard(
                     title: "已掌握",
                     value: "\(stats.masteredWords)",
                     color: Color.modernSuccess,
                     icon: "checkmark.circle.fill"
                 )
                 
-                StatCard(
+                VocabularyStatCard(
                     title: "今日複習",
                     value: "\(stats.dueToday)",
                     color: Color.modernAccent,
@@ -348,7 +348,7 @@ struct VocabularyHomeView: View {
 
 // MARK: - 輔助元件
 
-struct StatCard: View {
+struct VocabularyStatCard: View {
     let title: String
     let value: String
     let color: Color

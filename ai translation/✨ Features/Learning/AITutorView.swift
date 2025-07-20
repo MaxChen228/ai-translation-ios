@@ -72,7 +72,7 @@ struct AITutorView: View {
         let length = SettingsManager.shared.length.rawValue
         let generationModel = SettingsManager.shared.generationModel.rawValue
 
-        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/start_session") else {
+        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/session/start_session") else {
             errorMessage = "無效的網址"
             isLoading = false
             return

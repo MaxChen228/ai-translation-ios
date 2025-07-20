@@ -68,7 +68,7 @@ struct LearningCalendarView: View {
     }
     
     private func fetchHeatmapData(year: Int, month: Int) async {
-        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/get_calendar_heatmap") else { return }
+        guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/data/get_calendar_heatmap") else { return }
         urlComponents.queryItems = [
             URLQueryItem(name: "year", value: String(year)),
             URLQueryItem(name: "month", value: String(month))

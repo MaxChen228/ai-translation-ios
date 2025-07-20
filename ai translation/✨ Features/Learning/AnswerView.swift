@@ -71,7 +71,7 @@ struct AnswerView: View {
         isLoading = true
         errorMessage = nil
 
-        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/submit_answer") else {
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/session/submit_answer") else {
             errorMessage = "無效的網址"
             isLoading = false
             return
@@ -446,7 +446,7 @@ struct ClaudeHintCard: View {
         isLoadingSmartHint = true
         smartHintError = nil
         
-        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/get_smart_hint") else {
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/session/get_smart_hint") else {
             smartHintError = "無效的網址"
             isLoadingSmartHint = false
             return

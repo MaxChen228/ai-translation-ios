@@ -92,7 +92,7 @@ struct DailyDetailView: View {
     private func loadDailyDetails() {
         isLoading = true
         Task {
-            guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/get_daily_details") else { return }
+            guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/data/get_daily_details") else { return }
             urlComponents.queryItems = [
                 URLQueryItem(name: "date", value: dateStringForAPI)
             ]
@@ -121,7 +121,7 @@ struct DailyDetailView: View {
         
         isLoadingAISummary = true
         Task {
-            guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/generate_daily_summary") else { return }
+            guard var urlComponents = URLComponents(string: "\(APIConfig.apiBaseURL)/api/data/generate_daily_summary") else { return }
             urlComponents.queryItems = [
                 URLQueryItem(name: "date", value: dateStringForAPI)
             ]

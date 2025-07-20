@@ -300,7 +300,6 @@ struct FlashcardView: View {
                             "不知道",
                             icon: "x.circle.fill",
                             style: .primary,
-                            backgroundColor: Color.modernError,
                             isEnabled: !isSubmittingReview
                         ) {
                             submitAnswer(isCorrect: false)
@@ -311,7 +310,6 @@ struct FlashcardView: View {
                             "知道",
                             icon: "checkmark.circle.fill",
                             style: .primary,
-                            backgroundColor: Color.modernSuccess,
                             isEnabled: !isSubmittingReview
                         ) {
                             submitAnswer(isCorrect: true)

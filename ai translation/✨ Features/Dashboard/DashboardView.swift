@@ -99,7 +99,7 @@ struct DashboardView: View {
                 ]
 
                 for fontName in testFonts {
-                    if let font = UIFont(name: fontName, size: 16) {
+                    if UIFont(name: fontName, size: 16) != nil {
                         print("字體載入成功: \(fontName)")
                     } else {
                         print("字體載入失敗: \(fontName)")
@@ -114,7 +114,7 @@ struct DashboardView: View {
         isLoading = true
         errorMessage = nil
         
-        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/get_dashboard") else {
+        guard let url = URL(string: "\(APIConfig.apiBaseURL)/api/data/get_dashboard") else {
             errorMessage = "無效的網址"
             isLoading = false
             return
@@ -137,33 +137,6 @@ struct DashboardView: View {
 
 // MARK: - Claude 風格組件
 
-struct DashboardStats {
-    let totalPoints: Int
-    let weakPoints: Int
-    let mediumPoints: Int
-    let strongPoints: Int
-    let averageMastery: Double
-    let categoriesCount: Int
-    let needReviewToday: Int
-    
-    init(from points: [KnowledgePoint]) {
-        totalPoints = points.count
-        weakPoints = points.filter { $0.mastery_level < 1.5 }.count
-        mediumPoints = points.filter { $0.mastery_level >= 1.5 && $0.mastery_level < 3.5 }.count
-        strongPoints = points.filter { $0.mastery_level >= 3.5 }.count
-        averageMastery = points.isEmpty ? 0 : points.map { $0.mastery_level }.reduce(0, +) / Double(points.count)
-        categoriesCount = Set(points.map { $0.category }).count
-        
-        let today = Date()
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withFullDate]
-        needReviewToday = points.filter { point in
-            guard let dateString = point.next_review_date,
-                  let reviewDate = formatter.date(from: dateString) else { return false }
-            return Calendar.current.isDate(reviewDate, inSameDayAs: today) || reviewDate < today
-        }.count
-    }
-}
 
 // 【重新設計】Claude 風格模式選擇器
 struct ClaudeModeSelector: View {
