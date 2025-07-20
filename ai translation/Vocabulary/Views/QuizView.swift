@@ -55,7 +55,7 @@ struct QuizView: View {
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(Color.modernBackground)
         .onAppear {
             startTime = Date()
             questionStartTime = Date()
@@ -66,54 +66,56 @@ struct QuizView: View {
     
     private var topNavigationBar: some View {
         HStack {
-            Button("結束") {
+            ModernButton(
+                "結束",
+                style: .tertiary
+            ) {
                 dismiss()
             }
-            .foregroundColor(.red)
             
             Spacer()
             
             Text(type == .multipleChoice ? "選擇題測驗" : "語境填空")
-                .font(.headline)
-                .fontWeight(.semibold)
+                .font(.appHeadline(for: "測驗標題"))
+                .foregroundStyle(Color.modernTextPrimary)
             
             Spacer()
             
             Text("\(currentIndex + 1)/\(quiz.questions.count)")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+                .font(.appSubheadline(for: "問題計數"))
+                .foregroundStyle(Color.modernTextSecondary)
         }
-        .padding()
+        .padding(ModernSpacing.md)
     }
     
     // MARK: - 進度條
     
     private var progressBar: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.xs) {
             ProgressView(value: progress)
-                .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                .progressViewStyle(LinearProgressViewStyle(tint: Color.modernAccent))
                 .scaleEffect(x: 1, y: 2, anchor: .center)
             
             HStack {
                 Text("已完成 \(currentIndex)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                    .font(.appCaption(for: "進度文字"))
+                    .foregroundStyle(Color.modernTextSecondary)
                 
                 Spacer()
                 
                 Text("正確率: \(currentIndex > 0 ? Int(Double(correctAnswers) / Double(currentIndex) * 100) : 0)%")
-                    .font(.caption)
-                    .foregroundColor(.blue)
+                    .font(.appCaption(for: "正確率"))
+                    .foregroundStyle(Color.modernAccent)
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, ModernSpacing.md)
     }
     
     // MARK: - 問題區域
     
     private func questionArea(question: QuizQuestion, in geometry: GeometryProxy) -> some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: ModernSpacing.lg) {
                 // 問題卡片
                 questionCard(question: question)
                 
@@ -129,89 +131,92 @@ struct QuizView: View {
                     resultCard(question: question)
                 }
             }
-            .padding()
+            .padding(ModernSpacing.md)
         }
     }
     
     // MARK: - 問題卡片
     
     private func questionCard(question: QuizQuestion) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             // 單字或問題
             if type == .multipleChoice {
-                VStack(spacing: 12) {
+                VStack(spacing: ModernSpacing.sm) {
                     Text(question.word)
-                        .font(.appLargeTitle())
-                        .foregroundColor(.primary)
+                        .font(.appLargeTitle(for: "測驗單字"))
+                        .foregroundStyle(Color.modernTextPrimary)
                     
                     if let pronunciation = question.pronunciation {
                         Text("/\(pronunciation)/")
-                            .font(.title2)
-                            .foregroundColor(.blue)
+                            .font(.appTitle2(for: "單字發音"))
+                            .foregroundStyle(Color.modernSpecial)
                     }
                     
                     if let partOfSpeech = question.partOfSpeech {
                         Text(partOfSpeech)
-                            .font(.headline)
-                            .foregroundColor(.purple)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.purple.opacity(0.1))
-                            .cornerRadius(8)
+                            .font(.appCallout(for: "詞性標籤"))
+                            .foregroundStyle(Color.modernAccent)
+                            .padding(.horizontal, ModernSpacing.sm)
+                            .padding(.vertical, ModernSpacing.xs)
+                            .background {
+                                RoundedRectangle(cornerRadius: ModernRadius.xs)
+                                    .fill(Color.modernAccentSoft)
+                            }
                     }
                     
                     Text("選擇正確的中文意思：")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .font(.appSubheadline(for: "選擇提示"))
+                        .foregroundStyle(Color.modernTextSecondary)
                 }
             } else {
                 // 語境填空
-                VStack(spacing: 12) {
+                VStack(spacing: ModernSpacing.sm) {
                     Text("在下列句子中填入正確的單字：")
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                        .font(.appHeadline(for: "填空提示"))
+                        .foregroundStyle(Color.modernTextPrimary)
                     
                     if let questionSentence = question.questionSentence {
                         Text(questionSentence)
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .foregroundColor(.primary)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
+                            .font(.appTitle2(for: "問題句子"))
+                            .foregroundStyle(Color.modernTextPrimary)
+                            .padding(ModernSpacing.md)
+                            .background {
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .fill(Color.modernSurface)
+                            }
                             .multilineTextAlignment(.center)
                     }
                     
                     if let hints = question.hints, !hints.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                             Text("提示：")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                                .font(.appCaption(for: "提示標籤"))
+                                .foregroundStyle(Color.modernTextSecondary)
                             
                             ForEach(hints, id: \.self) { hint in
                                 Text("• \(hint)")
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .font(.appCaption(for: "提示內容"))
+                                    .foregroundStyle(Color.modernSpecial)
                             }
                         }
-                        .padding()
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(ModernSpacing.sm)
+                        .background {
+                            RoundedRectangle(cornerRadius: ModernRadius.xs)
+                                .fill(Color.modernSpecialSoft)
+                        }
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(20)
-        .background(Color(.systemBackground))
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .padding(ModernSpacing.lg)
+        .modernCard(.elevated)
     }
     
     // MARK: - 選擇題選項
     
     private func multipleChoiceOptions(question: QuizQuestion) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: ModernSpacing.sm) {
             if let options = question.options {
                 ForEach(Array(options.enumerated()), id: \.offset) { index, option in
                     optionButton(
@@ -231,24 +236,22 @@ struct QuizView: View {
             selectedIndex = index
             selectedAnswer = text
         }) {
-            HStack {
+            HStack(spacing: ModernSpacing.md) {
                 // 選項標記
                 ZStack {
                     Circle()
-                        .fill(backgroundColor(isSelected: isSelected, isCorrect: isCorrect))
+                        .fill(optionCircleBackgroundColor(isSelected: isSelected, isCorrect: isCorrect))
                         .frame(width: 28, height: 28)
                     
                     Text(optionLabel(for: index))
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(textColor(isSelected: isSelected, isCorrect: isCorrect))
+                        .font(.appHeadline(for: "選項標記"))
+                        .foregroundStyle(optionCircleTextColor(isSelected: isSelected, isCorrect: isCorrect))
                 }
                 
                 // 選項文字
                 Text(text)
-                    .font(.headline)
-                    .fontWeight(.medium)
-                    .foregroundColor(textColor(isSelected: isSelected, isCorrect: isCorrect))
+                    .font(.appHeadline(for: "選項文字"))
+                    .foregroundStyle(optionTextColor(isSelected: isSelected, isCorrect: isCorrect))
                     .multilineTextAlignment(.leading)
                 
                 Spacer()
@@ -257,43 +260,45 @@ struct QuizView: View {
                 if showingResult {
                     if isCorrect == true {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                            .font(.appHeadline())
+                            .foregroundStyle(Color.modernSuccess)
                     } else if isSelected && isCorrect == false {
-                        Image(systemName: "x.circle.fill")
-                            .foregroundColor(.red)
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.appHeadline())
+                            .foregroundStyle(Color.modernError)
                     }
                 }
             }
-            .padding()
-            .background(backgroundFillColor(isSelected: isSelected, isCorrect: isCorrect))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(borderColor(isSelected: isSelected, isCorrect: isCorrect), lineWidth: 2)
-            )
+            .padding(ModernSpacing.md)
+            .background {
+                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                    .fill(optionBackgroundColor(isSelected: isSelected, isCorrect: isCorrect))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: ModernRadius.sm)
+                            .stroke(optionBorderColor(isSelected: isSelected, isCorrect: isCorrect), lineWidth: 2)
+                    }
+            }
         }
         .disabled(isAnswered)
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
     
     // MARK: - 語境填空輸入
     
     private func contextFillInput(question: QuizQuestion) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             TextField("請輸入單字", text: $userInput)
-                .font(.title2)
-                .fontWeight(.medium)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
+                .font(.appTitle2(for: "輸入文字"))
+                .padding(ModernSpacing.md)
+                .modernInput(isFocused: false)
                 .disabled(isAnswered)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
             
             if !userInput.isEmpty && !isAnswered {
                 Text("你的答案：\(userInput)")
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
+                    .font(.appSubheadline(for: "用戶答案"))
+                    .foregroundStyle(Color.modernSpecial)
             }
         }
     }
@@ -301,147 +306,128 @@ struct QuizView: View {
     // MARK: - 結果卡片
     
     private func resultCard(question: QuizQuestion) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             // 結果標題
             HStack {
-                Image(systemName: isCorrectAnswer(question: question) ? "checkmark.circle.fill" : "x.circle.fill")
-                    .font(.title)
-                    .foregroundColor(isCorrectAnswer(question: question) ? .green : .red)
+                Image(systemName: isCorrectAnswer(question: question) ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .font(.appTitle())
+                    .foregroundStyle(isCorrectAnswer(question: question) ? Color.modernSuccess : Color.modernError)
                 
                 Text(isCorrectAnswer(question: question) ? "答對了！" : "答錯了")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(isCorrectAnswer(question: question) ? .green : .red)
+                    .font(.appTitle2(for: "結果標題"))
+                    .foregroundStyle(isCorrectAnswer(question: question) ? Color.modernSuccess : Color.modernError)
                 
                 Spacer()
             }
             
             // 正確答案
             if type == .contextFill {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text("正確答案：")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .font(.appSubheadline(for: "正確答案標籤"))
+                        .foregroundStyle(Color.modernTextSecondary)
                     
                     if let targetWord = question.targetWord {
                         Text(targetWord)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.green)
+                            .font(.appTitle2(for: "正確答案"))
+                            .foregroundStyle(Color.modernSuccess)
                     }
                     
                     if let completeSentence = question.completeSentence {
                         Text("完整句子：")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .font(.appCaption(for: "完整句子標籤"))
+                            .foregroundStyle(Color.modernTextSecondary)
                         
                         Text(completeSentence)
-                            .font(.subheadline)
-                            .foregroundColor(.primary)
+                            .font(.appSubheadline(for: "完整句子"))
+                            .foregroundStyle(Color.modernTextPrimary)
                     }
                 }
             }
             
             // 解釋
             if let explanation = question.explanation {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text("解釋：")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.appCaption(for: "解釋標籤"))
+                        .foregroundStyle(Color.modernTextSecondary)
                     
                     Text(explanation)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
+                        .font(.appSubheadline(for: "解釋內容"))
+                        .foregroundStyle(Color.modernTextPrimary)
                 }
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .padding(ModernSpacing.md)
+        .background {
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                .fill(Color.modernSurface)
+        }
     }
     
     // MARK: - 底部控制區域
     
     private var bottomControlArea: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ModernSpacing.md) {
             if !isAnswered {
                 // 提交答案按鈕
-                Button(action: submitAnswer) {
-                    HStack {
-                        if isSubmittingReview {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                                .foregroundColor(.white)
-                        } else {
-                            Text("提交答案")
-                                .fontWeight(.semibold)
-                        }
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(canSubmit ? Color.blue : Color.gray)
-                    .cornerRadius(16)
+                ModernButton(
+                    isSubmittingReview ? "" : "提交答案",
+                    style: canSubmit ? .primary : .secondary,
+                    isLoading: isSubmittingReview,
+                    isEnabled: canSubmit && !isSubmittingReview
+                ) {
+                    submitAnswer()
                 }
-                .disabled(!canSubmit || isSubmittingReview)
             } else {
                 // 下一題按鈕
-                Button(action: nextQuestion) {
-                    HStack {
-                        Text(currentIndex < quiz.questions.count - 1 ? "下一題" : "完成測驗")
-                            .fontWeight(.semibold)
-                        
-                        Image(systemName: currentIndex < quiz.questions.count - 1 ? "arrow.right" : "checkmark")
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Color.blue)
-                    .cornerRadius(16)
+                ModernButton(
+                    currentIndex < quiz.questions.count - 1 ? "下一題" : "完成測驗",
+                    icon: currentIndex < quiz.questions.count - 1 ? "arrow.right" : "checkmark",
+                    style: .primary
+                ) {
+                    nextQuestion()
                 }
             }
         }
-        .padding()
+        .padding(ModernSpacing.md)
     }
     
     // MARK: - 完成頁面
     
     private var studyCompleteView: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "trophy.fill")
-                .font(.appLargeTitle())
-                .foregroundColor(.orange)
+        VStack(spacing: ModernSpacing.xxl) {
+            Image(systemName: "star.circle.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(Color.modernSpecial)
             
             Text("測驗完成！")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(.appLargeTitle(for: "完成標題"))
+                .foregroundStyle(Color.modernTextPrimary)
             
-            VStack(spacing: 12) {
+            VStack(spacing: ModernSpacing.sm) {
                 Text("答對率: \(Int(Double(correctAnswers) / Double(quiz.questions.count) * 100))%")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(correctAnswers >= quiz.questions.count / 2 ? .green : .orange)
+                    .font(.appTitle2(for: "答對率"))
+                    .foregroundStyle(correctAnswers >= quiz.questions.count / 2 ? Color.modernSuccess : Color.modernWarning)
                 
                 Text("共完成 \(quiz.questions.count) 題")
-                    .font(.headline)
-                    .foregroundColor(.gray)
+                    .font(.appHeadline(for: "題目數量"))
+                    .foregroundStyle(Color.modernTextSecondary)
                 
                 Text("測驗時間: \(formatStudyTime())")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .font(.appSubheadline(for: "測驗時間"))
+                    .foregroundStyle(Color.modernTextSecondary)
             }
             
-            Button(action: completeStudy) {
-                Text("完成學習")
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Color.blue)
-                    .cornerRadius(16)
+            ModernButton(
+                "完成學習",
+                style: .primary
+            ) {
+                completeStudy()
             }
+            .padding(.horizontal, ModernSpacing.lg)
         }
-        .padding()
+        .padding(ModernSpacing.lg)
     }
     
     // MARK: - 計算屬性
@@ -554,33 +540,60 @@ struct QuizView: View {
         return String(UnicodeScalar(65 + index)!) // A, B, C, D
     }
     
-    private func backgroundColor(isSelected: Bool, isCorrect: Bool?) -> Color {
+    private func optionCircleBackgroundColor(isSelected: Bool, isCorrect: Bool?) -> Color {
         if let isCorrect = isCorrect {
-            return isCorrect ? .green : (isSelected ? .red : .gray)
-        }
-        return isSelected ? .blue : .gray
-    }
-    
-    private func textColor(isSelected: Bool, isCorrect: Bool?) -> Color {
-        if showingResult {
-            if let isCorrect = isCorrect {
-                return isCorrect ? .white : (isSelected ? .white : .primary)
+            if isCorrect {
+                return Color.modernSuccess
+            } else if isSelected {
+                return Color.modernError
+            } else {
+                return Color.modernTextTertiary
             }
         }
-        return isSelected ? .white : .primary
+        return isSelected ? Color.modernAccent : Color.modernTextTertiary
     }
     
-    private func backgroundFillColor(isSelected: Bool, isCorrect: Bool?) -> Color {
-        if let isCorrect = isCorrect {
-            return isCorrect ? .green.opacity(0.1) : (isSelected ? .red.opacity(0.1) : .clear)
+    private func optionCircleTextColor(isSelected: Bool, isCorrect: Bool?) -> Color {
+        if showingResult {
+            if let isCorrect = isCorrect {
+                return isCorrect ? .white : (isSelected ? .white : Color.modernTextPrimary)
+            }
         }
-        return isSelected ? .blue.opacity(0.1) : .clear
+        return isSelected ? .white : Color.modernTextPrimary
     }
     
-    private func borderColor(isSelected: Bool, isCorrect: Bool?) -> Color {
-        if let isCorrect = isCorrect {
-            return isCorrect ? .green : (isSelected ? .red : .gray.opacity(0.3))
+    private func optionTextColor(isSelected: Bool, isCorrect: Bool?) -> Color {
+        if showingResult {
+            if let isCorrect = isCorrect {
+                return isCorrect ? Color.modernSuccess : (isSelected ? Color.modernError : Color.modernTextPrimary)
+            }
         }
-        return isSelected ? .blue : .gray.opacity(0.3)
+        return isSelected ? Color.modernAccent : Color.modernTextPrimary
+    }
+    
+    private func optionBackgroundColor(isSelected: Bool, isCorrect: Bool?) -> Color {
+        if let isCorrect = isCorrect {
+            if isCorrect {
+                return Color.modernSuccess.opacity(0.1)
+            } else if isSelected {
+                return Color.modernError.opacity(0.1)
+            } else {
+                return Color.modernSurface
+            }
+        }
+        return isSelected ? Color.modernAccentSoft : Color.modernSurface
+    }
+    
+    private func optionBorderColor(isSelected: Bool, isCorrect: Bool?) -> Color {
+        if let isCorrect = isCorrect {
+            if isCorrect {
+                return Color.modernSuccess
+            } else if isSelected {
+                return Color.modernError
+            } else {
+                return Color.modernBorder
+            }
+        }
+        return isSelected ? Color.modernAccent : Color.modernBorder
     }
 }

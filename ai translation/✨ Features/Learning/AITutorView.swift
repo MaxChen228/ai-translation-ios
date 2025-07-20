@@ -120,8 +120,8 @@ struct ClaudeStartLearningCard: View {
             VStack(spacing: 16) {
                 HStack {
                     Image(systemName: "brain.head.profile")
-                        .font(.appTitle2(for: "🧠"))
-                        .foregroundStyle(Color.orange)
+                        .font(.appTitle2())
+                        .foregroundStyle(Color.modernAccent)
                     
                     Text("AI 英文家教")
                         .font(.appTitle2(for: "AI 英文家教"))
@@ -148,7 +148,7 @@ struct ClaudeStartLearningCard: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
                         Image(systemName: "play.fill")
-                            .font(.appCallout(for: "▶️"))
+                            .font(.appCallout())
                     }
                     
                     Text(isLoading ? "準備題目中..." : "開始學習")
@@ -159,11 +159,7 @@ struct ClaudeStartLearningCard: View {
                 .padding(.vertical, 16)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.linearGradient(
-                            colors: [Color.orange, Color.red],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
+                        .fill(Color.modernAccent)
                 }
             }
             .disabled(isLoading)
@@ -172,22 +168,22 @@ struct ClaudeStartLearningCard: View {
             if let errorMessage = errorMessage {
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.appCaption(for: "⚠️"))
-                        .foregroundStyle(.red)
+                        .font(.appCaption())
+                        .foregroundStyle(Color.modernError)
                         .padding(.top, 1)
                     
                     Text(errorMessage)
                         .font(.appCaption(for: errorMessage))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.modernError)
                         .lineSpacing(1)
                 }
                 .padding(12)
                 .background {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(.red.opacity(0.1))
+                        .fill(Color.modernError.opacity(0.1))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(.red.opacity(0.3), lineWidth: 1)
+                                .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                         }
                 }
             }
@@ -249,8 +245,8 @@ struct ClaudeSettingsPreviewCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "gearshape.fill")
-                    .font(.appCallout(for: "⚙️"))
-                    .foregroundStyle(Color.orange)
+                    .font(.appCallout())
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("學習設定")
                     .font(.appHeadline(for: "學習設定"))
@@ -261,7 +257,7 @@ struct ClaudeSettingsPreviewCard: View {
                 NavigationLink(destination: SettingsView()) {
                     Text("調整")
                         .font(.appSubheadline(for: "調整"))
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                 }
             }
             
@@ -285,8 +281,8 @@ struct ClaudeEmptyLearningState: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.appLargeTitle(for: "✅"))
-                .foregroundStyle(Color.green)
+                .font(.appLargeTitle())
+                .foregroundStyle(Color.modernSuccess)
             
             Text("學習回合已完成")
                 .font(.appTitle3(for: "學習回合已完成"))
@@ -308,7 +304,7 @@ struct ClaudeEmptyLearningState: View {
                 .padding(.vertical, 12)
                 .background {
                     Capsule()
-                        .fill(Color.orange)
+                        .fill(Color.modernAccent)
                 }
             }
         }
@@ -351,16 +347,16 @@ struct ClaudeLearningProgressCard: View {
                 Button(action: onNewSession) {
                     HStack(spacing: 6) {
                         Image(systemName: "plus")
-                            .font(.appCaption(for: "➕"))
+                            .font(.appCaption())
                         Text("新回合")
                             .font(.appSubheadline(for: "新回合"))
                     }
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background {
                         Capsule()
-                            .fill(Color.orange.opacity(0.15))
+                            .fill(Color.modernAccentSoft)
                     }
                 }
             }
@@ -376,12 +372,12 @@ struct ClaudeLearningProgressCard: View {
                     
                     Text("\(Int(progressPercentage * 100))%")
                         .font(.appCallout())
-                        .foregroundStyle(Color.orange)
+                        .foregroundStyle(Color.modernAccent)
                 }
                 
                 ProgressView(value: progressPercentage)
                     .progressViewStyle(.linear)
-                    .tint(Color.orange)
+                    .tint(Color.modernAccent)
                     .scaleEffect(y: 1.5)
             }
         }
@@ -401,8 +397,8 @@ struct ClaudeQuestionListCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "list.bullet")
-                    .font(.appHeadline(for: "📋"))
-                    .foregroundStyle(Color.orange)
+                    .font(.appHeadline())
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("題目列表")
                     .font(.appTitle3(for: "題目列表"))
@@ -445,12 +441,12 @@ struct ClaudeQuestionItem: View {
             // 題目編號和狀態
             ZStack {
                 Circle()
-                    .fill(sessionQuestion.isCompleted ? Color.green : Color.orange)
+                    .fill(sessionQuestion.isCompleted ? Color.modernSuccess : Color.modernAccent)
                     .frame(width: 32, height: 32)
                 
                 if sessionQuestion.isCompleted {
                     Image(systemName: "checkmark")
-                        .font(.appSubheadline(for: "✓"))
+                        .font(.appSubheadline())
                         .foregroundStyle(.white)
                 } else {
                     Text("\(questionNumber)")
@@ -481,8 +477,8 @@ struct ClaudeQuestionItem: View {
                     if let hint = sessionQuestion.question.hint_text, !hint.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "lightbulb.fill")
-                                .font(.appCaption2(for: "💡"))
-                                .foregroundStyle(.yellow)
+                                .font(.appCaption2())
+                                .foregroundStyle(Color.modernWarning)
                             
                             Text("有提示")
                                 .font(.appCaption2(for: "有提示"))
@@ -520,7 +516,7 @@ struct ClaudeQuestionGenerationStatus: View {
             HStack(spacing: 12) {
                 ForEach(0..<3) { index in
                     Circle()
-                        .fill(Color.orange)
+                        .fill(Color.modernAccent)
                         .frame(width: 12, height: 12)
                         .scaleEffect(animationScale)
                         .animation(
@@ -551,18 +547,10 @@ struct ClaudeQuestionGenerationStatus: View {
         .padding(24)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(.linearGradient(
-                    colors: [Color.orange.opacity(0.1), Color.red.opacity(0.05)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
+                .fill(Color.modernAccentSoft)
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(.linearGradient(
-                            colors: [Color.orange.opacity(0.3), Color.red.opacity(0.2)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ), lineWidth: 1.5)
+                        .stroke(Color.modernAccent.opacity(0.3), lineWidth: 1.5)
                 }
         }
     }

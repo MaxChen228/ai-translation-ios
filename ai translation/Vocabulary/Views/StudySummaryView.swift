@@ -27,9 +27,9 @@ struct StudySummaryView: View {
                     // 單字列表
                     wordsListSection
                     
-                    // 成就獎章
+                    // 新掌握單字
                     if !summary.newMasteryAchievements.isEmpty {
-                        masteryAchievementsSection
+                        newMasterySection
                     }
                     
                     // 底部按鈕
@@ -56,40 +56,40 @@ struct StudySummaryView: View {
         }
     }
     
-    // MARK: - 成就區域
+    // MARK: - 簡約總結區域
     
     private var achievementSection: some View {
         VStack(spacing: 16) {
-            // 主要成就圖示
+            // 簡化的結果指示器
             ZStack {
                 Circle()
-                    .fill(achievementColor)
-                    .frame(width: 100, height: 100)
-                    .shadow(color: achievementColor.opacity(0.3), radius: 10)
+                    .fill(Color.modernSurface)
+                    .frame(width: 80, height: 80)
+                    .overlay {
+                        Circle()
+                            .stroke(achievementColor, lineWidth: 3)
+                    }
                 
                 Image(systemName: achievementIcon)
-                    .font(.appLargeTitle())
-                    .foregroundColor(.white)
+                    .font(.appTitle2())
+                    .foregroundStyle(achievementColor)
             }
-            .scaleEffect(animateProgress ? 1.0 : 0.8)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: animateProgress)
             
-            // 成就標題
+            // 簡化標題
             Text(achievementTitle)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(Color.modernTextPrimary)
+                .font(.appTitle2())
+                .foregroundStyle(Color.modernTextPrimary)
                 .multilineTextAlignment(.center)
             
-            // 成就描述
+            // 簡化描述
             Text(achievementDescription)
-                .font(.subheadline)
-                .foregroundColor(Color.modernTextSecondary)
+                .font(.appSubheadline())
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
-        .background(Color.modernSurface.opacity(0.7))
-        .cornerRadius(ModernRadius.lg)
+        .background(Color.modernSurface)
+        .cornerRadius(ModernRadius.md)
     }
     
     // MARK: - 主要統計
@@ -192,7 +192,7 @@ struct StudySummaryView: View {
                     title: "學習效率",
                     value: efficiency,
                     progress: summary.accuracyRate / 100.0,
-                    color: .green
+                    color: Color.modernSuccess
                 )
                 
                 if !summary.newMasteryAchievements.isEmpty {
@@ -246,53 +246,43 @@ struct StudySummaryView: View {
         .shadow(color: ModernShadow.soft.color, radius: ModernShadow.soft.radius, x: ModernShadow.soft.x, y: ModernShadow.soft.y)
     }
     
-    // MARK: - 掌握成就
+    // MARK: - 新掌握單字
     
-    private var masteryAchievementsSection: some View {
+    private var newMasterySection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: "trophy.fill")
-                    .foregroundColor(Color.modernWarning)
-                
-                Text("新掌握成就")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-            }
-            
-            Text("恭喜！你在這次學習中掌握了以下單字：")
-                .font(.subheadline)
-                .foregroundColor(Color.modernTextSecondary)
+            Text("新掌握單字")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .foregroundStyle(Color.modernTextPrimary)
             
             LazyVStack(spacing: 8) {
                 ForEach(summary.newMasteryAchievements, id: \.id) { word in
                     HStack {
-                        Image(systemName: "crown.fill")
-                            .foregroundColor(Color.modernWarning)
-                        
                         VStack(alignment: .leading, spacing: 2) {
                             Text(word.word)
                                 .font(.headline)
                                 .fontWeight(.semibold)
+                                .foregroundStyle(Color.modernTextPrimary)
                             
                             Text(word.definitionZH)
                                 .font(.caption)
-                                .foregroundColor(Color.modernTextSecondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                         }
                         
                         Spacer()
                         
-                        Text("已掌握")
+                        Text("掌握")
                             .font(.caption)
                             .fontWeight(.medium)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.modernWarning)
+                            .background(Color.modernSuccess)
                             .cornerRadius(ModernRadius.sm)
                     }
                     .padding()
-                    .background(Color.modernWarning.opacity(0.1))
-                    .cornerRadius(ModernRadius.sm + 4)
+                    .background(Color.modernSurface)
+                    .cornerRadius(ModernRadius.sm)
                 }
             }
         }

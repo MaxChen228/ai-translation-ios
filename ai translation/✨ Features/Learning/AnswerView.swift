@@ -207,9 +207,9 @@ struct ClaudeQuestionTypeTag: View {
     private var tagInfo: (text: String, color: Color, icon: String) {
         switch type {
         case "review":
-            return ("複習題", .green, "arrow.clockwise")
+            return ("複習題", Color.modernSuccess, "arrow.clockwise")
         default:
-            return ("新題目", .blue, "plus")
+            return ("新題目", Color.modernSpecial, "plus")
         }
     }
     
@@ -283,7 +283,7 @@ struct ClaudeHintCard: View {
                             if isLoadingSmartHint {
                                 ProgressView()
                                     .scaleEffect(0.8)
-                                    .tint(Color.blue)
+                                    .tint(Color.modernSpecial)
                             } else {
                                 Image(systemName: "sparkles")
                                     .font(.appCallout())
@@ -292,15 +292,15 @@ struct ClaudeHintCard: View {
                             Text(isLoadingSmartHint ? "思考中..." : "AI智慧提示")
                                 .font(.appCallout())
                         }
-                        .foregroundStyle(Color.blue)
+                        .foregroundStyle(Color.modernSpecial)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                         .background {
                             Capsule()
-                                .fill(Color.blue.opacity(0.1))
+                                .fill(Color.modernSpecial.opacity(0.1))
                                 .overlay {
                                     Capsule()
-                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.modernSpecial.opacity(0.3), lineWidth: 1)
                                 }
                         }
                     }
@@ -314,7 +314,7 @@ struct ClaudeHintCard: View {
                     HStack(spacing: 8) {
                         Image(systemName: "lightbulb.fill")
                             .font(.appHeadline())
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(Color.modernWarning)
                         
                         Text("考點提示")
                             .font(.appHeadline())
@@ -341,10 +341,10 @@ struct ClaudeHintCard: View {
                 .padding(16)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.yellow.opacity(0.1))
+                        .fill(Color.modernWarning.opacity(0.1))
                         .overlay {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(.yellow.opacity(0.3), lineWidth: 1)
+                                .stroke(Color.modernWarning.opacity(0.3), lineWidth: 1)
                         }
                 }
                 .transition(.asymmetric(
@@ -359,7 +359,7 @@ struct ClaudeHintCard: View {
                     HStack(spacing: 8) {
                         Image(systemName: "sparkles")
                             .font(.appHeadline())
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(Color.modernSpecial)
                         
                         Text("AI 智慧引導")
                             .font(.appHeadline())
@@ -391,15 +391,15 @@ struct ClaudeHintCard: View {
                             // 思考問題
                             if !smartHint.thinking_questions.isEmpty {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    Text("🤔 思考一下：")
+                                    Text("思考一下：")
                                         .font(.appCallout())
-                                        .foregroundStyle(.blue)
+                                        .foregroundStyle(Color.modernSpecial)
                                     
                                     ForEach(Array(smartHint.thinking_questions.enumerated()), id: \.offset) { index, question in
                                         HStack(alignment: .top, spacing: 8) {
                                             Text("\(index + 1).")
                                                 .font(.appSubheadline())
-                                                .foregroundStyle(.blue)
+                                                .foregroundStyle(Color.modernSpecial)
                                             
                                             Text(question)
                                                 .font(.appSubheadline())
@@ -412,14 +412,14 @@ struct ClaudeHintCard: View {
                             
                             // 鼓勵話語
                             if !smartHint.encouragement.isEmpty {
-                                Text("💪 " + smartHint.encouragement)
+                                Text(smartHint.encouragement)
                                     .font(.appSubheadline())
                                     .foregroundStyle(.secondary)
                                     .italic()
                                     .padding(10)
                                     .background {
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.blue.opacity(0.08))
+                                            .fill(Color.modernSpecial.opacity(0.08))
                                     }
                             }
                         }
@@ -428,10 +428,10 @@ struct ClaudeHintCard: View {
                 .padding(16)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.blue.opacity(0.1))
+                        .fill(Color.modernSpecial.opacity(0.1))
                         .overlay {
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(.blue.opacity(0.3), lineWidth: 1)
+                                .stroke(Color.modernSpecial.opacity(0.3), lineWidth: 1)
                         }
                 }
                 .transition(.asymmetric(
@@ -570,7 +570,7 @@ struct ClaudeAnswerCard: View {
                     .padding(.vertical, 16)
                     .background {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(userAnswer.isEmpty ? Color.gray : Color.modernAccent)
+                            .fill(userAnswer.isEmpty ? Color.modernBorder : Color.modernAccent)
                     }
                 }
                 .disabled(isLoading || userAnswer.isEmpty)
@@ -597,21 +597,21 @@ struct ClaudeErrorMessage: View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.appCallout())
-                .foregroundStyle(.red)
+                .foregroundStyle(Color.modernError)
                 .padding(.top, 1)
             
             Text(message)
                 .font(.appSubheadline())
-                .foregroundStyle(.red)
+                .foregroundStyle(Color.modernError)
                 .lineSpacing(1)
         }
         .padding(12)
         .background {
             RoundedRectangle(cornerRadius: 8)
-                .fill(.red.opacity(0.1))
+                .fill(Color.modernError.opacity(0.1))
                 .overlay {
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(.red.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                 }
         }
     }
@@ -720,13 +720,13 @@ struct ClaudeFeedbackCard: View {
                 userAnswer: userAnswer
             )
             
-            saveMessage = "✅ 成功儲存 \(savedCount) 個知識點"
+            saveMessage = "成功儲存 \(savedCount) 個知識點"
             
             withAnimation {
                 editableErrors.removeAll()
             }
         } catch {
-            saveMessage = "❌ 儲存失敗：\(error.localizedDescription)"
+            saveMessage = "儲存失敗：\(error.localizedDescription)"
         }
         
         isSaving = false
@@ -830,9 +830,9 @@ struct ClaudeReviewResultCard: View {
     
     private var masteryColor: Color {
         if feedback.did_master_review_concept == true {
-            return .green
+            return Color.modernSuccess
         } else if feedback.is_generally_correct {
-            return .blue
+            return Color.modernSpecial
         } else {
             return Color.modernAccent
         }
@@ -844,7 +844,7 @@ struct ClaudeReviewResultCard: View {
             HStack {
                 Image(systemName: "arrow.clockwise")
                     .font(.appCallout())
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color.modernSuccess)
                 
                 Text("複習題結果")
                     .font(.appHeadline(for: "複習題結果"))
@@ -856,17 +856,17 @@ struct ClaudeReviewResultCard: View {
                 HStack(spacing: 6) {
                     Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.appHeadline())
-                        .foregroundStyle(feedback.is_generally_correct ? .green : .red)
+                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernError)
                     
                     Text(feedback.is_generally_correct ? "答對" : "答錯")
                         .font(.appCallout())
-                        .foregroundStyle(feedback.is_generally_correct ? .green : .red)
+                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernError)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background {
                     Capsule()
-                        .fill((feedback.is_generally_correct ? Color.green : Color.red).opacity(0.15))
+                        .fill((feedback.is_generally_correct ? Color.modernSuccess : Color.modernError).opacity(0.15))
                 }
             }
             
@@ -961,7 +961,7 @@ struct ClaudeErrorAnalysisCard: View {
                                 .padding(.vertical, 6)
                                 .background {
                                     Capsule()
-                                        .fill(Color.blue)
+                                        .fill(Color.modernSpecial)
                                 }
                             }
                             .disabled(isMerging)
@@ -1051,7 +1051,7 @@ struct ClaudeErrorAnalysisRow: View {
                 Button(action: onTap) {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .font(.appTitle3())
-                        .foregroundStyle(isSelected ? Color.blue : Color.secondary.opacity(0.6))
+                        .foregroundStyle(isSelected ? Color.modernSpecial : Color.secondary.opacity(0.6))
                 }
                 .padding(.trailing, 16)
             }
@@ -1090,8 +1090,8 @@ struct ClaudeErrorAnalysisRow: View {
                         
                         Text("\"\(error.original_phrase)\"")
                             .font(.appSubheadline())
-                            .foregroundStyle(.red)
-                            .strikethrough(color: .red)
+                            .foregroundStyle(Color.modernError)
+                            .strikethrough(color: Color.modernError)
                     }
                     
                     HStack(alignment: .top, spacing: 8) {
@@ -1101,7 +1101,7 @@ struct ClaudeErrorAnalysisRow: View {
                         
                         Text("\"\(error.correction)\"")
                             .font(.appSubheadline())
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color.modernSuccess)
                     }
                 }
                 
@@ -1118,7 +1118,7 @@ struct ClaudeErrorAnalysisRow: View {
                 Button(action: onDelete) {
                     Image(systemName: "trash.fill")
                         .font(.appHeadline())
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.modernError)
                 }
                 .padding(.leading, 16)
             }
@@ -1130,7 +1130,7 @@ struct ClaudeErrorAnalysisRow: View {
                 .overlay {
                     if isSelected {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.blue, lineWidth: 2)
+                            .stroke(Color.modernSpecial, lineWidth: 2)
                     }
                 }
         }
@@ -1142,9 +1142,9 @@ struct ClaudeNoErrorsCard: View {
         VStack(spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.appLargeTitle())
-                .foregroundStyle(.green)
+                .foregroundStyle(Color.modernSuccess)
             
-            Text("🎉 恭喜！")
+            Text("恭喜！")
                 .font(.appTitle2())
                 .foregroundStyle(.primary)
             
@@ -1156,10 +1156,10 @@ struct ClaudeNoErrorsCard: View {
         .padding(40)
         .background {
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.green.opacity(0.1))
+                .fill(Color.modernSuccess.opacity(0.1))
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.modernSuccess.opacity(0.3), lineWidth: 1)
                 }
         }
     }
@@ -1192,7 +1192,7 @@ struct ClaudeSaveSection: View {
                 .padding(.vertical, 16)
                 .background {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(editableErrors.isEmpty ? Color.gray : Color.green)
+                        .fill(editableErrors.isEmpty ? Color.modernBorder : Color.modernSuccess)
                 }
             }
             .disabled(editableErrors.isEmpty || isSaving)
@@ -1200,11 +1200,11 @@ struct ClaudeSaveSection: View {
             if let saveMessage = saveMessage {
                 Text(saveMessage)
                     .font(.appSubheadline())
-                    .foregroundStyle(saveMessage.contains("✅") ? .green : .red)
+                    .foregroundStyle(saveMessage.contains("成功") ? Color.modernSuccess : Color.modernError)
                     .padding(12)
                     .background {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill((saveMessage.contains("✅") ? Color.green : Color.red).opacity(0.1))
+                            .fill((saveMessage.contains("成功") ? Color.modernSuccess : Color.modernError).opacity(0.1))
                     }
             }
         }

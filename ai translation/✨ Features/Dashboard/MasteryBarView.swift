@@ -9,11 +9,11 @@ struct MasteryBarView: View {
     // 根據熟練度決定顏色
     private var barColor: Color {
         if masteryLevel < 1.5 {
-            return .red
+            return Color.modernError
         } else if masteryLevel < 3.5 {
-            return .orange
+            return Color.modernWarning
         } else {
-            return .green
+            return Color.modernSuccess
         }
     }
     
@@ -24,7 +24,7 @@ struct MasteryBarView: View {
                 // 1. 血條的背景 (底色)
                 Capsule()
                     .frame(width: geometry.size.width, height: 12)
-                    .foregroundColor(Color.gray.opacity(0.3))
+                    .foregroundColor(Color.modernTextTertiary.opacity(0.3))
                 
                 // 2. 血條的前景 (實際的熟練度)
                 Capsule()

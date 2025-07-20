@@ -97,18 +97,18 @@ struct KnowledgePointDetailView: View {
                 HStack(spacing: 8) {
                     Image(systemName: categoryIcon)
                         .font(.appCallout())
-                        .foregroundStyle(categoryColor)
+                        .foregroundStyle(Color.modernAccent)
                     
                     Text("\(point.category) → \(point.subcategory)")
                         .font(.appCallout())
                         .fontWeight(.semibold)
-                        .foregroundStyle(categoryColor)
+                        .foregroundStyle(Color.modernAccent)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background {
                     Capsule()
-                        .fill(categoryColor.opacity(0.15))
+                        .fill(Color.modernAccentSoft)
                 }
                 
                 Spacer()
@@ -123,7 +123,7 @@ struct KnowledgePointDetailView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .font(.appCaption())
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(Color.modernAccent)
                         
                         Text("掌握度")
                             .font(.appCaption(for: "掌握度"))
@@ -133,7 +133,7 @@ struct KnowledgePointDetailView: View {
                     Text("\(Int(point.mastery_level * 100))%")
                         .font(.appTitle2())
                         .fontWeight(.bold)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.modernAccent)
                 }
                 
                 Spacer()
@@ -142,11 +142,11 @@ struct KnowledgePointDetailView: View {
                     HStack(spacing: 8) {
                         Text("錯誤 \(point.mistake_count) 次")
                             .font(.appCaption(for: "錯誤"))
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.modernError)
                         
                         Text("正確 \(point.correct_count) 次")
                             .font(.appCaption(for: "正確"))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color.modernSuccess)
                     }
                     
                     if let nextReviewDate = point.next_review_date {
@@ -162,19 +162,19 @@ struct KnowledgePointDetailView: View {
     private var statusLabel: some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(localIsArchived ? Color.gray : Color.green)
+                .fill(localIsArchived ? Color.modernTextSecondary : Color.modernSuccess)
                 .frame(width: 8, height: 8)
             
             Text(localIsArchived ? "已歸檔" : "活躍")
                 .font(.appCaption(for: localIsArchived ? "已歸檔" : "活躍"))
                 .fontWeight(.medium)
-                .foregroundStyle(localIsArchived ? .gray : .green)
+                .foregroundStyle(localIsArchived ? Color.modernTextSecondary : Color.modernSuccess)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background {
             Capsule()
-                .fill((localIsArchived ? Color.gray : Color.green).opacity(0.1))
+                .fill((localIsArchived ? Color.modernTextSecondary : Color.modernSuccess).opacity(0.1))
         }
     }
     
@@ -185,7 +185,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("原始句子", systemImage: "quote.bubble.fill")
                         .font(.appHeadline(for: "原始句子"))
-                        .foregroundColor(.orange)
+                        .foregroundColor(Color.modernAccent)
                     
                     Text(userContextSentence)
                         .font(.appBody(for: userContextSentence))
@@ -203,7 +203,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("錯誤片段", systemImage: "exclamationmark.triangle.fill")
                         .font(.appHeadline(for: "錯誤片段"))
-                        .foregroundColor(.red)
+                        .foregroundColor(Color.modernError)
                     
                     if isEditing {
                         TextField("錯誤片段", text: $editablePoint.incorrect_phrase)
@@ -213,16 +213,16 @@ struct KnowledgePointDetailView: View {
                         Text(incorrectPhrase)
                             .font(.appBody(for: incorrectPhrase))
                             .fontWeight(.medium)
-                            .foregroundColor(.red)
-                            .strikethrough(color: .red)
+                            .foregroundColor(Color.modernError)
+                            .strikethrough(color: Color.modernError)
                             .padding(12)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.red.opacity(0.1))
+                                    .fill(Color.modernError.opacity(0.1))
                                     .overlay {
                                         RoundedRectangle(cornerRadius: 8)
-                                            .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                                            .stroke(Color.modernError.opacity(0.3), lineWidth: 1)
                                     }
                             }
                     }
@@ -233,7 +233,7 @@ struct KnowledgePointDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Label("核心知識點", systemImage: "lightbulb.fill")
                     .font(.appHeadline(for: "核心知識點"))
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.modernAccent)
                 
                 if isEditing {
                     TextField("核心知識點", text: $editablePoint.key_point_summary, axis: .vertical)
@@ -258,7 +258,7 @@ struct KnowledgePointDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Label("正確用法", systemImage: "checkmark.seal.fill")
                     .font(.appHeadline(for: "正確用法"))
-                    .foregroundColor(.green)
+                    .foregroundColor(Color.modernSuccess)
                 
                 if isEditing {
                     TextField("正確用法", text: $editablePoint.correct_phrase)
@@ -268,15 +268,15 @@ struct KnowledgePointDetailView: View {
                     Text(point.correct_phrase)
                         .font(.appBody(for: point.correct_phrase))
                         .fontWeight(.bold)
-                        .foregroundColor(.green)
+                        .foregroundColor(Color.modernSuccess)
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.green.opacity(0.1))
+                                .fill(Color.modernSuccess.opacity(0.1))
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                                        .stroke(Color.modernSuccess.opacity(0.3), lineWidth: 1)
                                 }
                         }
                 }
@@ -287,7 +287,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("用法解析", systemImage: "sparkles")
                         .font(.appHeadline(for: "用法解析"))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.modernAccent)
                     
                     if isEditing {
                         TextField("用法解析", text: $editablePoint.explanation, axis: .vertical)
@@ -308,7 +308,7 @@ struct KnowledgePointDetailView: View {
                     HStack {
                         Label("AI 審閱建議", systemImage: "brain.head.profile")
                             .font(.appHeadline(for: "AI 審閱建議"))
-                            .foregroundColor(.purple)
+                            .foregroundColor(Color.modernSpecial)
                         
                         Spacer()
                         
@@ -325,7 +325,7 @@ struct KnowledgePointDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.purple.opacity(0.1))
+                                .fill(Color.modernSpecial.opacity(0.1))
                         }
                 }
             }
@@ -348,10 +348,10 @@ struct KnowledgePointDetailView: View {
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color(.systemGray5))
-                        .foregroundColor(.primary)
-                        .cornerRadius(10)
+                        .padding(.vertical, ModernSpacing.sm + 2)
+                        .background(Color.modernBorder)
+                        .foregroundColor(Color.modernTextPrimary)
+                        .cornerRadius(ModernRadius.sm)
                     }
                     
                     Button(action: saveChanges) {
@@ -368,10 +368,10 @@ struct KnowledgePointDetailView: View {
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.green)
+                        .padding(.vertical, ModernSpacing.sm + 2)
+                        .background(Color.modernAccent)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(ModernRadius.sm)
                     }
                     .disabled(isLoading || !hasChanges)
                 }
@@ -395,10 +395,10 @@ struct KnowledgePointDetailView: View {
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.purple)
+                        .padding(.vertical, ModernSpacing.sm + 2)
+                        .background(Color.modernSpecial)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(ModernRadius.sm)
                     }
                     .disabled(isAIReviewing)
                     
@@ -413,10 +413,14 @@ struct KnowledgePointDetailView: View {
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(localIsArchived ? Color.green : Color.orange)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .padding(.vertical, ModernSpacing.sm + 2)
+                            .background(Color.modernAccentSoft)
+                            .foregroundColor(Color.modernAccent)
+                            .cornerRadius(ModernRadius.sm)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .stroke(Color.modernBorder, lineWidth: 1)
+                            }
                         }
                         
                         // 刪除按鈕
@@ -431,10 +435,14 @@ struct KnowledgePointDetailView: View {
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.red)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .padding(.vertical, ModernSpacing.sm + 2)
+                            .background(Color.clear)
+                            .foregroundColor(Color.modernError)
+                            .cornerRadius(ModernRadius.sm)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                    .stroke(Color.modernError, lineWidth: 1)
+                            }
                         }
                     }
                 }
@@ -458,26 +466,26 @@ struct KnowledgePointDetailView: View {
         }
         .font(.appBody(for: isEditing ? "完成" : "編輯"))
         .fontWeight(.semibold)
-        .foregroundColor(.orange)
+        .foregroundColor(Color.modernAccent)
     }
     
     // MARK: - 保存訊息視圖
     
     private func saveMessageView(_ message: String) -> some View {
         HStack {
-            Image(systemName: message.contains("✅") ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+            Image(systemName: message.contains("成功") ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                 .font(.appBody())
-                .foregroundStyle(message.contains("✅") ? .green : .red)
+                .foregroundStyle(message.contains("成功") ? Color.modernSuccess : Color.modernError)
             
-            Text(message)
+            Text(message.replacingOccurrences(of: "✅ ", with: "").replacingOccurrences(of: "❌ ", with: ""))
                 .font(.appBody(for: message))
                 .fontWeight(.medium)
-                .foregroundStyle(message.contains("✅") ? .green : .red)
+                .foregroundStyle(message.contains("成功") ? Color.modernSuccess : Color.modernError)
         }
         .padding(12)
         .background {
             RoundedRectangle(cornerRadius: 8)
-                .fill((message.contains("✅") ? Color.green : Color.red).opacity(0.1))
+                .fill((message.contains("成功") ? Color.modernSuccess : Color.modernError).opacity(0.1))
         }
     }
     
@@ -493,15 +501,6 @@ struct KnowledgePointDetailView: View {
         }
     }
     
-    private var categoryColor: Color {
-        switch point.category.lowercased() {
-        case "grammar": return .blue
-        case "vocabulary": return .green
-        case "syntax": return .purple
-        case "idiom": return .orange
-        default: return .gray
-        }
-    }
     
     private var hasChanges: Bool {
         return editablePoint.category != point.category ||
@@ -530,7 +529,7 @@ struct KnowledgePointDetailView: View {
             // 暫時只更新本地狀態
             isLoading = false
             isEditing = false
-            saveMessage = "✅ 保存成功"
+            saveMessage = "保存成功"
             
             // 清除保存訊息
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -554,7 +553,7 @@ struct KnowledgePointDetailView: View {
             } catch {
                 await MainActor.run {
                     isAIReviewing = false
-                    saveMessage = "❌ AI審閱失敗：\(error.localizedDescription)"
+                    saveMessage = "AI審閱失敗：\(error.localizedDescription)"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         saveMessage = nil
@@ -577,7 +576,7 @@ struct KnowledgePointDetailView: View {
                 }
                 
                 await MainActor.run {
-                    saveMessage = localIsArchived ? "✅ 已歸檔" : "✅ 已取消歸檔"
+                    saveMessage = localIsArchived ? "已歸檔" : "已取消歸檔"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                         saveMessage = nil
@@ -587,7 +586,7 @@ struct KnowledgePointDetailView: View {
                 await MainActor.run {
                     // 如果 API 調用失敗，恢復本地狀態
                     localIsArchived = originalStatus
-                    saveMessage = "❌ 操作失敗：\(error.localizedDescription)"
+                    saveMessage = "操作失敗：\(error.localizedDescription)"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         saveMessage = nil
@@ -607,7 +606,7 @@ struct KnowledgePointDetailView: View {
                 }
             } catch {
                 await MainActor.run {
-                    saveMessage = "❌ 刪除失敗：\(error.localizedDescription)"
+                    saveMessage = "刪除失敗：\(error.localizedDescription)"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         saveMessage = nil

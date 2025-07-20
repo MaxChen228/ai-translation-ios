@@ -83,29 +83,29 @@ struct VocabularyHomeView: View {
                 HStack {
                     Text("整體掌握度")
                         .font(.appHeadline(for: "整體掌握度"))
-                        .foregroundColor(Color.modernTextPrimary)
+                        .foregroundStyle(Color.modernTextPrimary)
                     
                     Spacer()
                     
                     Text("\(String(format: "%.1f", stats.masteryPercentage))%")
                         .font(.appTitle2())
-                        .foregroundColor(.green)
+                        .foregroundStyle(Color.modernSuccess)
                 }
                 
                 ProgressView(value: stats.masteryPercentage / 100.0)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                    .progressViewStyle(LinearProgressViewStyle(tint: Color.modernSuccess))
                     .scaleEffect(x: 1, y: 2, anchor: .center)
                 
                 HStack {
                     Label("\(stats.newWords) 新單字", systemImage: "plus.circle")
                         .font(.appCaption())
-                        .foregroundColor(.blue)
+                        .foregroundStyle(Color.modernSpecial)
                     
                     Spacer()
                     
                     Label("\(stats.learningWords) 學習中", systemImage: "clock.circle")
                         .font(.appCaption())
-                        .foregroundColor(.orange)
+                        .foregroundStyle(Color.modernAccent)
                 }
             }
             .padding()
@@ -120,7 +120,7 @@ struct VocabularyHomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "calendar.badge.clock")
-                    .foregroundColor(.orange)
+                    .foregroundStyle(Color.modernAccent)
                 Text("今日復習計劃")
                     .font(.appHeadline())
                                     
@@ -129,7 +129,7 @@ struct VocabularyHomeView: View {
                 if let stats = statistics, stats.dueToday > 0 {
                     Text("\(stats.dueToday)個單字待複習")
                         .font(.appCaption())
-                        .foregroundColor(.orange)
+                        .foregroundStyle(Color.modernAccent)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Color.modernAccent.opacity(0.1))
@@ -149,7 +149,7 @@ struct VocabularyHomeView: View {
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding()
                         .background(Color.modernAccent)
                         .cornerRadius(12)
@@ -157,9 +157,9 @@ struct VocabularyHomeView: View {
                 } else {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("🎉 今日復習已完成！")
-                            .foregroundColor(.green)
+                            .foregroundStyle(Color.modernSuccess)
+                        Text("今日復習已完成！")
+                            .foregroundStyle(Color.modernSuccess)
                         Spacer()
                     }
                     .padding()
@@ -171,7 +171,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     // MARK: - 快速學習
@@ -180,7 +180,7 @@ struct VocabularyHomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "bolt.circle")
-                    .foregroundColor(.blue)
+                    .foregroundStyle(Color.modernSpecial)
                 Text("快速學習")
                     .font(.appHeadline())
                                 }
@@ -208,10 +208,10 @@ struct VocabularyHomeView: View {
                     VStack {
                         Image(systemName: "list.bullet.rectangle")
                             .font(.appTitle2())
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         Text("單字管理")
                             .font(.appCaption())
-                                                        .foregroundColor(Color.modernTextSecondary)
+                                                        .foregroundStyle(Color.modernTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 80)
@@ -223,7 +223,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     // MARK: - 進度圖表
@@ -232,7 +232,7 @@ struct VocabularyHomeView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "chart.pie")
-                    .foregroundColor(.purple)
+                    .foregroundStyle(Color.modernAccent)
                 Text("學習進度分布")
                     .font(.appHeadline())
                                 }
@@ -242,7 +242,7 @@ struct VocabularyHomeView: View {
                 VStack {
                     ZStack {
                         Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 8)
+                            .stroke(Color.modernBorder, lineWidth: 8)
                             .frame(width: 80, height: 80)
                         
                         Circle()
@@ -257,7 +257,7 @@ struct VocabularyHomeView: View {
                     
                     Text("已掌握")
                         .font(.appCaption())
-                        .foregroundColor(.green)
+                        .foregroundStyle(Color.modernSuccess)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -265,21 +265,21 @@ struct VocabularyHomeView: View {
                         title: "新單字",
                         count: stats.newWords,
                         total: stats.totalWords,
-                        color: .blue
+                        color: Color.modernSpecial
                     )
                     
                     ProgressBar(
                         title: "學習中",
                         count: stats.learningWords,
                         total: stats.totalWords,
-                        color: .orange
+                        color: Color.modernAccent
                     )
                     
                     ProgressBar(
                         title: "已掌握",
                         count: stats.masteredWords,
                         total: stats.totalWords,
-                        color: .green
+                        color: Color.modernSuccess
                     )
                 }
                 
@@ -289,7 +289,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .gray.opacity(0.1), radius: 2, x: 0, y: 1)
+        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
     // MARK: - 載入和錯誤狀態
@@ -299,7 +299,7 @@ struct VocabularyHomeView: View {
             ProgressView()
                 .scaleEffect(1.5)
             Text("載入統計資料中...")
-                .foregroundColor(.gray)
+                .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(height: 200)
     }
@@ -308,7 +308,7 @@ struct VocabularyHomeView: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.appLargeTitle())
-                .foregroundColor(.orange)
+                .foregroundStyle(Color.modernAccent)
             
             Text("載入失敗")
                 .font(.appHeadline())
@@ -316,7 +316,7 @@ struct VocabularyHomeView: View {
             if let error = errorMessage {
                 Text(error)
                     .font(.appCaption())
-                    .foregroundColor(.gray)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .multilineTextAlignment(.center)
             }
             
@@ -358,15 +358,15 @@ struct StatCard: View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.appTitle2())
-                .foregroundColor(color)
+                .foregroundStyle(color)
             
             Text(value)
                 .font(.appTitle2())
-                                .foregroundColor(Color.modernTextPrimary)
+                                .foregroundStyle(Color.modernTextPrimary)
             
             Text(title)
                 .font(.appCaption())
-                .foregroundColor(.gray)
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -385,11 +385,11 @@ struct StudyModeButton: View {
             VStack {
                 Image(systemName: mode.systemImageName)
                     .font(.appTitle2())
-                    .foregroundColor(.blue)
+                    .foregroundStyle(Color.modernSpecial)
                 
                 Text(mode.displayName)
                     .font(.appCaption())
-                                        .foregroundColor(Color.modernTextPrimary)
+                                        .foregroundStyle(Color.modernTextPrimary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
@@ -416,19 +416,19 @@ struct ProgressBar: View {
             HStack {
                 Text(title)
                     .font(.appCaption())
-                    .foregroundColor(.gray)
+                    .foregroundStyle(Color.modernTextSecondary)
                 
                 Spacer()
                 
                 Text("\(count)")
                     .font(.appCaption())
-                                        .foregroundColor(color)
+                                        .foregroundStyle(color)
             }
             
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Rectangle()
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(Color.modernBorder.opacity(0.3))
                         .frame(height: 4)
                         .cornerRadius(2)
                     

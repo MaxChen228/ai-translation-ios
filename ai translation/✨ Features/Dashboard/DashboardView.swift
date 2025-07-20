@@ -100,9 +100,9 @@ struct DashboardView: View {
 
                 for fontName in testFonts {
                     if let font = UIFont(name: fontName, size: 16) {
-                        print("✅ \(fontName) 載入成功")
+                        print("字體載入成功: \(fontName)")
                     } else {
-                        print("❌ \(fontName) 載入失敗")
+                        print("字體載入失敗: \(fontName)")
                     }
                 }
                 #endif
@@ -351,7 +351,7 @@ struct ClaudeFocusCard: View {
             if points.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.circle")
-                        .font(.appLargeTitle(for: "✅"))
+                        .font(.appLargeTitle())
                         .foregroundStyle(Color.modernSuccess)
                     Text("所有知識點都很穩固！")
                         .font(.appSubheadline(for: "所有知識點都很穩固！"))
@@ -642,7 +642,7 @@ struct ClaudeErrorView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.appLargeTitle(for: "⚠️"))
+                .font(.appLargeTitle())
                 .foregroundStyle(Color.modernWarning)
             
             Text("載入失敗")
@@ -671,7 +671,7 @@ struct ClaudeEmptyStateView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "brain.head.profile")
-                .font(.appLargeTitle(for: "🧠"))
+                .font(.appLargeTitle())
                 .foregroundStyle(Color.modernAccent)
             
             Text("開始您的學習之旅")

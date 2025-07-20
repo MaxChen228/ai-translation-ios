@@ -18,8 +18,8 @@ struct ArchivedPointsView: View {
             } else if let errorMessage = errorMessage {
                 VStack(spacing: 10) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.appLargeTitle(for: "⚠️"))
-                        .foregroundColor(.yellow)
+                        .font(.appLargeTitle())
+                        .foregroundStyle(Color.modernWarning)
                     Text("載入失敗")
                         .font(.appHeadline(for: "載入失敗"))
                     Text(errorMessage)
@@ -30,7 +30,7 @@ struct ArchivedPointsView: View {
             } else if archivedPoints.isEmpty {
                 Text("封存區是空的")
                     .font(.appHeadline(for: "封存區是空的"))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             } else {
                 List {
                     ForEach(archivedPoints) { point in
@@ -40,7 +40,7 @@ struct ArchivedPointsView: View {
                                 .fontWeight(.medium)
                             Text(point.key_point_summary ?? "核心觀念")
                                 .font(.appCaption(for: point.key_point_summary ?? "核心觀念"))
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(Color.modernTextSecondary)
                         }
                         .padding(.vertical, 5)
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
@@ -51,13 +51,13 @@ struct ArchivedPointsView: View {
                             } label: {
                                 Label("取消封存", systemImage: "arrow.uturn.backward.circle.fill")
                             }
-                            .tint(.blue)
+                            .tint(Color.modernSpecial)
                         }
                     }
                 }
             }
         }
-        .navigationTitle("🗄️ 封存區")
+        .navigationTitle("封存區")
         .onAppear(perform: fetchArchivedPoints)
     }
     

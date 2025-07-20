@@ -14,15 +14,15 @@ struct GuestFeatureLimitView: View {
             VStack(spacing: 12) {
                 Image(systemName: featureIcon)
                     .font(.system(size: 48))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("功能限制")
                     .font(.appTitle2(for: "限制標題"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(feature.description)
                     .font(.appBody(for: "限制說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .multilineTextAlignment(.center)
             }
             
@@ -30,7 +30,7 @@ struct GuestFeatureLimitView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("註冊後享有完整功能：")
                     .font(.appHeadline(for: "升級標題"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 VStack(spacing: 8) {
                     GuestUpgradeBenefit(
@@ -58,42 +58,30 @@ struct GuestFeatureLimitView: View {
                     )
                 }
             }
-            .padding(16)
+            .padding(ModernSpacing.md)
             .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
+                RoundedRectangle(cornerRadius: ModernRadius.md)
+                    .fill(Color.modernSurface)
             }
             
             // 按鈕組
-            VStack(spacing: 12) {
-                Button(action: onRegister) {
-                    Text("立即註冊")
-                        .font(.appHeadline(for: "註冊按鈕"))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.orange)
-                        }
-                }
-                .buttonStyle(.plain)
+            VStack(spacing: ModernSpacing.sm) {
+                ModernButton(
+                    "立即註冊",
+                    style: .primary,
+                    action: onRegister
+                )
                 
-                Button(action: onDismiss) {
-                    Text("稍後再說")
-                        .font(.appCallout(for: "取消按鈕"))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
+                ModernButton(
+                    "稍後再說",
+                    style: .tertiary,
+                    action: onDismiss
+                )
             }
         }
-        .padding(24)
-        .background {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-        }
-        .padding(20)
+        .padding(ModernSpacing.lg)
+        .modernCard(.elevated)
+        .padding(ModernSpacing.lg)
     }
     
     private var featureIcon: String {
@@ -113,20 +101,20 @@ struct GuestUpgradeBenefit: View {
     let description: String
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: ModernSpacing.sm) {
             Image(systemName: icon)
                 .font(.appCallout(for: "優勢圖示"))
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(Color.modernAccent)
                 .frame(width: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.appCallout(for: "優勢標題"))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Text(description)
                     .font(.appCaption(for: "優勢說明"))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             }
             
             Spacer()
@@ -144,7 +132,7 @@ struct GuestModeIndicator: View {
             Button(action: {
                 showingPrompt = true
             }) {
-                HStack(spacing: 8) {
+                HStack(spacing: ModernSpacing.xs) {
                     Image(systemName: "eye")
                         .font(.appCaption(for: "訪客圖示"))
                     
@@ -155,11 +143,11 @@ struct GuestModeIndicator: View {
                         .font(.appCaption(for: "升級圖示"))
                 }
                 .foregroundStyle(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, ModernSpacing.sm)
+                .padding(.vertical, ModernSpacing.xs)
                 .background {
                     Capsule()
-                        .fill(Color.blue)
+                        .fill(Color.modernSpecial)
                 }
             }
             .buttonStyle(.plain)
@@ -182,59 +170,59 @@ struct GuestRegistrationPromptView: View {
             ScrollView {
                 VStack(spacing: 32) {
                     // 慶祝圖示
-                    VStack(spacing: 16) {
+                    VStack(spacing: ModernSpacing.md) {
                         Image(systemName: "star.circle.fill")
                             .font(.system(size: 64))
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(Color.modernSpecial)
                         
                         Text("太棒了！")
                             .font(.appLargeTitle(for: "慶祝標題"))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                         
                         Text("您已經體驗了我們的核心功能")
                             .font(.appSubheadline(for: "慶祝說明"))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, ModernSpacing.lg)
                     
                     // 學習成果展示
                     if let user = authManager.currentUser {
-                        VStack(spacing: 16) {
+                        VStack(spacing: ModernSpacing.md) {
                             Text("您的學習成果")
                                 .font(.appTitle3(for: "成果標題"))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.modernTextPrimary)
                             
-                            HStack(spacing: 20) {
+                            HStack(spacing: ModernSpacing.lg) {
                                 GuestAchievementCard(
                                     icon: "clock.fill",
                                     title: "學習時間",
                                     value: formatTime(user.totalLearningTime),
-                                    color: .blue
+                                    color: Color.modernSpecial
                                 )
                                 
                                 GuestAchievementCard(
                                     icon: "brain.head.profile",
                                     title: "知識點",
                                     value: "\(user.knowledgePointsCount)個",
-                                    color: .orange
+                                    color: Color.modernAccent
                                 )
                             }
                         }
-                        .padding(20)
+                        .padding(ModernSpacing.lg)
                         .background {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(.systemGray6))
+                            RoundedRectangle(cornerRadius: ModernRadius.md)
+                                .fill(Color.modernSurface)
                         }
                     }
                     
                     // 升級優勢
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: ModernSpacing.md) {
                         Text("註冊享有更多功能")
                             .font(.appTitle3(for: "升級標題"))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.modernTextPrimary)
                         
-                        VStack(spacing: 12) {
+                        VStack(spacing: ModernSpacing.sm) {
                             GuestUpgradeBenefit(
                                 icon: "icloud.and.arrow.up",
                                 title: "永久保存學習進度",
@@ -256,33 +244,23 @@ struct GuestRegistrationPromptView: View {
                     }
                     
                     // 行動按鈕
-                    VStack(spacing: 12) {
-                        Button(action: {
+                    VStack(spacing: ModernSpacing.sm) {
+                        ModernButton(
+                            "立即註冊，保存學習成果",
+                            style: .primary
+                        ) {
                             showingRegister = true
-                        }) {
-                            Text("立即註冊，保存學習成果")
-                                .font(.appHeadline(for: "註冊按鈕"))
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color.orange)
-                                }
                         }
-                        .buttonStyle(.plain)
                         
-                        Button(action: {
+                        ModernButton(
+                            "繼續訪客體驗",
+                            style: .tertiary
+                        ) {
                             dismiss()
-                        }) {
-                            Text("繼續訪客體驗")
-                                .font(.appCallout(for: "繼續按鈕"))
-                                .foregroundStyle(.secondary)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
-                .padding(20)
+                .padding(ModernSpacing.lg)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -290,7 +268,7 @@ struct GuestRegistrationPromptView: View {
                     Button("關閉") {
                         dismiss()
                     }
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 }
             }
         }
@@ -320,24 +298,24 @@ struct GuestAchievementCard: View {
     let color: Color
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: ModernSpacing.xs) {
             Image(systemName: icon)
                 .font(.appTitle3(for: "成就圖示"))
                 .foregroundStyle(color)
             
             Text(value)
                 .font(.appTitle2(for: "成就數值"))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.modernTextPrimary)
             
             Text(title)
                 .font(.appCaption(for: "成就標題"))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.modernTextSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, ModernSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                .fill(Color.modernSurfaceElevated)
         }
     }
 }
