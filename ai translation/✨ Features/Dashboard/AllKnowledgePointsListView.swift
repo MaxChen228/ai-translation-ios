@@ -65,7 +65,7 @@ struct AllKnowledgePointsListView: View {
         let selectedIDs = Array(selection)
         
         do {
-            try await KnowledgePointAPIService.batchArchivePoints(ids: selectedIDs)
+            try await KnowledgePointAPIService.batchArchiveKnowledgePoints(ids: selectedIDs)
             // 清空選中項目
             selection.removeAll()
             // 退出編輯模式

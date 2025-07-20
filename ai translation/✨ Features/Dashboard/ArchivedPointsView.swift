@@ -66,7 +66,7 @@ struct ArchivedPointsView: View {
             isLoading = true
             errorMessage = nil
             do {
-                self.archivedPoints = try await KnowledgePointAPIService.fetchArchivedPoints()
+                self.archivedPoints = try await KnowledgePointAPIService.fetchArchivedKnowledgePoints()
             } catch {
                 if let apiError = error as? APIError {
                     switch apiError {
@@ -91,7 +91,7 @@ struct ArchivedPointsView: View {
     
     private func unarchivePoint(id: Int) async {
         do {
-            try await KnowledgePointAPIService.unarchivePoint(id: id)
+            try await KnowledgePointAPIService.unarchiveKnowledgePoint(id: id)
             // 重新載入資料
             fetchArchivedPoints()
         } catch {
