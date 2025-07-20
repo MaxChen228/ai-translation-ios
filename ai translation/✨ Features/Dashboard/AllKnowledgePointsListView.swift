@@ -24,7 +24,7 @@ struct AllKnowledgePointsListView: View {
                                 .lineLimit(1)
                             Text(point.correct_phrase)
                                 .font(.appCaption(for: point.correct_phrase))
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                                 .lineLimit(1)
                         }
                         .padding(.vertical, 6)
@@ -90,14 +90,14 @@ struct BottomActionBar: View {
             HStack {
                 Text("已選取 \(selectionCount) 個項目")
                     .font(.appSubheadline(for: "已選取項目"))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 
                 Spacer()
                 
                 Button(action: onArchiveAction) {
                     Text("封存")
                         .font(.appHeadline(for: "封存"))
-                        .foregroundColor(.blue)
+                        .foregroundStyle(Color.modernAccent)
                 }
             }
             .padding()

@@ -59,11 +59,11 @@ struct ErrorAnalysis: Codable, Identifiable {
     
     var categoryColor: Color {
         switch error_type_code {
-        case "A": return .blue
-        case "B": return .orange
-        case "C": return .purple
-        case "D": return .gray
-        default: return .red
+        case "A": return Color.modernSpecial
+        case "B": return Color.modernWarning
+        case "C": return Color.modernAccent
+        case "D": return Color.modernTextSecondary
+        default: return Color.modernError
         }
     }
 }

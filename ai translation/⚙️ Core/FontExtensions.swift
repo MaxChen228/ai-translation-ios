@@ -297,7 +297,7 @@ struct FontPreviewView: View {
                         Text(text)
                             .font(.appFont(for: text, size: 16, weight: .regular))
                             .padding()
-                            .background(Color.gray.opacity(0.1))
+                            .background(Color.modernSurface)
                             .cornerRadius(8)
                     }
                 }

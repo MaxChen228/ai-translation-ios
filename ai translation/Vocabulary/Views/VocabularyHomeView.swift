@@ -171,7 +171,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .modernShadow()
     }
     
     // MARK: - 快速學習
@@ -223,7 +223,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .modernShadow()
     }
     
     // MARK: - 進度圖表
@@ -289,7 +289,7 @@ struct VocabularyHomeView: View {
         .padding()
         .background(Color.modernSurface)
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .modernShadow()
     }
     
     // MARK: - 載入和錯誤狀態

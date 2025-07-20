@@ -67,7 +67,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "graduationcap")
-                    .foregroundColor(Color.modernAccent)
+                    .foregroundStyle(Color.modernAccent)
                 Text("學習模式")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -95,7 +95,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "gamecontroller")
-                    .foregroundColor(Color.modernAccent)
+                    .foregroundStyle(Color.modernAccent)
                 Text("練習類型")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -123,7 +123,7 @@ struct StudyModeSelectionView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "slider.horizontal.3")
-                    .foregroundColor(Color.modernAccent)
+                    .foregroundStyle(Color.modernAccent)
                 Text("學習設定")
                     .font(.headline)
                     .fontWeight(.semibold)
@@ -145,19 +145,19 @@ struct StudyModeSelectionView: View {
                     HStack {
                         Text("5")
                             .font(.caption)
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("10")
                             .font(.caption)
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("15")
                             .font(.caption)
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("20")
                             .font(.caption)
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                     }
                 }
                 
@@ -188,7 +188,7 @@ struct StudyModeSelectionView: View {
                         
                         Text("1=簡單, 5=困難")
                             .font(.caption)
-                            .foregroundColor(Color.modernTextSecondary)
+                            .foregroundStyle(Color.modernTextSecondary)
                     }
                 }
             }
@@ -206,7 +206,7 @@ struct StudyModeSelectionView: View {
             if let errorMessage = errorMessage {
                 Text(errorMessage)
                     .font(.caption)
-                    .foregroundColor(Color.modernError)
+                    .foregroundStyle(Color.modernError)
                     .multilineTextAlignment(.center)
             }
             
@@ -215,7 +215,7 @@ struct StudyModeSelectionView: View {
                     if isStartingStudy {
                         ProgressView()
                             .scaleEffect(0.8)
-                            .foregroundColor(.white)
+                            .foregroundStyle(.white)
                     } else {
                         Image(systemName: "play.fill")
                     }
@@ -223,7 +223,7 @@ struct StudyModeSelectionView: View {
                     Text(isStartingStudy ? "準備中..." : "開始學習")
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(isStartingStudy ? Color.modernTextSecondary : Color.modernAccent)
@@ -233,7 +233,7 @@ struct StudyModeSelectionView: View {
             
             Text("根據你的選擇，將生成 \(wordCount) 個單字的 \(selectedPracticeType.displayName)")
                 .font(.caption)
-                .foregroundColor(Color.modernTextSecondary)
+                .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
     }
@@ -292,25 +292,25 @@ struct StudyModeCard: View {
             HStack(spacing: 16) {
                 Image(systemName: mode.systemImageName)
                     .font(.title2)
-                    .foregroundColor(isSelected ? .white : Color.modernAccent)
+                    .foregroundStyle(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(mode.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
-                        .foregroundColor(isSelected ? .white : Color.modernTextPrimary)
+                        .foregroundStyle(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(mode.description)
                         .font(.caption)
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
+                        .foregroundStyle(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 }
             }
             .padding()
@@ -331,25 +331,25 @@ struct PracticeTypeCard: View {
             HStack(spacing: 16) {
                 Image(systemName: type.systemImageName)
                     .font(.title2)
-                    .foregroundColor(isSelected ? .white : Color.modernAccent)
+                    .foregroundStyle(isSelected ? .white : Color.modernAccent)
                     .frame(width: 32)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(type.displayName)
                         .font(.headline)
                         .fontWeight(.medium)
-                        .foregroundColor(isSelected ? .white : Color.modernTextPrimary)
+                        .foregroundStyle(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(practiceDescription(for: type))
                         .font(.caption)
-                        .foregroundColor(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
+                        .foregroundStyle(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
                 Spacer()
                 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                 }
             }
             .padding()

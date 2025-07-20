@@ -146,6 +146,11 @@ extension View {
                     }
             }
     }
+    
+    // 現代陰影樣式
+    func modernShadow(_ style: ModernShadow.ShadowStyle = ModernShadow.soft) -> some View {
+        self.shadow(color: style.color, radius: style.radius, x: style.x, y: style.y)
+    }
 }
 
 // MARK: - Modern Style Definitions

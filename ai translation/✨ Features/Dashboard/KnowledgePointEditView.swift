@@ -31,7 +31,7 @@ struct KnowledgePointEditView: View {
                 if let errorMessage = errorMessage {
                     Section {
                         Text(errorMessage)
-                            .foregroundColor(.red)
+                            .foregroundStyle(Color.modernError)
                             .font(.appCaption(for: "錯誤訊息"))
                     }
                 }

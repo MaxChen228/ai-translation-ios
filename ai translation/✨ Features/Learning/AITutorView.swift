@@ -192,7 +192,7 @@ struct ClaudeStartLearningCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -270,7 +270,7 @@ struct ClaudeSettingsPreviewCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -313,7 +313,7 @@ struct ClaudeEmptyLearningState: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -336,7 +336,7 @@ struct ClaudeLearningProgressCard: View {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.appHeadline(for: "📈"))
-                    .foregroundStyle(Color.orange)
+                    .foregroundStyle(Color.modernAccent)
                 
                 Text("學習進度")
                     .font(.appTitle3(for: "學習進度"))
@@ -385,7 +385,7 @@ struct ClaudeLearningProgressCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -420,7 +420,7 @@ struct ClaudeQuestionListCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }

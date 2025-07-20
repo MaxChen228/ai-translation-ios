@@ -48,7 +48,7 @@ struct LearningAreaView: View {
                         .font(.appCaption())
                 }
         }
-        .accentColor(.modernAccent) // 學習區使用現代橙棕主題
+        .accentColor(Color.modernAccent) // 學習區使用現代橙棕主題
     }
 }
 
@@ -169,7 +169,7 @@ struct MonthlyOverviewCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "calendar")
-                    .font(.appHeadline(for: "📅"))
+                    .font(.appHeadline())
                     .foregroundStyle(Color.modernAccent)
                 
                 Text("本月學習概覽")
@@ -227,7 +227,7 @@ struct MonthlyOverviewCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -239,7 +239,7 @@ struct WeeklyTrendCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.appHeadline(for: "📈"))
+                    .font(.appHeadline())
                     .foregroundStyle(Color.modernAccent)
                 
                 Text("近七天學習趨勢")
@@ -301,7 +301,7 @@ struct WeeklyTrendCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
     
@@ -324,7 +324,7 @@ struct AchievementsCard: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 Image(systemName: "trophy.fill")
-                    .font(.appHeadline(for: "🏆"))
+                    .font(.appHeadline())
                     .foregroundStyle(Color.modernAccent)
                 
                 Text("學習成就")
@@ -334,7 +334,7 @@ struct AchievementsCard: View {
                 
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
                     .font(.appCaption())
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(Color.modernAccent)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(Color.modernAccent.opacity(0.15))
@@ -351,7 +351,7 @@ struct AchievementsCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -368,7 +368,7 @@ struct LearningAdviceCard: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Image(systemName: "lightbulb.fill")
-                    .font(.appHeadline(for: "💡"))
+                    .font(.appHeadline())
                     .foregroundStyle(Color.modernAccent)
                 
                 Text("學習建議")
@@ -400,7 +400,7 @@ struct LearningAdviceCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }

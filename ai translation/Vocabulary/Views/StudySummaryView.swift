@@ -109,7 +109,7 @@ struct StudySummaryView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundColor(Color.modernAccent)
+                .foregroundStyle(Color.modernAccent)
             }
             
             // 進度圓環
@@ -131,12 +131,12 @@ struct StudySummaryView: View {
                         Text("\(Int(summary.accuracyRate))%")
                             .font(.headline)
                             .fontWeight(.bold)
-                            .foregroundColor(accuracyColor)
+                            .foregroundStyle(accuracyColor)
                     }
                     
                     Text("正確率")
                         .font(.caption)
-                        .foregroundColor(Color.modernTextSecondary)
+                        .foregroundStyle(Color.modernTextSecondary)
                 }
                 
                 // 統計數字
@@ -224,7 +224,7 @@ struct StudySummaryView: View {
                 
                 Text("共 \(summary.wordsStudied.count) 個")
                     .font(.caption)
-                    .foregroundColor(Color.modernTextSecondary)
+                    .foregroundStyle(Color.modernTextSecondary)
             }
             
             LazyVStack(spacing: 8) {
@@ -305,7 +305,7 @@ struct StudySummaryView: View {
                     Text("繼續學習")
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(Color.modernAccent)
@@ -321,7 +321,7 @@ struct StudySummaryView: View {
                     Text("查看單字庫")
                         .fontWeight(.medium)
                 }
-                .foregroundColor(Color.modernAccent)
+                .foregroundStyle(Color.modernAccent)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
                 .background(Color.modernAccent.opacity(0.1))
@@ -394,19 +394,19 @@ struct StatRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .frame(width: 16)
             
             Text(label)
                 .font(.caption)
-                .foregroundColor(Color.modernTextSecondary)
+                .foregroundStyle(Color.modernTextSecondary)
             
             Spacer()
             
             Text(value)
                 .font(.caption)
                 .fontWeight(.semibold)
-                .foregroundColor(Color.modernTextPrimary)
+                .foregroundStyle(Color.modernTextPrimary)
         }
     }
 }
@@ -422,14 +422,14 @@ struct DetailedStatRow: View {
             HStack {
                 Text(title)
                     .font(.subheadline)
-                    .foregroundColor(Color.modernTextPrimary)
+                    .foregroundStyle(Color.modernTextPrimary)
                 
                 Spacer()
                 
                 Text(value)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             
             GeometryReader { geometry in
@@ -460,7 +460,7 @@ struct WordSummaryRow: View {
             Text("\(index + 1)")
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(width: 20, height: 20)
                 .background(Color.modernAccent)
                 .clipShape(Circle())
@@ -473,7 +473,7 @@ struct WordSummaryRow: View {
                 
                 Text(word.definitionZH)
                     .font(.caption)
-                    .foregroundColor(Color.modernTextSecondary)
+                    .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
             
@@ -483,12 +483,12 @@ struct WordSummaryRow: View {
             HStack(spacing: 4) {
                 Image(systemName: masteryIcon(for: word.masteryLevel))
                     .font(.caption)
-                    .foregroundColor(masteryColor(for: word.masteryLevel))
+                    .foregroundStyle(masteryColor(for: word.masteryLevel))
                 
                 Text(String(format: "%.1f", word.masteryLevel))
                     .font(.caption)
                     .fontWeight(.medium)
-                    .foregroundColor(masteryColor(for: word.masteryLevel))
+                    .foregroundStyle(masteryColor(for: word.masteryLevel))
             }
         }
         .padding(.vertical, 8)

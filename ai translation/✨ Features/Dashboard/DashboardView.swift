@@ -455,7 +455,7 @@ struct ClaudeCategoryCard: View {
                     if weakPointsCount > 0 {
                         Label("\(weakPointsCount) 需加強", systemImage: "exclamationmark.triangle")
                             .font(.appCaption())
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Color.modernWarning)
                     }
                 }
             }
@@ -614,7 +614,7 @@ struct ClaudeScheduleCard: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(isOverdue ? Color.modernError.opacity(0.2) : Color.clear, lineWidth: 1)
                 }
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+                .modernShadow()
         }
     }
 }

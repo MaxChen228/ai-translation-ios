@@ -196,7 +196,7 @@ struct ClaudeQuestionCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }      
 }
@@ -255,7 +255,7 @@ struct ClaudeHintCard: View {
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "lightbulb")
-                                .font(.appSubheadline(for: "💡"))
+                                .font(.appSubheadline())
                             
                             Text("基本提示")
                                 .font(.appSubheadline(for: "基本提示"))
@@ -585,7 +585,7 @@ struct ClaudeAnswerCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -808,7 +808,7 @@ struct ClaudeOverallAssessment: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -1015,7 +1015,7 @@ struct ClaudeErrorAnalysisCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
     
@@ -1212,7 +1212,7 @@ struct ClaudeSaveSection: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }

@@ -200,7 +200,7 @@ struct ClaudeLoadingCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -232,7 +232,7 @@ struct ClaudeNoDataCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -284,21 +284,21 @@ struct ClaudeDayOverviewCard: View {
                     title: "學習時長",
                     value: formatTime(stats.totalTime),
                     icon: "clock.fill",
-                    color: .blue
+                    color: Color.modernSpecial
                 )
                 
                 ClaudeStatBox(
                     title: "學習效率",
                     value: String(format: "%.1f/分", stats.efficiency),
                     icon: "speedometer",
-                    color: .purple
+                    color: Color.modernAccent
                 )
                 
                 ClaudeStatBox(
                     title: "複習重點",
                     value: "\(stats.reviewedCount)",
                     icon: "arrow.clockwise.circle.fill",
-                    color: .green
+                    color: Color.modernSuccess
                 )
                 
                 ClaudeStatBox(
@@ -313,7 +313,7 @@ struct ClaudeDayOverviewCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
     
@@ -420,13 +420,13 @@ struct ClaudeAISummaryCard: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("今日亮點")
                                 .font(.appCallout(for: "今日亮點"))
-                                .foregroundStyle(Color.green)
+                                .foregroundStyle(Color.modernSuccess)
                             
                             ForEach(summary.key_achievements, id: \.self) { achievement in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "star.fill")
                                         .font(.appCaption())
-                                        .foregroundStyle(Color.yellow)
+                                        .foregroundStyle(Color.modernWarning)
                                         .padding(.top, 3)
                                     
                                     Text(achievement)
@@ -442,13 +442,13 @@ struct ClaudeAISummaryCard: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("改進建議")
                                 .font(.appCallout(for: "改進建議"))
-                                .foregroundStyle(Color.blue)
+                                .foregroundStyle(Color.modernSpecial)
                             
                             ForEach(summary.improvement_suggestions, id: \.self) { suggestion in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "lightbulb.fill")
                                         .font(.appCaption())
-                                        .foregroundStyle(Color.yellow)
+                                        .foregroundStyle(Color.modernWarning)
                                         .padding(.top, 3)
                                     
                                     Text(suggestion)
@@ -500,7 +500,7 @@ struct ClaudeAISummaryCard: View {
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.modernAccent.opacity(0.2), lineWidth: 1)
                 }
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -524,7 +524,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
                     ClaudeKnowledgeSection(
                         title: "強化複習",
                         points: reviewedPoints,
-                        color: .green,
+                        color: Color.modernSuccess,
                         icon: "arrow.clockwise.circle.fill"
                     )
                 }
@@ -544,7 +544,7 @@ struct ClaudeKnowledgeAnalysisCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
 }
@@ -630,7 +630,7 @@ struct ClaudeLearningInsightsCard: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.modernSurface)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
     
@@ -643,14 +643,14 @@ struct ClaudeLearningInsightsCard: View {
                 title: "高效學習",
                 description: "您的學習效率很高，平均每分鐘掌握 \(String(format: "%.1f", stats.efficiency)) 個知識點",
                 icon: "bolt.fill",
-                color: .yellow
+                color: Color.modernWarning
             ))
         } else if stats.efficiency > 0 {
             insights.append(LearningInsight(
                 title: "穩定進步",
                 description: "保持這樣的學習節奏，持續積累知識",
                 icon: "chart.line.uptrend.xyaxis",
-                color: .blue
+                color: Color.modernSpecial
             ))
         }
         
@@ -661,14 +661,14 @@ struct ClaudeLearningInsightsCard: View {
                 title: "鞏固為主",
                 description: "今天主要在鞏固舊知識，建議適當嘗試新挑戰",
                 icon: "arrow.clockwise",
-                color: .green
+                color: Color.modernSuccess
             ))
         } else if reviewRatio < 0.3 && stats.newCount > 0 {
             insights.append(LearningInsight(
                 title: "探索新知",
                 description: "今天學了很多新知識，記得定期複習哦",
                 icon: "star.fill",
-                color: .orange
+                color: Color.modernAccent
             ))
         }
         
@@ -679,7 +679,7 @@ struct ClaudeLearningInsightsCard: View {
                 title: "專注投入",
                 description: "今天學習了 \(minutes) 分鐘，投入度很高！",
                 icon: "clock.badge.checkmark",
-                color: .purple
+                color: Color.modernSpecial
             ))
         }
         

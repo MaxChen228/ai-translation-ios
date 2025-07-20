@@ -24,12 +24,12 @@ struct MasteryBarView: View {
                 // 1. 血條的背景 (底色)
                 Capsule()
                     .frame(width: geometry.size.width, height: 12)
-                    .foregroundColor(Color.modernTextTertiary.opacity(0.3))
+                    .foregroundStyle(Color.modernTextTertiary.opacity(0.3))
                 
                 // 2. 血條的前景 (實際的熟練度)
                 Capsule()
                     .frame(width: (masteryLevel / totalLevel) * geometry.size.width, height: 12)
-                    .foregroundColor(barColor)
+                    .foregroundStyle(barColor)
                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: masteryLevel)
             }
         }

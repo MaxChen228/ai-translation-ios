@@ -85,7 +85,7 @@ struct KnowledgePointDetailView: View {
         .background {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .modernShadow()
         }
     }
     
@@ -185,7 +185,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("原始句子", systemImage: "quote.bubble.fill")
                         .font(.appHeadline(for: "原始句子"))
-                        .foregroundColor(Color.modernAccent)
+                        .foregroundStyle(Color.modernAccent)
                     
                     Text(userContextSentence)
                         .font(.appBody(for: userContextSentence))
@@ -203,7 +203,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("錯誤片段", systemImage: "exclamationmark.triangle.fill")
                         .font(.appHeadline(for: "錯誤片段"))
-                        .foregroundColor(Color.modernError)
+                        .foregroundStyle(Color.modernError)
                     
                     if isEditing {
                         TextField("錯誤片段", text: $editablePoint.incorrect_phrase)
@@ -213,7 +213,7 @@ struct KnowledgePointDetailView: View {
                         Text(incorrectPhrase)
                             .font(.appBody(for: incorrectPhrase))
                             .fontWeight(.medium)
-                            .foregroundColor(Color.modernError)
+                            .foregroundStyle(Color.modernError)
                             .strikethrough(color: Color.modernError)
                             .padding(12)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -268,7 +268,7 @@ struct KnowledgePointDetailView: View {
                     Text(point.correct_phrase)
                         .font(.appBody(for: point.correct_phrase))
                         .fontWeight(.bold)
-                        .foregroundColor(Color.modernSuccess)
+                        .foregroundStyle(Color.modernSuccess)
                         .padding(12)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background {
@@ -287,7 +287,7 @@ struct KnowledgePointDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("用法解析", systemImage: "sparkles")
                         .font(.appHeadline(for: "用法解析"))
-                        .foregroundColor(Color.modernAccent)
+                        .foregroundStyle(Color.modernAccent)
                     
                     if isEditing {
                         TextField("用法解析", text: $editablePoint.explanation, axis: .vertical)
@@ -308,7 +308,7 @@ struct KnowledgePointDetailView: View {
                     HStack {
                         Label("AI 審閱建議", systemImage: "brain.head.profile")
                             .font(.appHeadline(for: "AI 審閱建議"))
-                            .foregroundColor(Color.modernSpecial)
+                            .foregroundStyle(Color.modernSpecial)
                         
                         Spacer()
                         
@@ -350,7 +350,7 @@ struct KnowledgePointDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, ModernSpacing.sm + 2)
                         .background(Color.modernBorder)
-                        .foregroundColor(Color.modernTextPrimary)
+                        .foregroundStyle(Color.modernTextPrimary)
                         .cornerRadius(ModernRadius.sm)
                     }
                     
@@ -370,7 +370,7 @@ struct KnowledgePointDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, ModernSpacing.sm + 2)
                         .background(Color.modernAccent)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .cornerRadius(ModernRadius.sm)
                     }
                     .disabled(isLoading || !hasChanges)
@@ -397,7 +397,7 @@ struct KnowledgePointDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, ModernSpacing.sm + 2)
                         .background(Color.modernSpecial)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .cornerRadius(ModernRadius.sm)
                     }
                     .disabled(isAIReviewing)
@@ -415,7 +415,7 @@ struct KnowledgePointDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, ModernSpacing.sm + 2)
                             .background(Color.modernAccentSoft)
-                            .foregroundColor(Color.modernAccent)
+                            .foregroundStyle(Color.modernAccent)
                             .cornerRadius(ModernRadius.sm)
                             .overlay {
                                 RoundedRectangle(cornerRadius: ModernRadius.sm)
@@ -437,7 +437,7 @@ struct KnowledgePointDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, ModernSpacing.sm + 2)
                             .background(Color.clear)
-                            .foregroundColor(Color.modernError)
+                            .foregroundStyle(Color.modernError)
                             .cornerRadius(ModernRadius.sm)
                             .overlay {
                                 RoundedRectangle(cornerRadius: ModernRadius.sm)
@@ -750,16 +750,16 @@ struct ScoreRow: View {
                 Text("\(score)")
                     .font(.appBody())
                     .fontWeight(.semibold)
-                    .foregroundColor(scoreColor(score))
+                    .foregroundStyle(scoreColor(score))
             }
         }
     }
     
     private func scoreColor(_ score: Int) -> Color {
         switch score {
-        case 90...100: return .green
-        case 70...89: return .orange
-        default: return .red
+        case 90...100: return Color.modernSuccess
+        case 70...89: return Color.modernWarning
+        default: return Color.modernError
         }
     }
 }

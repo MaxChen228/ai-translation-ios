@@ -147,9 +147,9 @@ enum StudyMode: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .review: return "📚 複習模式"
-        case .newLearning: return "🆕 新學習模式"
-        case .targeted: return "🎯 專項練習"
+        case .review: return "複習模式"
+        case .newLearning: return "新學習模式"
+        case .targeted: return "專項練習"
         }
     }
     

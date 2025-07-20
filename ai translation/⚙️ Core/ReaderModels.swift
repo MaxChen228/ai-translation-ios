@@ -33,7 +33,7 @@ struct ReaderBook: Identifiable, Codable {
         title: String,
         author: String,
         content: String = "",
-        coverColor: Color = .blue,
+        coverColor: Color = Color.modernSpecial,
         progress: Double = 0.0,
         totalPages: Int,
         currentPage: Int = 1,
