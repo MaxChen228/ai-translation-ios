@@ -77,7 +77,10 @@ class DashboardViewModel: ObservableObject {
                 sampleKnowledgePoints = try await UnifiedAPIService.shared.getSampleKnowledgePoints()
                 print("📚 成功載入 \(sampleKnowledgePoints.count) 個示例知識點")
             } catch {
-                print("⚠️ 無法載入示例知識點: \(error.localizedDescription)")
+                print("⚠️ 無法從伺服器載入示例知識點: \(error.localizedDescription)")
+                // 使用本地預設示例知識點作為備援
+                sampleKnowledgePoints = createLocalSampleKnowledgePoints()
+                print("📋 使用本地示例知識點: \(sampleKnowledgePoints.count) 個")
             }
         }
         
@@ -159,6 +162,99 @@ class DashboardViewModel: ObservableObject {
         }
         
         return localPoints
+    }
+    
+    /// 創建本地示例知識點
+    private func createLocalSampleKnowledgePoints() -> [KnowledgePoint] {
+        let samplePoints = [
+            KnowledgePoint(
+                id: -1001,
+                category: "語法錯誤",
+                subcategory: "主語動詞一致性",
+                correct_phrase: "The team is working on the project",
+                explanation: "當主語是單數集合名詞時，動詞使用單數形式",
+                user_context_sentence: "The team are working on the project",
+                incorrect_phrase_in_context: "are",
+                key_point_summary: "集合名詞的主謂一致",
+                mastery_level: 2.3,
+                mistake_count: 1,
+                correct_count: 0,
+                next_review_date: nil,
+                is_archived: false,
+                ai_review_notes: "示例知識點",
+                last_ai_review_date: nil
+            ),
+            KnowledgePoint(
+                id: -1002,
+                category: "詞彙選擇",
+                subcategory: "介詞使用",
+                correct_phrase: "depend on",
+                explanation: "depend 後面通常接介詞 on，表示「依靠、取決於」",
+                user_context_sentence: "It depends of the weather",
+                incorrect_phrase_in_context: "depends of",
+                key_point_summary: "depend 的介詞搭配",
+                mastery_level: 1.8,
+                mistake_count: 2,
+                correct_count: 0,
+                next_review_date: nil,
+                is_archived: false,
+                ai_review_notes: "示例知識點",
+                last_ai_review_date: nil
+            ),
+            KnowledgePoint(
+                id: -1003,
+                category: "時態使用",
+                subcategory: "現在完成時",
+                correct_phrase: "I have lived here for five years",
+                explanation: "現在完成時用於表示過去開始並持續到現在的動作或狀態",
+                user_context_sentence: "I live here for five years",
+                incorrect_phrase_in_context: "live",
+                key_point_summary: "現在完成時的使用情境",
+                mastery_level: 3.1,
+                mistake_count: 0,
+                correct_count: 2,
+                next_review_date: nil,
+                is_archived: false,
+                ai_review_notes: "示例知識點",
+                last_ai_review_date: nil
+            ),
+            KnowledgePoint(
+                id: -1004,
+                category: "語法錯誤",
+                subcategory: "冠詞使用",
+                correct_phrase: "a university",
+                explanation: "university 雖然以母音字母 u 開頭，但發音是子音 /j/，所以用 a",
+                user_context_sentence: "He studies at an university",
+                incorrect_phrase_in_context: "an university",
+                key_point_summary: "冠詞 a/an 的發音規則",
+                mastery_level: 2.7,
+                mistake_count: 1,
+                correct_count: 1,
+                next_review_date: nil,
+                is_archived: false,
+                ai_review_notes: "示例知識點",
+                last_ai_review_date: nil
+            ),
+            KnowledgePoint(
+                id: -1005,
+                category: "詞彙選擇",
+                subcategory: "動詞辨析",
+                correct_phrase: "make a decision",
+                explanation: "make a decision 是固定搭配，表示「做決定」",
+                user_context_sentence: "I need to take a decision",
+                incorrect_phrase_in_context: "take a decision",
+                key_point_summary: "make vs take 的搭配差異",
+                mastery_level: 1.5,
+                mistake_count: 3,
+                correct_count: 0,
+                next_review_date: nil,
+                is_archived: false,
+                ai_review_notes: "示例知識點",
+                last_ai_review_date: nil
+            )
+        ]
+        
+        return samplePoints
     }
     
     /// 刷新數據
