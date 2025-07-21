@@ -70,17 +70,29 @@ class DashboardViewModel: ObservableObject {
         localKnowledgePoints = loadLocalKnowledgePoints()
         print("💾 本地儲存知識點: \(localKnowledgePoints.count) 個")
         
-        // 3. 合併伺服器和本地知識點
-        let allKnowledgePoints = serverKnowledgePoints + localKnowledgePoints
+        // 3. 如果用戶未認證且沒有本地數據，嘗試載入示例知識點
+        var sampleKnowledgePoints: [KnowledgePoint] = []
+        if !authManager.isAuthenticated && localKnowledgePoints.isEmpty {
+            do {
+                sampleKnowledgePoints = try await UnifiedAPIService.shared.getSampleKnowledgePoints()
+                print("📚 成功載入 \(sampleKnowledgePoints.count) 個示例知識點")
+            } catch {
+                print("⚠️ 無法載入示例知識點: \(error.localizedDescription)")
+            }
+        }
+        
+        // 4. 合併所有知識點數據
+        let allKnowledgePoints = serverKnowledgePoints + localKnowledgePoints + sampleKnowledgePoints
         
         withAnimation(.easeInOut(duration: 0.3)) {
             knowledgePoints = allKnowledgePoints
         }
         
-        // 4. 如果完全沒有數據，才顯示錯誤或空狀態
-        if serverKnowledgePoints.isEmpty && localKnowledgePoints.isEmpty {
+        // 5. 如果完全沒有數據，才顯示錯誤或空狀態
+        if allKnowledgePoints.isEmpty {
             if !authManager.isAuthenticated {
-                print("📋 未認證用戶，無任何本地知識點數據")
+                print("📋 未認證用戶，無任何數據")
+                // 不顯示錯誤，讓 EmptyStateView 處理
             } else {
                 errorMessage = "無法載入任何知識點數據，請檢查網路連線"
             }

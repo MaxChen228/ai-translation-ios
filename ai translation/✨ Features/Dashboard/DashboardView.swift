@@ -635,21 +635,63 @@ struct DashboardErrorView: View {
 }
 
 struct EmptyStateView: View {
+    @EnvironmentObject private var authManager: AuthenticationManager
+    
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
             Image(systemName: "brain.head.profile")
                 .font(.appLargeTitle())
                 .foregroundStyle(Color.modernAccent)
             
-            Text("開始您的學習之旅")
-                .font(.appTitle3(for: "開始您的學習之旅"))
-                .foregroundStyle(Color.modernTextPrimary)
+            VStack(spacing: 12) {
+                Text("開始您的學習之旅")
+                    .font(.appTitle3(for: "開始您的學習之旅"))
+                    .foregroundStyle(Color.modernTextPrimary)
+                
+                Text(authManager.isAuthenticated ? 
+                     "完成翻譯練習後，系統會為您建立\n個人化的知識點分析！" :
+                     "完成訪客模式翻譯練習，\n或註冊以獲得完整學習體驗！")
+                    .font(.appSubheadline(for: "完成翻譯練習後..."))
+                    .foregroundStyle(Color.modernTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(2)
+            }
             
-            Text("完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！")
-                .font(.appSubheadline(for: "完成幾道翻譯練習，\n系統就會為您建立個人化的知識分析！"))
-                .foregroundStyle(Color.modernTextSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(2)
+            VStack(spacing: 12) {
+                // AI 家教按鈕
+                NavigationLink(destination: AITutorView()) {
+                    HStack {
+                        Image(systemName: "sparkles")
+                            .font(.appBody())
+                        Text("開始 AI 翻譯練習")
+                            .font(.appSubheadline(for: "開始 AI 翻譯練習"))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.modernAccent)
+                    .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
+                }
+                .buttonStyle(.plain)
+                
+                // 如果未認證，顯示註冊提示
+                if !authManager.isAuthenticated {
+                    NavigationLink(destination: RegisterView()) {
+                        HStack {
+                            Image(systemName: "person.badge.plus")
+                                .font(.appBody())
+                            Text("註冊獲得完整功能")
+                                .font(.appSubheadline(for: "註冊獲得完整功能"))
+                        }
+                        .foregroundStyle(Color.modernAccent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.modernAccent.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 40)
