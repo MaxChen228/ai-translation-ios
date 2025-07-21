@@ -27,43 +27,48 @@ enum ModernDashboardMode: String, CaseIterable, Identifiable {
 }
 
 struct DashboardView: View {
-    @State private var knowledgePoints: [KnowledgePoint] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
+    @StateObject private var viewModel = DashboardViewModel(authManager: AuthenticationManager.shared)
     @State private var selectedMode: ModernDashboardMode = .overview
+    @StateObject private var syncManager = KnowledgePointSyncManager.shared
     
     private var stats: DashboardStats {
-        DashboardStats(from: knowledgePoints)
+        DashboardStats(from: viewModel.knowledgePoints)
     }
     
     var body: some View {
         NavigationView {
             VStack(spacing: ModernSpacing.xs) {
+                // 同步狀態視圖
+                SyncStatusView()
+                    .padding(.horizontal, ModernSpacing.lg)
+                    .padding(.top, ModernSpacing.sm)
+                
                 // 【簡化】模式選擇器
                 ModernModeSelector(selectedMode: $selectedMode)
                     .padding(.horizontal, ModernSpacing.lg)
                     .padding(.top, ModernSpacing.md)
                 
-                if isLoading {
-                    ModernLoadingView()
-                } else if let errorMessage = errorMessage {
-                    ErrorView(message: errorMessage) {
-                        Task { await fetchDashboardData() }
+                if viewModel.isLoading {
+                    ModernLoadingView("正在載入知識點數據...", style: .fullscreen)
+                        .frame(maxWidth: .infinity, minHeight: 300)
+                } else if let errorMessage = viewModel.errorMessage {
+                    DashboardErrorView(message: errorMessage) {
+                        Task { await viewModel.loadDashboard() }
                     }
-                } else if knowledgePoints.isEmpty {
+                } else if viewModel.knowledgePoints.isEmpty {
                     EmptyStateView()
                 } else {
                     ScrollView {
                         LazyVStack(spacing: ModernSpacing.lg) {
                             switch selectedMode {
                             case .overview:
-                                OverviewSection(stats: stats, points: knowledgePoints)
+                                OverviewSection(stats: stats, points: viewModel.knowledgePoints)
                             case .categories:
-                                CategoriesSection(points: knowledgePoints)
+                                CategoriesSection(points: viewModel.knowledgePoints)
                             case .progress:
-                               ProgressSection(points: knowledgePoints)
+                               ProgressSection(points: viewModel.knowledgePoints)
                             case .schedule:
-                                ScheduleSection(points: knowledgePoints)
+                                ScheduleSection(points: viewModel.knowledgePoints)
                             }
                         }
                         .padding(ModernSpacing.lg)
@@ -75,7 +80,11 @@ struct DashboardView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: { Task { await fetchDashboardData() } }) {
+                    Button(action: { 
+                        Task { 
+                            await viewModel.refresh()
+                        }
+                    }) {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(Color.modernAccent)
                     }
@@ -87,7 +96,11 @@ struct DashboardView: View {
                 }
             }
             .onAppear {
-                Task { await fetchDashboardData() }
+                Task { 
+                    await viewModel.loadDashboard()
+                    // 檢查並執行自動同步
+                    await syncManager.checkAndPerformAutoSync()
+                }
                 
                 #if DEBUG
                 // 字體測試代碼
@@ -110,27 +123,6 @@ struct DashboardView: View {
         }
     }
     
-    func fetchDashboardData() async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            let dashboardResponse = try await KnowledgePointAPIService.getDashboard()
-            withAnimation(.easeInOut(duration: 0.3)) {
-                self.knowledgePoints = dashboardResponse.knowledge_points
-            }
-        } catch APIError.serverError(let statusCode, let message) {
-            self.errorMessage = "伺服器錯誤 (\(statusCode)): \(message)"
-        } catch APIError.decodingError(let error) {
-            self.errorMessage = "數據解析錯誤，請稍後再試。"
-            print("Dashboard 解析錯誤: \(error)")
-        } catch {
-            self.errorMessage = "無法獲取數據，請稍後再試。"
-            print("獲取儀表板數據時發生錯誤: \(error)")
-        }
-        
-        isLoading = false
-    }
 }
 
 // MARK: - Claude 風格組件
@@ -336,10 +328,19 @@ struct ModernFocusCard: View {
                         NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(point.key_point_summary ?? "核心觀念")
-                                        .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
-                                        .foregroundStyle(Color.modernTextPrimary)
-                                        .lineLimit(1)
+                                    HStack(spacing: 8) {
+                                        Text(point.key_point_summary ?? "核心觀念")
+                                            .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
+                                            .foregroundStyle(Color.modernTextPrimary)
+                                            .lineLimit(1)
+                                        
+                                        // 本地知識點標識
+                                        if point.ai_review_notes == "本地儲存" {
+                                            Image(systemName: "internaldrive")
+                                                .font(.appCaption())
+                                                .foregroundStyle(Color.modernWarning)
+                                        }
+                                    }
                                     
                                     Text(point.correct_phrase)
                                         .font(.appCaption(for: point.correct_phrase))
@@ -474,10 +475,19 @@ struct KnowledgePointProgressCard: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(point.key_point_summary ?? "核心觀念")
-                    .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
-                    .foregroundStyle(Color.modernTextPrimary)
-                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    Text(point.key_point_summary ?? "核心觀念")
+                        .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
+                        .foregroundStyle(Color.modernTextPrimary)
+                        .lineLimit(1)
+                    
+                    // 本地知識點標識
+                    if point.ai_review_notes == "本地儲存" {
+                        Image(systemName: "internaldrive")
+                            .font(.appCaption())
+                            .foregroundStyle(Color.modernWarning)
+                    }
+                }
                 
                 Text(point.correct_phrase)
                     .font(.appCaption(for: point.correct_phrase))
@@ -592,7 +602,7 @@ struct ModernScheduleCard: View {
 
 // ModernLoadingView 已移除，直接使用 ModernLoadingView
 
-struct ErrorView: View {
+struct DashboardErrorView: View {
     let message: String
     let retry: () -> Void
     

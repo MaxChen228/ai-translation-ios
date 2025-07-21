@@ -44,24 +44,109 @@ class DashboardViewModel: ObservableObject {
     
     /// 載入儀表板數據
     func loadDashboard() async {
-        guard authManager.isAuthenticated else { return }
-        
         isLoading = true
         errorMessage = nil
         
-        do {
-            async let activePoints = repository.fetchKnowledgePoints()
-            async let archived = repository.fetchArchivedKnowledgePoints()
-            
-            knowledgePoints = try await activePoints
-            archivedPoints = try await archived
-            
-        } catch {
-            errorMessage = "載入數據失敗：\(error.localizedDescription)"
-            print("Dashboard 載入錯誤: \(error)")
+        var serverKnowledgePoints: [KnowledgePoint] = []
+        var localKnowledgePoints: [KnowledgePoint] = []
+        
+        // 1. 如果用戶已認證，嘗試從伺服器獲取知識點
+        if authManager.isAuthenticated {
+            do {
+                async let activePoints = repository.fetchKnowledgePoints()
+                async let archived = repository.fetchArchivedKnowledgePoints()
+                
+                serverKnowledgePoints = try await activePoints
+                archivedPoints = try await archived
+                
+                print("✅ 成功從伺服器獲取 \(serverKnowledgePoints.count) 個知識點")
+            } catch {
+                print("⚠️ 無法從伺服器獲取知識點: \(error.localizedDescription)")
+                // 不設置 errorMessage，讓程式繼續載入本地資料
+            }
+        }
+        
+        // 2. 始終嘗試載入本地儲存的知識點
+        localKnowledgePoints = loadLocalKnowledgePoints()
+        print("💾 本地儲存知識點: \(localKnowledgePoints.count) 個")
+        
+        // 3. 合併伺服器和本地知識點
+        let allKnowledgePoints = serverKnowledgePoints + localKnowledgePoints
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            knowledgePoints = allKnowledgePoints
+        }
+        
+        // 4. 如果完全沒有數據，才顯示錯誤或空狀態
+        if serverKnowledgePoints.isEmpty && localKnowledgePoints.isEmpty {
+            if !authManager.isAuthenticated {
+                print("📋 未認證用戶，無任何本地知識點數據")
+            } else {
+                errorMessage = "無法載入任何知識點數據，請檢查網路連線"
+            }
         }
         
         isLoading = false
+    }
+    
+    /// 從本地儲存載入知識點
+    private func loadLocalKnowledgePoints() -> [KnowledgePoint] {
+        let guestDataManager = GuestDataManager.shared
+        let localPointsData = guestDataManager.getGuestKnowledgePoints()
+        
+        var localPoints: [KnowledgePoint] = []
+        
+        for pointData in localPointsData {
+            // 轉換本地儲存的字典資料為 KnowledgePoint 模型
+            // 支援新的負數 ID 格式和舊的字串 ID 格式
+            var pointId: Int = 0
+            
+            if let id = pointData["id"] as? Int {
+                // 新格式：直接使用負數 ID
+                pointId = id
+            } else if let _ = pointData["id"] as? String {
+                // 舊格式：字串 ID，本地知識點應該有負數 ID
+                // 如果還是字串，說明是舊資料，跳過
+                continue
+            }
+            
+            if let category = pointData["category"] as? String,
+               let subcategory = pointData["subcategory"] as? String,
+               let correctPhrase = pointData["correct_phrase"] as? String,
+               let explanation = pointData["explanation"] as? String,
+               let userContextSentence = pointData["user_context_sentence"] as? String,
+               let incorrectPhrase = pointData["incorrect_phrase_in_context"] as? String,
+               let masteryLevel = pointData["mastery_level"] as? Double,
+               let mistakeCount = pointData["mistake_count"] as? Int,
+               let correctCount = pointData["correct_count"] as? Int,
+               let isArchived = pointData["is_archived"] as? Bool {
+                
+                // key_point_summary 是可選的，如果沒有就使用 subcategory 或 correct_phrase
+                let keyPointSummary = pointData["key_point_summary"] as? String
+                
+                let knowledgePoint = KnowledgePoint(
+                    id: pointId,
+                    category: category,
+                    subcategory: subcategory,
+                    correct_phrase: correctPhrase,
+                    explanation: explanation,
+                    user_context_sentence: userContextSentence,
+                    incorrect_phrase_in_context: incorrectPhrase,
+                    key_point_summary: keyPointSummary,
+                    mastery_level: masteryLevel,
+                    mistake_count: mistakeCount,
+                    correct_count: correctCount,
+                    next_review_date: nil,
+                    is_archived: isArchived,
+                    ai_review_notes: "本地儲存",
+                    last_ai_review_date: nil
+                )
+                
+                localPoints.append(knowledgePoint)
+            }
+        }
+        
+        return localPoints
     }
     
     /// 刷新數據
