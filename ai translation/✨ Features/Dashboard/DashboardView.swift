@@ -141,7 +141,7 @@ struct ModernModeSelector: View {
                     isSelected: selectedMode == mode,
                     animation: animation
                 ) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(MicroInteractions.stateChange()) {
                         selectedMode = mode
                     }
                 }
@@ -638,62 +638,123 @@ struct EmptyStateView: View {
     @EnvironmentObject private var authManager: AuthenticationManager
     
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "brain.head.profile")
-                .font(.appLargeTitle())
-                .foregroundStyle(Color.modernAccent)
-            
-            VStack(spacing: 12) {
-                Text("開始您的學習之旅")
-                    .font(.appTitle3(for: "開始您的學習之旅"))
-                    .foregroundStyle(Color.modernTextPrimary)
+        VStack(spacing: 32) {
+            // 圖示和標題區域
+            VStack(spacing: 16) {
+                Image(systemName: "lock.circle")
+                    .font(.appLargeTitle())
+                    .foregroundStyle(Color.modernAccent)
                 
-                Text(authManager.isAuthenticated ? 
-                     "完成翻譯練習後，系統會為您建立\n個人化的知識點分析！" :
-                     "完成訪客模式翻譯練習，\n或註冊以獲得完整學習體驗！")
-                    .font(.appSubheadline(for: "完成翻譯練習後..."))
-                    .foregroundStyle(Color.modernTextSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(2)
+                VStack(spacing: 8) {
+                    Text("解鎖您的學習分析")
+                        .font(.appTitle2(for: "解鎖您的學習分析"))
+                        .foregroundStyle(Color.modernTextPrimary)
+                    
+                    Text("註冊帳戶即可查看個人化的\n知識點分析和學習進度")
+                        .font(.appSubheadline(for: "註冊帳戶即可查看..."))
+                        .foregroundStyle(Color.modernTextSecondary)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(2)
+                }
             }
             
+            // 功能預覽區域
+            VStack(alignment: .leading, spacing: 16) {
+                Text("註冊後您將享有：")
+                    .font(.appHeadline(for: "註冊後您將享有："))
+                    .foregroundStyle(Color.modernTextPrimary)
+                
+                VStack(spacing: 12) {
+                    FeaturePreviewRow(
+                        icon: "chart.line.uptrend.xyaxis",
+                        title: "個人化知識分析",
+                        description: "追蹤您的學習弱點和進步軌跡"
+                    )
+                    
+                    FeaturePreviewRow(
+                        icon: "icloud.and.arrow.up",
+                        title: "雲端同步備份",
+                        description: "學習進度跨設備安全同步"
+                    )
+                    
+                    FeaturePreviewRow(
+                        icon: "infinity",
+                        title: "無限制練習",
+                        description: "每日翻譯練習次數不受限"
+                    )
+                    
+                    FeaturePreviewRow(
+                        icon: "brain.head.profile",
+                        title: "進階 AI 分析",
+                        description: "深度語法和用詞建議"
+                    )
+                }
+            }
+            
+            // 行動按鈕區域
             VStack(spacing: 12) {
-                // AI 家教按鈕
-                NavigationLink(destination: AITutorView()) {
+                // 主要 CTA - 註冊
+                NavigationLink(destination: RegisterView()) {
                     HStack {
-                        Image(systemName: "sparkles")
+                        Image(systemName: "person.badge.plus")
                             .font(.appBody())
-                        Text("開始 AI 翻譯練習")
-                            .font(.appSubheadline(for: "開始 AI 翻譯練習"))
+                        Text("立即註冊開始學習")
+                            .font(.appSubheadline(for: "立即註冊開始學習"))
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, 14)
                     .background(Color.modernAccent)
                     .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
                 }
                 .buttonStyle(.plain)
                 
-                // 如果未認證，顯示註冊提示
-                if !authManager.isAuthenticated {
-                    NavigationLink(destination: RegisterView()) {
-                        HStack {
-                            Image(systemName: "person.badge.plus")
-                                .font(.appBody())
-                            Text("註冊獲得完整功能")
-                                .font(.appSubheadline(for: "註冊獲得完整功能"))
-                        }
-                        .foregroundStyle(Color.modernAccent)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.modernAccent.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
+                // 次要 CTA - 登入
+                NavigationLink(destination: LoginView()) {
+                    HStack {
+                        Image(systemName: "person.circle")
+                            .font(.appBody())
+                        Text("已有帳戶？立即登入")
+                            .font(.appSubheadline(for: "已有帳戶？立即登入"))
                     }
-                    .buttonStyle(.plain)
+                    .foregroundStyle(Color.modernAccent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.modernAccent.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
                 }
+                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 40)
+        .padding(.horizontal, 32)
+    }
+}
+
+// MARK: - 功能預覽行組件
+struct FeaturePreviewRow: View {
+    let icon: String
+    let title: String
+    let description: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.appTitle3())
+                .foregroundStyle(Color.modernAccent)
+                .frame(width: 24, height: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.appCallout(for: title))
+                    .foregroundStyle(Color.modernTextPrimary)
+                
+                Text(description)
+                    .font(.appCaption(for: description))
+                    .foregroundStyle(Color.modernTextSecondary)
+            }
+            
+            Spacer()
+        }
     }
 }
