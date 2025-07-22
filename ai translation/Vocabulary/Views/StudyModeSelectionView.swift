@@ -56,6 +56,9 @@ struct StudyModeSelectionView: View {
                     QuizView(quiz: quiz, type: .multipleChoice, onComplete: handleStudyComplete)
                 case .contextFill:
                     QuizView(quiz: quiz, type: .contextFill, onComplete: handleStudyComplete)
+                case .pronunciation, .writing:
+                    // 暫時使用flashcard模式，後續可以添加專門的練習類型
+                    FlashcardView(quiz: quiz, onComplete: handleStudyComplete)
                 }
             }
         }
@@ -367,6 +370,10 @@ struct PracticeTypeCard: View {
             return "選擇正確的中文意思"
         case .contextFill:
             return "在語境中填入正確單字"
+        case .pronunciation:
+            return "練習單字發音"
+        case .writing:
+            return "拼寫練習"
         }
     }
 }

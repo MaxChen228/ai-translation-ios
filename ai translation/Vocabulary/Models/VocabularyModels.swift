@@ -1,15 +1,23 @@
-// AI-tutor-v1.0/ai translation/📚 Vocabulary/Models/VocabularyModels.swift
+// VocabularyModels.swift - 單字記憶庫資料模型
+// 實現統一的資料模型協議
 
 import Foundation
+import SwiftUI
 
 // MARK: - 統計數據模型
-struct VocabularyStatistics: Codable {
+struct VocabularyStatistics: Codable, StatisticalModel {
+    let id = UUID()
     let totalWords: Int
     let masteredWords: Int
     let learningWords: Int
     let newWords: Int
     let dueToday: Int
     let masteryPercentage: Double
+    
+    // StatisticalModel 實現
+    var totalCount: Int { totalWords }
+    var completedCount: Int { masteredWords }
+    var progressPercentage: Double { masteryPercentage }
     
     enum CodingKeys: String, CodingKey {
         case totalWords = "total_words"
@@ -22,7 +30,7 @@ struct VocabularyStatistics: Codable {
 }
 
 // MARK: - 單字模型
-struct VocabularyWord: Codable, Identifiable {
+struct VocabularyWord: Codable, LearnableItem, DifficultyModel, ArchivableModel, ExampleModel, SearchableModel {
     let id: Int
     let word: String
     let pronunciationIPA: String?
@@ -41,9 +49,21 @@ struct VocabularyWord: Codable, Identifiable {
     let sourceType: String
     let addedContext: String?
     let createdAt: String
-    let updatedAt: String
+    let updatedAt: String?
     let isArchived: Bool
     let examples: [VocabularyExample]?
+    
+    // PracticableItem 實現
+    var practiceType: PracticeType { .flashcard }
+    
+    // SearchableModel 實現
+    var searchKeywords: [String] {
+        var keywords = [word, definitionZH]
+        if let pronunciation = pronunciationIPA { keywords.append(pronunciation) }
+        if let definitionEN = definitionEN { keywords.append(definitionEN) }
+        if let partOfSpeech = partOfSpeech { keywords.append(partOfSpeech) }
+        return keywords.compactMap { $0.isEmpty ? nil : $0 }
+    }
     
     enum CodingKeys: String, CodingKey {
         case id, word, examples
@@ -67,19 +87,18 @@ struct VocabularyWord: Codable, Identifiable {
         case isArchived = "is_archived"
     }
     
-    // 計算屬性
+    // 舊的計算屬性（保持向後相容）
     var masteryStatus: MasteryStatus {
-        if masteryLevel >= 4.0 { return .mastered }
-        else if masteryLevel > 0 { return .learning }
-        else { return .new }
+        switch masteryLevel {
+        case 0: return .new
+        case 0.1..<2.0: return .learning
+        case 2.0..<4.0: return .learning
+        case 4.0...: return .mastered
+        default: return .new
+        }
     }
     
-    var accuracyRate: Double {
-        guard totalReviews > 0 else { return 0.0 }
-        return Double(correctReviews) / Double(totalReviews) * 100
-    }
-    
-    var difficultyColor: String {
+    var difficultyColorHex: String {
         switch difficultyLevel {
         case 1: return "#4CAF50"  // 綠色
         case 2: return "#8BC34A"  // 淺綠
@@ -92,12 +111,22 @@ struct VocabularyWord: Codable, Identifiable {
 }
 
 // MARK: - 例句模型
-struct VocabularyExample: Codable, Identifiable {
-    let id: Int?
+struct VocabularyExample: Codable, DataModel {
+    let id: Int
     let sentenceEN: String
     let sentenceZH: String?
     let source: String
     let difficultyLevel: Int?
+    
+    // 為沒有ID的舊資料提供預設值
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(Int.self, forKey: .id) ?? 0
+        self.sentenceEN = try container.decode(String.self, forKey: .sentenceEN)
+        self.sentenceZH = try container.decodeIfPresent(String.self, forKey: .sentenceZH)
+        self.source = try container.decode(String.self, forKey: .source)
+        self.difficultyLevel = try container.decodeIfPresent(Int.self, forKey: .difficultyLevel)
+    }
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -108,7 +137,7 @@ struct VocabularyExample: Codable, Identifiable {
     }
 }
 
-// MARK: - 掌握狀態枚舉
+// MARK: - 舊版掌握狀態枚舉（向後相容）
 enum MasteryStatus: String, CaseIterable {
     case new = "new"
     case learning = "learning"
@@ -135,6 +164,15 @@ enum MasteryStatus: String, CaseIterable {
         case .new: return "plus.circle"
         case .learning: return "clock.circle"
         case .mastered: return "checkmark.circle"
+        }
+    }
+    
+    // 轉換為新的統一掌握程度
+    var unifiedLevel: MasteryLevel {
+        switch self {
+        case .new: return .new
+        case .learning: return .learning
+        case .mastered: return .mastered
         }
     }
 }
@@ -170,28 +208,8 @@ enum StudyMode: String, CaseIterable {
     }
 }
 
-// MARK: - 練習類型枚舉
-enum PracticeType: String, CaseIterable {
-    case flashcard = "flashcard"
-    case multipleChoice = "multiple_choice"
-    case contextFill = "context_fill"
-    
-    var displayName: String {
-        switch self {
-        case .flashcard: return "翻卡模式"
-        case .multipleChoice: return "選擇題測驗"
-        case .contextFill: return "語境填空"
-        }
-    }
-    
-    var systemImageName: String {
-        switch self {
-        case .flashcard: return "rectangle.stack"
-        case .multipleChoice: return "checklist"
-        case .contextFill: return "text.bubble"
-        }
-    }
-}
+// MARK: - 練習類型枚舉（舊版本，向後相容）
+// 已移至 DataModelProtocols.swift 統一定義
 
 // MARK: - 測驗問題模型
 struct QuizQuestion: Codable, Identifiable {

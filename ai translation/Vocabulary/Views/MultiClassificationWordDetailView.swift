@@ -30,24 +30,11 @@ struct MultiClassificationWordDetailView: View {
                     ClassificationTagsView(classifications: detail.classifications)
                     
                     if detail.isEnriched, let enrichedInfo = detail.enrichedInfo {
-                        // 檢查是否有實際內容
-                        let hasContent = !enrichedInfo.definitions.isEmpty || 
-                                       !enrichedInfo.pronunciation.isEmpty || 
-                                       !enrichedInfo.partOfSpeech.isEmpty ||
-                                       !enrichedInfo.synonyms.isEmpty ||
-                                       !enrichedInfo.antonyms.isEmpty ||
-                                       (enrichedInfo.etymology != nil && !enrichedInfo.etymology!.isEmpty)
-                        
-                        if hasContent {
-                            // 充實資訊
-                            EnrichedContentView(enrichedInfo: enrichedInfo)
-                        } else {
-                            // 數據不完整提示
-                            DataIncompleteView()
-                        }
+                        // 總是顯示完整的資訊框架，不論數據是否完整
+                        CompleteWordInfoView(enrichedInfo: enrichedInfo)
                     } else {
-                        // 未充實提示
-                        UnenrichedPromptView()
+                        // 未充實的單字也顯示框架，只是標示為未充實
+                        EmptyWordInfoView(word: detail.word)
                     }
                 }
                 .padding()
@@ -164,100 +151,6 @@ struct TagView: View {
     }
 }
 
-// MARK: - 充實內容視圖
-
-struct EnrichedContentView: View {
-    let enrichedInfo: EnrichedWordInfo
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // 定義
-            if !enrichedInfo.definitions.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("定義")
-                        .font(.headline)
-                    
-                    ForEach(Array(enrichedInfo.definitions.enumerated()), id: \.offset) { index, definition in
-                        HStack(alignment: .top) {
-                            Text("\(index + 1).")
-                                .foregroundColor(.secondary)
-                            Text(definition)
-                        }
-                    }
-                }
-            }
-            
-            // 同義詞
-            if !enrichedInfo.synonyms.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("同義詞")
-                        .font(.headline)
-                    
-                    Text(enrichedInfo.synonyms.joined(separator: ", "))
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            // 反義詞
-            if !enrichedInfo.antonyms.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("反義詞")
-                        .font(.headline)
-                    
-                    Text(enrichedInfo.antonyms.joined(separator: ", "))
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            // 詞源
-            if let etymology = enrichedInfo.etymology, !etymology.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("詞源")
-                        .font(.headline)
-                    
-                    Text(etymology)
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-    }
-}
-
-// MARK: - 未充實提示視圖
-
-struct UnenrichedPromptView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 60))
-                .foregroundColor(.secondary)
-            
-            Text("此單字尚未充實資料")
-                .font(.headline)
-                .foregroundColor(.secondary)
-            
-            Text("申請充實後可查看完整定義、發音、例句等資訊")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            
-            Button(action: {
-                // TODO: 實作申請充實功能
-            }) {
-                Label("申請充實資料", systemImage: "arrow.up.doc")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(Color.blue)
-                    .cornerRadius(25)
-            }
-        }
-        .padding(.vertical, 40)
-        .frame(maxWidth: .infinity)
-    }
-}
-
 // MARK: - Flow Layout
 
 struct FlowLayout: Layout {
@@ -313,32 +206,173 @@ struct FlowLayout: Layout {
     }
 }
 
-// MARK: - 數據不完整提示視圖
+// MARK: - 完整單字資訊視圖
 
-struct DataIncompleteView: View {
+struct CompleteWordInfoView: View {
+    let enrichedInfo: EnrichedWordInfo
+    
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.circle")
-                .font(.system(size: 60))
-                .foregroundColor(.orange)
+        VStack(alignment: .leading, spacing: 20) {
+            // 定義區塊
+            WordInfoSection(title: "定義", icon: "book.fill") {
+                if !enrichedInfo.definitions.isEmpty {
+                    ForEach(Array(enrichedInfo.definitions.enumerated()), id: \.offset) { index, definition in
+                        HStack(alignment: .top, spacing: 8) {
+                            Text("\(index + 1).")
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                            Text(definition)
+                                .font(.subheadline)
+                        }
+                    }
+                } else {
+                    DataNotAvailableView(message: "定義資料整理中")
+                }
+            }
             
-            Text("單字資料不完整")
-                .font(.headline)
-                .foregroundColor(.primary)
+            // 同義詞區塊
+            WordInfoSection(title: "同義詞", icon: "arrow.triangle.2.circlepath") {
+                if !enrichedInfo.synonyms.isEmpty {
+                    Text(enrichedInfo.synonyms.joined(separator: ", "))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    DataNotAvailableView(message: "同義詞資料整理中")
+                }
+            }
             
-            Text("此單字雖已標記為充實，但詳細資料尚未完整載入")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+            // 反義詞區塊
+            WordInfoSection(title: "反義詞", icon: "arrow.left.and.right.circle") {
+                if !enrichedInfo.antonyms.isEmpty {
+                    Text(enrichedInfo.antonyms.joined(separator: ", "))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    DataNotAvailableView(message: "反義詞資料整理中")
+                }
+            }
             
-            Text("請稍後再試或聯繫管理員")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            // 詞源區塊
+            WordInfoSection(title: "詞源", icon: "scroll.fill") {
+                if let etymology = enrichedInfo.etymology, !etymology.isEmpty {
+                    Text(etymology)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    DataNotAvailableView(message: "詞源資料整理中")
+                }
+            }
         }
-        .padding(.vertical, 40)
-        .frame(maxWidth: .infinity)
     }
 }
+
+// MARK: - 空白單字資訊視圖（未充實）
+
+struct EmptyWordInfoView: View {
+    let word: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            // 定義區塊
+            WordInfoSection(title: "定義", icon: "book.fill") {
+                DataNotAvailableView(message: "單字尚未充實，定義資料待補充")
+            }
+            
+            // 同義詞區塊
+            WordInfoSection(title: "同義詞", icon: "arrow.triangle.2.circlepath") {
+                DataNotAvailableView(message: "單字尚未充實，同義詞資料待補充")
+            }
+            
+            // 反義詞區塊
+            WordInfoSection(title: "反義詞", icon: "arrow.left.and.right.circle") {
+                DataNotAvailableView(message: "單字尚未充實，反義詞資料待補充")
+            }
+            
+            // 詞源區塊
+            WordInfoSection(title: "詞源", icon: "scroll.fill") {
+                DataNotAvailableView(message: "單字尚未充實，詞源資料待補充")
+            }
+            
+            // 充實提示
+            VStack(spacing: 12) {
+                Image(systemName: "sparkles")
+                    .font(.largeTitle)
+                    .foregroundColor(.blue)
+                
+                Text("申請充實資料")
+                    .font(.headline)
+                
+                Text("點擊下方按鈕申請為此單字補充完整資訊")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                Button(action: {
+                    // TODO: 實作申請充實功能
+                }) {
+                    Label("申請充實", systemImage: "arrow.up.doc.fill")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(Color.blue)
+                        .cornerRadius(25)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+        }
+    }
+}
+
+// MARK: - 資訊區塊組件
+
+struct WordInfoSection<Content: View>: View {
+    let title: String
+    let icon: String
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundColor(.blue)
+                    .font(.headline)
+                
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+            
+            content
+                .padding(.leading, 4)
+        }
+        .padding(16)
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+}
+
+// MARK: - 資料未取得提示
+
+struct DataNotAvailableView: View {
+    let message: String
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "clock.circle")
+                .foregroundColor(.orange)
+                .font(.subheadline)
+            
+            Text(message)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .italic()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
 
 // MARK: - Preview
 

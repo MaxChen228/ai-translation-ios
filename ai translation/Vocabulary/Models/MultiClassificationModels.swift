@@ -2,7 +2,7 @@
 //  MultiClassificationModels.swift
 //  ai translation
 //
-//  多分類單字系統資料模型
+//  多分類單字系統資料模型 - 實現統一的資料模型協議
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - 分類系統
 
-struct ClassificationSystem: Codable, Identifiable, Hashable {
+struct ClassificationSystem: Codable, DataModel, StatisticalModel, Hashable {
     let systemId: Int
     let systemName: String
     let systemCode: String
@@ -21,6 +21,14 @@ struct ClassificationSystem: Codable, Identifiable, Hashable {
     let displayOrder: Int?
     
     var id: Int { systemId }
+    
+    // StatisticalModel 實現
+    var totalCount: Int { totalWords }
+    var completedCount: Int { enrichedWords }
+    var progressPercentage: Double {
+        guard totalWords > 0 else { return 0 }
+        return Double(enrichedWords) / Double(totalWords) * 100
+    }
     
     private enum CodingKeys: String, CodingKey {
         case systemId = "system_id"
@@ -33,11 +41,8 @@ struct ClassificationSystem: Codable, Identifiable, Hashable {
         case displayOrder = "display_order"
     }
     
-    // 計算屬性
-    var enrichedPercentage: Double {
-        guard totalWords > 0 else { return 0 }
-        return Double(enrichedWords) / Double(totalWords) * 100
-    }
+    // 向後相容的計算屬性
+    var enrichedPercentage: Double { progressPercentage }
     
     var progressText: String {
         "\(enrichedWords)/\(totalWords)"
@@ -135,7 +140,7 @@ struct SystemCategoryInfo: Codable {
 
 // MARK: - 多分類單字
 
-struct MultiClassWord: Codable, Identifiable {
+struct MultiClassWord: Codable, DataModel, SearchableModel {
     let wordId: Int
     let word: String
     let pronunciation: String?
@@ -145,6 +150,14 @@ struct MultiClassWord: Codable, Identifiable {
     let enrichedAt: String?
     
     var id: Int { wordId }
+    
+    // SearchableModel 實現
+    var searchKeywords: [String] {
+        var keywords = [word]
+        if let pronunciation = pronunciation { keywords.append(pronunciation) }
+        if let partOfSpeech = partOfSpeech { keywords.append(partOfSpeech) }
+        return keywords.compactMap { $0.isEmpty ? nil : $0 }
+    }
     
     private enum CodingKeys: String, CodingKey {
         case wordId = "word_id"
@@ -250,20 +263,11 @@ struct AlphabetDistribution {
 
 // MARK: - API 回應結構
 
+// API回應結構（保持原有格式以匹配實際API）
 struct SystemsResponse: Codable {
     let success: Bool
     let data: SystemsData
     let message: String
-}
-
-struct SystemsData: Codable {
-    let systems: [ClassificationSystem]
-    let totalSystems: Int
-    
-    private enum CodingKeys: String, CodingKey {
-        case systems
-        case totalSystems = "total_systems"
-    }
 }
 
 struct CategoryInfoResponse: Codable {
@@ -276,6 +280,16 @@ struct WordsResponse: Codable {
     let success: Bool
     let data: WordsData
     let message: String
+}
+
+struct SystemsData: Codable {
+    let systems: [ClassificationSystem]
+    let totalSystems: Int
+    
+    private enum CodingKeys: String, CodingKey {
+        case systems
+        case totalSystems = "total_systems"
+    }
 }
 
 struct WordsData: Codable {
@@ -310,11 +324,9 @@ struct WordFilter: Codable {
     }
 }
 
-struct AlphabetResponse: Codable {
-    let success: Bool
-    let data: AlphabetData
-    let message: String
-}
+// 使用統一的API回應協議
+typealias AlphabetResponse = StandardAPIResponse<AlphabetData>
+typealias WordDetailResponse = StandardAPIResponse<MultiClassWordDetail>
 
 struct AlphabetData: Codable {
     let systemCode: String
@@ -338,12 +350,6 @@ struct AlphabetData: Codable {
         activeLetters.map { (letter: $0.key, count: $0.value) }
             .sorted { $0.letter < $1.letter }
     }
-}
-
-struct WordDetailResponse: Codable {
-    let success: Bool
-    let data: MultiClassWordDetail
-    let message: String
 }
 
 // MARK: - UI 輔助

@@ -127,11 +127,25 @@ class NetworkManager {
     }
     
     private func addAuthHeaderIfNeeded(to request: inout URLRequest, requireAuth: Bool) {
+        // 嘗試從Keychain獲取token作為備用方案
         if let token = KeychainManager().retrieve(.accessToken) {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         } else if requireAuth {
             // 如果需要認證但沒有token，使用訪客標識
             request.setValue("Guest", forHTTPHeaderField: "X-User-Type")
+        }
+    }
+    
+    // 新增非同步認證頭方法，供NetworkServiceProtocol使用
+    func addAuthHeaderAsync(to request: inout URLRequest, requireAuth: Bool) async throws {
+        if requireAuth {
+            let authManager = await AuthenticationManager.shared
+            if let token = await authManager.getAccessToken() {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            } else {
+                // 如果需要認證但沒有token，使用訪客標識
+                request.setValue("Guest", forHTTPHeaderField: "X-User-Type")
+            }
         }
     }
 }

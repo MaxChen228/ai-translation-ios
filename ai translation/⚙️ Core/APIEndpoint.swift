@@ -51,10 +51,23 @@ enum APIEndpoint {
     // MARK: - Helix語義系統端點
     case getRelatedKnowledgePoints(id: Int, includeDetails: Bool)
     
-    // MARK: - 單字記憶庫端點 (暫時移除，避免編譯錯誤)
-    // case getVocabularyStatistics
-    // case getBuiltinVocabulary(category: String?, difficulty: String?)
-    // case getVocabularyWords(category: String?, studyMode: String?)
+    // MARK: - 單字記憶庫端點
+    case getVocabularyStatistics
+    case getVocabularyWords(search: String?, page: Int, limit: Int, dueOnly: Bool)
+    case getVocabularyWord(id: Int)
+    case addVocabularyWord(word: String, definition: String?)
+    case updateVocabularyWord(id: Int, updates: [String: Any])
+    case deleteVocabularyWord(id: Int)
+    case studyVocabularyWord(id: Int, correct: Bool)
+    case searchVocabulary(query: String, limit: Int)
+    
+    // MARK: - 多分類單字系統端點
+    case getClassificationSystems
+    case getCategoryInfo(systemCode: String)
+    case getWordsInCategory(systemCode: String, category: String, letter: String?, page: Int, pageSize: Int)
+    case getWordDetail(wordId: Int)
+    case getAlphabetDistribution(systemCode: String, category: String)
+    case searchMultiClassWords(query: String, systemCode: String?, limit: Int)
     
     // MARK: - 端點配置
     var urlPath: String {
@@ -95,6 +108,24 @@ enum APIEndpoint {
             
         // Helix語義系統
         case .getRelatedKnowledgePoints(let id, _): return "\(baseAPI)/helix/point_connections/\(id)"
+            
+        // 單字記憶庫
+        case .getVocabularyStatistics: return "\(baseAPI)/vocabulary/statistics"
+        case .getVocabularyWords: return "\(baseAPI)/vocabulary/words"
+        case .getVocabularyWord(let id): return "\(baseAPI)/vocabulary/words/\(id)"
+        case .addVocabularyWord: return "\(baseAPI)/vocabulary/words"
+        case .updateVocabularyWord(let id, _): return "\(baseAPI)/vocabulary/words/\(id)"
+        case .deleteVocabularyWord(let id): return "\(baseAPI)/vocabulary/words/\(id)"
+        case .studyVocabularyWord(let id, _): return "\(baseAPI)/vocabulary/words/\(id)/study"
+        case .searchVocabulary: return "\(baseAPI)/vocabulary/search"
+            
+        // 多分類單字系統
+        case .getClassificationSystems: return "\(baseAPI)/vocabulary/systems"
+        case .getCategoryInfo(let systemCode): return "\(baseAPI)/vocabulary/systems/\(systemCode)/categories"
+        case .getWordsInCategory(let systemCode, let category, _, _, _): return "\(baseAPI)/vocabulary/systems/\(systemCode)/\(category)/words"
+        case .getWordDetail(let wordId): return "\(baseAPI)/vocabulary/word/\(wordId)/detail"
+        case .getAlphabetDistribution(let systemCode, let category): return "\(baseAPI)/vocabulary/systems/\(systemCode)/\(category)/alphabet"
+        case .searchMultiClassWords: return "\(baseAPI)/vocabulary/search"
         }
     }
     
@@ -103,13 +134,13 @@ enum APIEndpoint {
         case .login, .register, .refreshToken, .logout, .validateToken, .upgradeAnonymousUser,
              .archiveKnowledgePoint, .unarchiveKnowledgePoint, .batchOperationKnowledgePoints,
              .aiReviewKnowledgePoint, .mergeErrors, .finalizeKnowledgePoints,
-             .generateDailySummary, .submitGuestAnswer:
+             .generateDailySummary, .submitGuestAnswer, .addVocabularyWord, .studyVocabularyWord:
             return .POST
             
-        case .updateKnowledgePoint:
+        case .updateKnowledgePoint, .updateVocabularyWord:
             return .PUT
             
-        case .deleteKnowledgePoint:
+        case .deleteKnowledgePoint, .deleteVocabularyWord:
             return .DELETE
             
         default:
@@ -123,6 +154,10 @@ enum APIEndpoint {
             return false // 訪客模式端點不需要認證
         case .login, .register:
             return false // 認證端點本身不需要預先認證
+        case .getClassificationSystems:
+            return false // 獲取分類系統列表不需要認證
+        case .getCategoryInfo, .getWordsInCategory, .getWordDetail, .getAlphabetDistribution, .searchMultiClassWords:
+            return false // 多分類單字系統的讀取操作不需要認證
         default:
             return true // 其他端點都需要認證
         }
@@ -150,6 +185,47 @@ enum APIEndpoint {
             if includeDetails {
                 urlComponents?.queryItems = [URLQueryItem(name: "include_details", value: "true")]
             }
+            
+        // 單字記憶庫查詢參數
+        case .getVocabularyWords(let search, let page, let limit, let dueOnly):
+            var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "limit", value: String(limit))
+            ]
+            if let search = search, !search.isEmpty {
+                queryItems.append(URLQueryItem(name: "search", value: search))
+            }
+            if dueOnly {
+                queryItems.append(URLQueryItem(name: "due_only", value: "true"))
+            }
+            urlComponents?.queryItems = queryItems
+            
+        case .searchVocabulary(let query, let limit):
+            urlComponents?.queryItems = [
+                URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "limit", value: String(limit))
+            ]
+            
+        // 多分類單字系統查詢參數
+        case .getWordsInCategory(_, _, let letter, let page, let pageSize):
+            var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "page_size", value: String(pageSize))
+            ]
+            if let letter = letter {
+                queryItems.append(URLQueryItem(name: "letter", value: letter))
+            }
+            urlComponents?.queryItems = queryItems
+            
+        case .searchMultiClassWords(let query, let systemCode, let limit):
+            var queryItems: [URLQueryItem] = [
+                URLQueryItem(name: "q", value: query),
+                URLQueryItem(name: "limit", value: String(limit))
+            ]
+            if let systemCode = systemCode {
+                queryItems.append(URLQueryItem(name: "system", value: systemCode))
+            }
+            urlComponents?.queryItems = queryItems
             
         default:
             break // 其他端點不需要查詢參數
@@ -235,6 +311,21 @@ enum APIEndpoint {
                 "email": email,
                 "password": password
             ]
+            return try JSONSerialization.data(withJSONObject: body)
+            
+        // 單字記憶庫請求體
+        case .addVocabularyWord(let word, let definition):
+            var body: [String: Any] = ["word": word]
+            if let definition = definition {
+                body["definition"] = definition
+            }
+            return try JSONSerialization.data(withJSONObject: body)
+            
+        case .updateVocabularyWord(_, let updates):
+            return try JSONSerialization.data(withJSONObject: updates)
+            
+        case .studyVocabularyWord(_, let correct):
+            let body: [String: Any] = ["correct": correct]
             return try JSONSerialization.data(withJSONObject: body)
             
         default:

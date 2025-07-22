@@ -412,26 +412,5 @@ extension BatchOperationRequest {
     }
 }
 
-// MARK: - 驗證錯誤
-enum ValidationError: Error, LocalizedError {
-    case invalidMasteryLevel
-    case emptyNotes
-    case emptyIds
-    case tooManyIds
-    case invalidTimeRange
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidMasteryLevel:
-            return "熟練度必須在 0.0 到 1.0 之間"
-        case .emptyNotes:
-            return "備註不能為空"
-        case .emptyIds:
-            return "ID 列表不能為空"
-        case .tooManyIds:
-            return "一次最多只能處理 100 個項目"
-        case .invalidTimeRange:
-            return "時間範圍無效"
-        }
-    }
-}
+// MARK: - 驗證錯誤（已移至DataModelProtocols.swift統一定義）
+// 使用新的ValidationError結構
