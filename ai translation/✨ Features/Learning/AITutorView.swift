@@ -4,16 +4,11 @@ import SwiftUI
 
 struct AITutorView: View {
     @EnvironmentObject var sessionManager: SessionManager
-    @StateObject private var viewModel: AITutorViewModel
+    @StateObject private var viewModel = AITutorViewModel()
     
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showStartLearning = true
-    
-    init() {
-        // 在初始化時創建 ViewModel，但會在 onAppear 時獲取 sessionManager
-        _viewModel = StateObject(wrappedValue: AITutorViewModel(sessionManager: SessionManager()))
-    }
 
     var body: some View {
         NavigationView {
@@ -66,8 +61,8 @@ struct AITutorView: View {
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
-            // 更新 ViewModel 的 sessionManager 引用
-            viewModel.updateSessionManager(sessionManager)
+            // 設定 ViewModel 的 sessionManager 引用
+            viewModel.setupSessionManager(sessionManager)
         }
         .sheet(isPresented: $viewModel.showingResults) {
             SessionResultsView(

@@ -53,12 +53,16 @@ class AITutorViewModel: ObservableObject {
     
     // MARK: - Dependencies
     private let apiService: UnifiedAPIServiceProtocol
-    private var sessionManager: SessionManager
+    private var sessionManager: SessionManager?
     
     // MARK: - Initialization
-    init(sessionManager: SessionManager, apiService: UnifiedAPIServiceProtocol = UnifiedAPIService.shared) {
-        self.sessionManager = sessionManager
+    init(apiService: UnifiedAPIServiceProtocol = UnifiedAPIService.shared) {
         self.apiService = apiService
+    }
+    
+    // MARK: - SessionManager Setup
+    func setupSessionManager(_ sessionManager: SessionManager) {
+        self.sessionManager = sessionManager
     }
     
     // MARK: - Public Methods
@@ -73,7 +77,7 @@ class AITutorViewModel: ObservableObject {
             let questionsResponse = try await apiService.getSampleQuestions(count: 3)
             let questions = questionsResponse.questions
             currentQuestions = questions
-            sessionManager.startNewSession(questions: questions)
+            sessionManager?.startNewSession(questions: questions)
             resetSession()
             tutorState = .active
             
@@ -111,7 +115,7 @@ class AITutorViewModel: ObservableObject {
             feedback = feedbackResponse
             
             // 更新會話管理器
-            sessionManager.updateQuestion(
+            sessionManager?.updateQuestion(
                 id: question.id,
                 userAnswer: userAnswer,
                 feedback: feedbackResponse
@@ -305,7 +309,7 @@ extension AITutorViewModel {
 extension AITutorViewModel {
     /// 從會話管理器恢復狀態
     func restoreFromSessionManager() {
-        let sessionQuestions = sessionManager.sessionQuestions
+        let sessionQuestions = sessionManager?.sessionQuestions ?? []
         
         if !sessionQuestions.isEmpty {
             currentQuestions = sessionQuestions.map { $0.question }
@@ -357,7 +361,7 @@ extension AITutorViewModel {
     
     /// 同步知識點到伺服器
     private func syncKnowledgePointsToServer() async {
-        let knowledgePointsData = sessionManager.extractKnowledgePointsForSync()
+        let knowledgePointsData = sessionManager?.extractKnowledgePointsForSync() ?? []
         
         guard !knowledgePointsData.isEmpty else {
             print("📝 沒有需要同步的知識點")
@@ -405,21 +409,17 @@ extension AITutorViewModel {
     /// 手動同步知識點
     func manualSyncKnowledgePoints() async -> Bool {
         await syncKnowledgePointsToServer()
-        return sessionManager.hasUnsyncedKnowledgePoints() == false
+        return sessionManager?.hasUnsyncedKnowledgePoints() == false
     }
     
     /// 檢查是否有未同步的知識點
     func hasUnsyncedKnowledgePoints() -> Bool {
-        return sessionManager.hasUnsyncedKnowledgePoints()
+        return sessionManager?.hasUnsyncedKnowledgePoints() ?? false
     }
     
     /// 取得未同步知識點數量
     func getUnsyncedKnowledgePointsCount() -> Int {
-        return sessionManager.getUnsyncedKnowledgePointsCount()
+        return sessionManager?.getUnsyncedKnowledgePointsCount() ?? 0
     }
     
-    /// 更新 SessionManager 引用（用於環境物件注入）
-    func updateSessionManager(_ sessionManager: SessionManager) {
-        self.sessionManager = sessionManager
-    }
 }

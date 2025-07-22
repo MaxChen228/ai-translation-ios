@@ -17,6 +17,17 @@ class NetworkManager {
         configuration.timeoutIntervalForRequest = 30.0
         configuration.timeoutIntervalForResource = 60.0
         
+        // 設定HTTP緩存策略
+        let memoryCapacity = 50 * 1024 * 1024  // 50MB
+        let diskCapacity = 200 * 1024 * 1024   // 200MB
+        let cache = URLCache(
+            memoryCapacity: memoryCapacity,
+            diskCapacity: diskCapacity,
+            diskPath: "networkCache"
+        )
+        configuration.urlCache = cache
+        print("🗂️ NetworkManager: HTTP緩存已設置 - 內存: \(memoryCapacity/1024/1024)MB, 磁盤: \(diskCapacity/1024/1024)MB")
+        
         if isSimulator {
             print("🔧 NetworkManager: 檢測到iOS模擬器，應用模擬器專用網路配置")
             
@@ -27,7 +38,7 @@ class NetworkManager {
             configuration.httpShouldSetCookies = false
             configuration.httpCookieAcceptPolicy = .never
             configuration.httpMaximumConnectionsPerHost = 4
-            configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+            configuration.requestCachePolicy = .returnCacheDataElseLoad
             configuration.allowsConstrainedNetworkAccess = false
             configuration.allowsExpensiveNetworkAccess = false
             
@@ -104,7 +115,7 @@ class NetworkManager {
         
         // 設定基本標頭，移除可能導致問題的設定
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+        request.setValue("max-age=300", forHTTPHeaderField: "Cache-Control") // 5分鐘緩存
         
         return request
     }

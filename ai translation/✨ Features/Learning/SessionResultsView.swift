@@ -482,7 +482,7 @@ struct DetailStatRow: View {
 #Preview {
     SessionResultsView(
         viewModel: {
-            let vm = AITutorViewModel(sessionManager: SessionManager())
+            let vm = AITutorViewModel()
             vm.sessionStats.totalAnswered = 10
             vm.sessionStats.correctAnswers = 8
             vm.sessionStats.averageScore = 0.85

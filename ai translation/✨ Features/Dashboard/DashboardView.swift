@@ -60,16 +60,7 @@ struct DashboardView: View {
                 } else {
                     ScrollView {
                         LazyVStack(spacing: ModernSpacing.lg) {
-                            switch selectedMode {
-                            case .overview:
-                                OverviewSection(stats: stats, points: viewModel.knowledgePoints)
-                            case .categories:
-                                CategoriesSection(points: viewModel.knowledgePoints)
-                            case .progress:
-                               ProgressSection(points: viewModel.knowledgePoints)
-                            case .schedule:
-                                ScheduleSection(points: viewModel.knowledgePoints)
-                            }
+                            modeContentView()
                         }
                         .padding(ModernSpacing.lg)
                     }
@@ -121,6 +112,42 @@ struct DashboardView: View {
                 #endif
             }
         }
+    }
+    
+    // MARK: - 優化的視圖內容方法
+    
+    @ViewBuilder
+    private func modeContentView() -> some View {
+        Group {
+            switch selectedMode {
+            case .overview:
+                OverviewSection(stats: stats, points: viewModel.knowledgePoints)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .trailing)),
+                        removal: .opacity.combined(with: .move(edge: .leading))
+                    ))
+            case .categories:
+                CategoriesSection(points: viewModel.knowledgePoints)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .trailing)),
+                        removal: .opacity.combined(with: .move(edge: .leading))
+                    ))
+            case .progress:
+                ProgressSection(points: viewModel.knowledgePoints)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .trailing)),
+                        removal: .opacity.combined(with: .move(edge: .leading))
+                    ))
+            case .schedule:
+                ScheduleSection(points: viewModel.knowledgePoints)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .trailing)),
+                        removal: .opacity.combined(with: .move(edge: .leading))
+                    ))
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: selectedMode)
+        .id("content-\(selectedMode.rawValue)") // 為每個模式提供唯一ID，優化重繪
     }
     
 }
