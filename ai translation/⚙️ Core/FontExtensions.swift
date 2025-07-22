@@ -10,6 +10,7 @@ enum AppFontStyle {
     case chineseDefault      // 中文預設（思源宋體）
     case englishRounded      // 英文圓潤
     case englishSerif        // 英文襯線（Times New Roman 類型）
+    case monospace           // 等寬字體（用於英文和數字）
     case system              // 系統字體（後備方案）
 }
 
@@ -62,11 +63,21 @@ struct AppFont {
         static let englishSerif = "TimesNewRomanPSMT"
         static let englishSerifBold = "TimesNewRomanPS-BoldMT"
         
-        // 系統字體（後備方案）
-        static let systemFont = "SFProText-Regular"
-        static let systemFontBold = "SFProText-Bold"
-        static let systemFontMedium = "SFProText-Medium"
-        static let systemFontLight = "SFProText-Light"
+        // Monospace 字體：用於英文和數字
+        static let monospace = "Menlo-Regular"
+        static let monospaceBold = "Menlo-Bold"
+        static let monospaceLight = "Menlo-Regular"  // Menlo 沒有 Light 版本，使用 Regular
+        static let monospaceMedium = "Menlo-Regular"  // Menlo 沒有 Medium 版本，使用 Regular
+        
+        // Monospace 後備字體
+        static let monospaceBackup = "Courier"
+        static let monospaceBackupBold = "Courier-Bold"
+        
+        // 系統字體（後備方案）- 改為自定義思源宋體
+        static let systemFont = "SourceHanSerifTCVF-Regular"
+        static let systemFontBold = "SourceHanSerifTCVF-Bold"
+        static let systemFontMedium = "SourceHanSerifTCVF-Medium"
+        static let systemFontLight = "SourceHanSerifTCVF-Light"
     }
     
     // 智慧字體選擇 - 根據文字內容自動選擇合適字體
@@ -116,6 +127,29 @@ struct AppFont {
             return .chineseDefault
         }
         
+        // 計算英文字母和數字的數量
+        let englishAndDigitCount = text.filter { char in
+            return char.isLetter || char.isNumber
+        }.count
+        
+        // 計算非空白字符的總數
+        let nonWhitespaceCount = text.filter { !$0.isWhitespace }.count
+        let englishDigitRatio = nonWhitespaceCount > 0 ? Double(englishAndDigitCount) / Double(nonWhitespaceCount) : 0.0
+        
+        // 檢測是否主要為英文字母和數字（比例超過 70%）
+        if englishDigitRatio > 0.7 && !hasChinese {
+            // 進一步檢測是否適合使用 monospace
+            // 條件：包含數字、程式碼關鍵字、或短字串
+            let hasNumbers = text.contains { $0.isNumber }
+            let codeKeywords = ["func", "var", "let", "class", "struct", "enum", "import", "return", "if", "else", "for", "while", "switch", "case"]
+            let hasCodeKeywords = codeKeywords.contains { text.lowercased().contains($0) }
+            let isShortText = text.count <= 50
+            
+            if hasNumbers || hasCodeKeywords || isShortText {
+                return .monospace
+            }
+        }
+        
         // 判斷英文內容的類型
         // 如果包含正式文件常見詞彙，使用襯線字體
         let formalKeywords = ["therefore", "furthermore", "however", "moreover", "consequently", "nevertheless"]
@@ -162,6 +196,16 @@ struct AppFont {
                 return FontNames.englishSerif
             case .semibold, .bold:
                 return FontNames.englishSerifBold
+            }
+            
+        case .monospace:
+            switch weight {
+            case .light:
+                return FontNames.monospaceLight
+            case .regular, .medium:
+                return FontNames.monospace
+            case .semibold, .bold:
+                return FontNames.monospaceBold
             }
             
         case .system:
@@ -278,7 +322,16 @@ struct FontPreviewView: View {
         "Learning English grammar can be challenging",
         "學習英語語法雖然具有挑戰性，但只要方法得當，就會變得更加容易掌握。",
         "Furthermore, the comprehensive analysis demonstrates significant improvements.",
-        "AI 家教點評結果"
+        "AI 家教點評結果",
+        // Monospace 測試文本
+        "func calculateSum() -> Int",
+        "Version 1.2.3",
+        "API Key: abc123def456",
+        "Error 404",
+        "Total: $128.99",
+        "IP: 192.168.1.1",
+        "Hello123",
+        "let result = data"
     ]
     
     var body: some View {

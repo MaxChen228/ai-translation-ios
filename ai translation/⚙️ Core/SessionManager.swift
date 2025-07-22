@@ -34,4 +34,35 @@ class SessionManager: ObservableObject {
             sessionQuestions[index].feedback = feedback
         }
     }
+    
+    // MARK: - 知識點同步相關功能
+    
+    /// 提取會話中所有需要同步的知識點資料
+    func extractKnowledgePointsForSync() -> [(errors: [ErrorAnalysis], questionData: [String: Any], userAnswer: String)] {
+        return sessionQuestions.compactMap { sessionQuestion in
+            guard let feedback = sessionQuestion.feedback,
+                  let userAnswer = sessionQuestion.userAnswer,
+                  !feedback.errorAnalysis.isEmpty else { return nil }
+            
+            let questionData: [String: Any] = [
+                "id": sessionQuestion.question.id.uuidString,
+                "new_sentence": sessionQuestion.question.newSentence,
+                "type": sessionQuestion.question.type
+            ]
+            
+            return (feedback.errorAnalysis, questionData, userAnswer)
+        }
+    }
+    
+    /// 檢查是否有未同步的知識點
+    func hasUnsyncedKnowledgePoints() -> Bool {
+        return !extractKnowledgePointsForSync().isEmpty
+    }
+    
+    /// 取得未同步知識點的總數
+    func getUnsyncedKnowledgePointsCount() -> Int {
+        return extractKnowledgePointsForSync().reduce(0) { total, data in
+            total + data.errors.count
+        }
+    }
 }

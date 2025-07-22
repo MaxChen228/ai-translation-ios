@@ -18,10 +18,10 @@ class DashboardViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     var totalPoints: Int { knowledgePoints.count }
-    var masteredPoints: Int { knowledgePoints.filter { $0.mastery_level >= 0.8 }.count }
+    var masteredPoints: Int { knowledgePoints.filter { $0.masteryLevel >= 0.8 }.count }
     var averageMastery: Double {
         guard !knowledgePoints.isEmpty else { return 0.0 }
-        return knowledgePoints.reduce(0) { $0 + $1.mastery_level } / Double(knowledgePoints.count)
+        return knowledgePoints.reduce(0) { $0 + $1.masteryLevel } / Double(knowledgePoints.count)
     }
     
     var masteredPercentage: Double {
@@ -129,18 +129,18 @@ class DashboardViewModel: ObservableObject {
                     id: pointId,
                     category: category,
                     subcategory: subcategory,
-                    correct_phrase: correctPhrase,
+                    correctPhrase: correctPhrase,
                     explanation: explanation,
-                    user_context_sentence: userContextSentence,
-                    incorrect_phrase_in_context: incorrectPhrase,
-                    key_point_summary: keyPointSummary,
-                    mastery_level: masteryLevel,
-                    mistake_count: mistakeCount,
-                    correct_count: correctCount,
-                    next_review_date: nil,
-                    is_archived: isArchived,
-                    ai_review_notes: "本地儲存",
-                    last_ai_review_date: nil
+                    userContextSentence: userContextSentence,
+                    incorrectPhraseInContext: incorrectPhrase,
+                    keyPointSummary: keyPointSummary,
+                    masteryLevel: masteryLevel,
+                    mistakeCount: mistakeCount,
+                    correctCount: correctCount,
+                    nextReviewDate: nil,
+                    isArchived: isArchived,
+                    aiReviewNotes: "本地儲存",
+                    lastAiReviewDate: nil
                 )
                 
                 localPoints.append(knowledgePoint)

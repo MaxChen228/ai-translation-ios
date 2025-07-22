@@ -69,7 +69,7 @@ struct StudyModeSelectionView: View {
                 Image(systemName: "graduationcap")
                     .foregroundStyle(Color.modernAccent)
                 Text("學習模式")
-                    .font(.headline)
+                    .font(.appHeadline())
                     .fontWeight(.semibold)
             }
             
@@ -97,7 +97,7 @@ struct StudyModeSelectionView: View {
                 Image(systemName: "gamecontroller")
                     .foregroundStyle(Color.modernAccent)
                 Text("練習類型")
-                    .font(.headline)
+                    .font(.appHeadline())
                     .fontWeight(.semibold)
             }
             
@@ -125,7 +125,7 @@ struct StudyModeSelectionView: View {
                 Image(systemName: "slider.horizontal.3")
                     .foregroundStyle(Color.modernAccent)
                 Text("學習設定")
-                    .font(.headline)
+                    .font(.appHeadline())
                     .fontWeight(.semibold)
             }
             
@@ -133,7 +133,7 @@ struct StudyModeSelectionView: View {
                 // 單字數量
                 VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                     Text("單字數量: \(wordCount)")
-                        .font(.subheadline)
+                        .font(.appSubheadline())
                         .fontWeight(.medium)
                     
                     Slider(value: Binding(
@@ -144,19 +144,19 @@ struct StudyModeSelectionView: View {
                     
                     HStack {
                         Text("5")
-                            .font(.caption)
+                            .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("10")
-                            .font(.caption)
+                            .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("15")
-                            .font(.caption)
+                            .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                         Spacer()
                         Text("20")
-                            .font(.caption)
+                            .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                     }
                 }
@@ -167,7 +167,7 @@ struct StudyModeSelectionView: View {
                 if selectedStudyMode == .targeted {
                     VStack(alignment: .leading, spacing: ModernSpacing.sm) {
                         Text("難度等級")
-                            .font(.subheadline)
+                            .font(.appSubheadline())
                             .fontWeight(.medium)
                         
                         HStack(spacing: ModernSpacing.sm) {
@@ -187,7 +187,7 @@ struct StudyModeSelectionView: View {
                         }
                         
                         Text("1=簡單, 5=困難")
-                            .font(.caption)
+                            .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                     }
                 }
@@ -205,7 +205,7 @@ struct StudyModeSelectionView: View {
         VStack(spacing: 12) {
             if let errorMessage = errorMessage {
                 Text(errorMessage)
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundStyle(Color.modernError)
                     .multilineTextAlignment(.center)
             }
@@ -232,7 +232,7 @@ struct StudyModeSelectionView: View {
             .disabled(isStartingStudy)
             
             Text("根據你的選擇，將生成 \(wordCount) 個單字的 \(selectedPracticeType.displayName)")
-                .font(.caption)
+                .font(.appCaption())
                 .foregroundStyle(Color.modernTextSecondary)
                 .multilineTextAlignment(.center)
         }
@@ -297,12 +297,12 @@ struct StudyModeCard: View {
                 
                 VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text(mode.displayName)
-                        .font(.headline)
+                        .font(.appHeadline())
                         .fontWeight(.medium)
                         .foregroundStyle(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(mode.description)
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundStyle(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
@@ -336,12 +336,12 @@ struct PracticeTypeCard: View {
                 
                 VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                     Text(type.displayName)
-                        .font(.headline)
+                        .font(.appHeadline())
                         .fontWeight(.medium)
                         .foregroundStyle(isSelected ? .white : Color.modernTextPrimary)
                     
                     Text(practiceDescription(for: type))
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundStyle(isSelected ? .white.opacity(0.8) : Color.modernTextSecondary)
                 }
                 
@@ -376,7 +376,7 @@ struct DifficultyButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.caption)
+            .font(.appCaption())
             .fontWeight(.medium)
             .foregroundColor(isSelected ? .white : Color.modernAccent)
             .padding(.horizontal, ModernSpacing.md)

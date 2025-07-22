@@ -12,7 +12,7 @@ struct DailyDetailView: View {
     @State private var showAISummary = false
     
     private var formattedLearningTime: String {
-        guard let totalSeconds = details?.total_learning_time_seconds else { return "0分0秒" }
+        guard let totalSeconds = details?.totalLearningTimeSeconds else { return "0分0秒" }
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return minutes > 0 ? "\(minutes)分\(seconds)秒" : "\(seconds)秒"
@@ -67,10 +67,10 @@ struct DailyDetailView: View {
                     )
                     
                     // 知識點分析卡片
-                    if !details.reviewed_knowledge_points.isEmpty || !details.new_knowledge_points.isEmpty {
+                    if !details.reviewedKnowledgePoints.isEmpty || !details.newKnowledgePoints.isEmpty {
                         ModernKnowledgeAnalysisCard(
-                            reviewedPoints: details.reviewed_knowledge_points,
-                            newPoints: details.new_knowledge_points
+                            reviewedPoints: details.reviewedKnowledgePoints,
+                            newPoints: details.newKnowledgePoints
                         )
                     }
                     
@@ -99,8 +99,10 @@ struct DailyDetailView: View {
             guard let url = urlComponents.url else { return }
             
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                let decodedResponse = try JSONDecoder().decode(DailyDetailResponse.self, from: data)
+                let (data, response) = try await NetworkManager.shared.performGETRequest(url: url, requireAuth: false)
+                try NetworkManager.shared.validateHTTPResponse(response, data: data)
+                let decodedResponse = try NetworkManager.shared.safeDecodeJSON(data, as: DailyDetailResponse.self)
+                
                 await MainActor.run {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         self.details = decodedResponse
@@ -128,8 +130,10 @@ struct DailyDetailView: View {
             guard let url = urlComponents.url else { return }
             
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                let summaryResponse = try JSONDecoder().decode(DailySummaryResponse.self, from: data)
+                let (data, response) = try await NetworkManager.shared.performGETRequest(url: url, requireAuth: false)
+                try NetworkManager.shared.validateHTTPResponse(response, data: data)
+                let summaryResponse = try NetworkManager.shared.safeDecodeJSON(data, as: DailySummaryResponse.self)
+                
                 await MainActor.run {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         self.aiSummary = summaryResponse
@@ -165,9 +169,9 @@ struct DayStats {
             return
         }
         
-        totalTime = details.total_learning_time_seconds
-        reviewedCount = details.reviewed_knowledge_points.reduce(0) { $0 + $1.count }
-        newCount = details.new_knowledge_points.reduce(0) { $0 + $1.count }
+        totalTime = details.totalLearningTimeSeconds
+        reviewedCount = details.reviewedKnowledgePoints.reduce(0) { $0 + $1.count }
+        newCount = details.newKnowledgePoints.reduce(0) { $0 + $1.count }
         totalKnowledgePoints = reviewedCount + newCount
         
         let minutes = max(1, totalTime / 60)
@@ -177,9 +181,16 @@ struct DayStats {
 
 struct DailySummaryResponse: Codable {
     let summary: String
-    let key_achievements: [String]
-    let improvement_suggestions: [String]
-    let motivational_message: String
+    let keyAchievements: [String]
+    let improvementSuggestions: [String]
+    let motivationalMessage: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case summary
+        case keyAchievements = "key_achievements"
+        case improvementSuggestions = "improvement_suggestions"
+        case motivationalMessage = "motivational_message"
+    }
 }
 
 // MARK: - Claude風格組件
@@ -416,13 +427,13 @@ struct ModernAISummaryCard: View {
                     }
                     
                     // 主要成就
-                    if !summary.key_achievements.isEmpty {
+                    if !summary.keyAchievements.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("今日亮點")
                                 .font(.appCallout(for: "今日亮點"))
                                 .foregroundStyle(Color.modernSuccess)
                             
-                            ForEach(summary.key_achievements, id: \.self) { achievement in
+                            ForEach(summary.keyAchievements, id: \.self) { achievement in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "star.fill")
                                         .font(.appCaption())
@@ -438,13 +449,13 @@ struct ModernAISummaryCard: View {
                     }
                     
                     // 改進建議
-                    if !summary.improvement_suggestions.isEmpty {
+                    if !summary.improvementSuggestions.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("改進建議")
                                 .font(.appCallout(for: "改進建議"))
                                 .foregroundStyle(Color.modernSpecial)
                             
-                            ForEach(summary.improvement_suggestions, id: \.self) { suggestion in
+                            ForEach(summary.improvementSuggestions, id: \.self) { suggestion in
                                 HStack(alignment: .top, spacing: 8) {
                                     Image(systemName: "lightbulb.fill")
                                         .font(.appCaption())
@@ -460,9 +471,9 @@ struct ModernAISummaryCard: View {
                     }
                     
                     // 激勵訊息
-                    if !summary.motivational_message.isEmpty {
-                        Text(summary.motivational_message)
-                            .font(.appBody(for: summary.motivational_message))
+                    if !summary.motivationalMessage.isEmpty {
+                        Text(summary.motivationalMessage)
+                            .font(.appBody(for: summary.motivationalMessage))
                             .foregroundStyle(.secondary)
                             .italic()
                             .padding(ModernSpacing.md)

@@ -48,9 +48,10 @@ struct KnowledgePointCard: View {
     let onArchived: () -> Void
     
     @State private var showingActionSheet = false
+    @State private var isPressed = false
     
     var masteryColor: Color {
-        switch point.mastery_level {
+        switch point.masteryLevel {
         case 0.8...1.0: return .modernSuccess
         case 0.5..<0.8: return .modernWarning
         default: return .modernError
@@ -58,88 +59,124 @@ struct KnowledgePointCard: View {
     }
     
     var masteryDescription: String {
-        switch point.mastery_level {
+        switch point.masteryLevel {
         case 0.8...1.0: return "已熟練"
         case 0.5..<0.8: return "進展中"
         default: return "需加強"
         }
     }
     
+    // 簡約的分類標籤
+    var categoryLabel: String {
+        switch point.subcategory {
+        case "A": return "A"
+        case "B": return "B"
+        case "C": return "C" 
+        case "D": return "D"
+        default: return "?"
+        }
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: ModernSpacing.md) {
-            // 標題與操作按鈕
+        VStack(alignment: .leading, spacing: ModernSpacing.lg) {
+            // 頂部：分類標籤和操作按鈕
             HStack {
-                VStack(alignment: .leading, spacing: ModernSpacing.xs) {
-                    Text(point.displayTitle)
-                        .font(.appCallout(for: "知識點標題"))
-                        .foregroundStyle(Color.modernTextPrimary)
-                        .fontWeight(.medium)
-                        .lineLimit(2)
-                    
-                    Text(point.category)
-                        .font(.appCaption2(for: "分類標籤"))
-                        .foregroundStyle(Color.modernTextTertiary)
-                        .padding(.horizontal, ModernSpacing.sm)
-                        .padding(.vertical, ModernSpacing.xs)
-                        .background(Color.modernAccentSoft)
-                        .cornerRadius(ModernRadius.xs)
-                }
+                // 簡約分類標籤
+                Text(categoryLabel)
+                    .font(.appCaption2(for: "分類"))
+                    .fontWeight(.medium)
+                    .foregroundStyle(Color.modernTextPrimary)
+                    .padding(.horizontal, ModernSpacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.modernAccent.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: ModernRadius.xs))
                 
                 Spacer()
                 
                 Button(action: { showingActionSheet = true }) {
                     Image(systemName: "ellipsis")
-                        .font(.appCallout())
-                        .foregroundStyle(Color.modernTextSecondary)
+                        .font(.appCaption())
+                        .foregroundStyle(Color.modernTextTertiary)
                         .frame(width: 24, height: 24)
                 }
                 .accessibilityLabel("更多選項")
-                .accessibilityHint("顯示知識點操作選單")
             }
             
-            // 熟練度進度條
-            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
-                HStack {
-                    Text("熟練度")
-                        .font(.appCaption(for: "熟練度標籤"))
+            // 主要內容：標題和錯誤提示
+            VStack(alignment: .leading, spacing: ModernSpacing.sm) {
+                Text(point.displayTitle)
+                    .font(.appSubheadline(for: "知識點標題"))
+                    .foregroundStyle(Color.modernTextPrimary)
+                    .fontWeight(.medium)
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
+                
+                if let incorrectPhrase = point.incorrectPhraseInContext, !incorrectPhrase.isEmpty {
+                    Text("錯誤：\(incorrectPhrase)")
+                        .font(.appCaption(for: "錯誤內容"))
                         .foregroundStyle(Color.modernTextSecondary)
+                        .lineLimit(1)
+                }
+            }
+            
+            // 底部：簡潔的熟練度顯示
+            HStack(alignment: .center) {
+                Text("熟練度")
+                    .font(.appCaption(for: "熟練度"))
+                    .foregroundStyle(Color.modernTextSecondary)
+                
+                Spacer()
+                
+                HStack(spacing: ModernSpacing.xs) {
+                    // 簡潔進度條
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.modernBorder.opacity(0.3))
+                                .frame(height: 4)
+                            
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(masteryColor)
+                                .frame(
+                                    width: geometry.size.width * CGFloat(point.masteryLevel),
+                                    height: 4
+                                )
+                                .animation(.easeOut(duration: 0.4), value: point.masteryLevel)
+                        }
+                    }
+                    .frame(width: 60, height: 4)
                     
-                    Spacer()
-                    
-                    Text(masteryDescription)
-                        .font(.appCaption(for: "熟練度描述"))
+                    Text("\(Int(point.masteryLevel * 100))%")
+                        .font(.appCaption(for: "百分比"))
                         .foregroundStyle(masteryColor)
                         .fontWeight(.medium)
+                        .frame(width: 35, alignment: .trailing)
                 }
-                
-                ProgressView(value: point.mastery_level)
-                    .progressViewStyle(ModernProgressViewStyle(color: masteryColor))
-                    .accessibilityLabel("熟練度進度")
-                    .accessibilityValue("\(Int(point.mastery_level * 100))%，\(masteryDescription)")
-            }
-            
-            // 統計資訊
-            HStack(spacing: ModernSpacing.md) {
-                StatisticItem(
-                    icon: "clock",
-                    value: "\(point.studyCount)",
-                    label: "學習次數"
-                )
-                
-                StatisticItem(
-                    icon: "calendar",
-                    value: formatDate(point.lastStudiedAt),
-                    label: "最後學習"
-                )
             }
         }
         .padding(ModernSpacing.lg)
-        .modernCard(.standard)
-        .onTapGesture { onTapped() }
+        .background(Color.modernSurfaceElevated)
+        .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: ModernRadius.md)
+                .stroke(Color.modernBorder.opacity(0.08), lineWidth: 1)
+        )
+        .modernShadow(ModernShadow.subtle)
+        .scaleEffect(isPressed ? 0.98 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: isPressed)
+        .onTapGesture {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.8)) {
+                isPressed = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isPressed = false
+                    onTapped()
+                }
+            }
+        }
         .accessibleCard(
             label: "知識點：\(point.displayTitle)",
             hint: "輕點以查看詳細內容",
-            value: "熟練度 \(Int(point.mastery_level * 100))%"
+            value: "熟練度 \(Int(point.masteryLevel * 100))%"
         )
         .actionSheet(isPresented: $showingActionSheet) {
             ActionSheet(
@@ -202,56 +239,8 @@ struct StatisticItem: View {
     }
 }
 
-// MARK: - 自定義進度條樣式
-struct ModernProgressViewStyle: ProgressViewStyle {
-    let color: Color
-    
-    func makeBody(configuration: Configuration) -> some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                // 背景軌道
-                RoundedRectangle(cornerRadius: ModernRadius.xs)
-                    .fill(color.opacity(0.1))
-                    .frame(height: 4)
-                
-                // 進度條
-                RoundedRectangle(cornerRadius: ModernRadius.xs)
-                    .fill(color)
-                    .frame(
-                        width: geometry.size.width * CGFloat(configuration.fractionCompleted ?? 0),
-                        height: 4
-                    )
-                    .animation(.easeInOut(duration: 0.5), value: configuration.fractionCompleted)
-            }
-        }
-        .frame(height: 4)
-    }
-}
 
-// MARK: - 網格佈局選項
-enum GridLayout: String, CaseIterable, Identifiable {
-    case compact = "緊湊"
-    case comfortable = "舒適"
-    case spacious = "寬鬆"
-    
-    var id: String { rawValue }
-    
-    var columns: Int {
-        switch self {
-        case .compact: return 3
-        case .comfortable: return 2
-        case .spacious: return 1
-        }
-    }
-    
-    var spacing: CGFloat {
-        switch self {
-        case .compact: return ModernSpacing.sm
-        case .comfortable: return ModernSpacing.md
-        case .spacious: return ModernSpacing.lg
-        }
-    }
-}
+
 
 // MARK: - 空狀態視圖
 struct EmptyKnowledgePointsView: View {
@@ -259,29 +248,40 @@ struct EmptyKnowledgePointsView: View {
     
     var body: some View {
         VStack(spacing: ModernSpacing.xl) {
+            // 簡約圖示
             Image(systemName: "brain.head.profile")
-                .font(.system(size: 60))
-                .foregroundStyle(Color.modernTextTertiary)
+                .font(.system(size: 48, weight: .light))
+                .foregroundStyle(Color.modernAccent)
                 .accessibilityHidden(true)
             
             VStack(spacing: ModernSpacing.md) {
-                Text("還沒有知識點")
-                    .font(.appTitle2(for: "空狀態標題"))
+                Text("開始學習之旅")
+                    .font(.appTitle3(for: "空狀態標題"))
                     .foregroundStyle(Color.modernTextPrimary)
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
                 
-                Text("開始您的學習之旅，創建第一個知識點")
-                    .font(.appBody(for: "空狀態描述"))
+                Text("完成練習後，系統會為您建立\n個人化的知識點分析")
+                    .font(.appBody(for: "空狀態說明"))
                     .foregroundStyle(Color.modernTextSecondary)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(4)
             }
             
-            ModernButton("創建知識點", icon: "plus", action: onCreateFirst)
-                .frame(maxWidth: 200)
+            Button(action: onCreateFirst) {
+                Text("開始練習")
+                    .font(.appSubheadline(for: "開始練習"))
+                    .fontWeight(.medium)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, ModernSpacing.md)
+                    .padding(.horizontal, ModernSpacing.xl)
+                    .background(Color.modernAccent)
+                    .clipShape(RoundedRectangle(cornerRadius: ModernRadius.md))
+            }
+            .buttonStyle(.plain)
         }
         .padding(ModernSpacing.xxl)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("沒有知識點，輕點創建知識點按鈕開始學習")
+        .accessibilityLabel("沒有知識點，輕點開始練習按鈕開始學習")
     }
 }
 
@@ -290,29 +290,119 @@ struct EmptyKnowledgePointsView: View {
     let samplePoints = [
         KnowledgePoint.example(
             id: 1,
-            title: "什麼是 SwiftUI？",
-            category: "iOS 開發",
-            masteryLevel: 0.85
+            title: "不定冠詞 'a' 後接的形容詞 'extensive' 是...",
+            category: "詞彙與片語錯誤",
+            subcategory: "A",
+            masteryLevel: 0.85,
+            studyCount: 15,
+            incorrectPhrase: "an extensive"
         ),
         KnowledgePoint.example(
             id: 2,
-            title: "如何使用 @State？",
-            category: "SwiftUI",
-            masteryLevel: 0.45
+            title: "主詞與動詞之間不應使用逗號",
+            category: "語法結構錯誤", 
+            subcategory: "B",
+            masteryLevel: 0.65,
+            studyCount: 8,
+            incorrectPhrase: "challenges are"
+        ),
+        KnowledgePoint.example(
+            id: 3,
+            title: "不定冠詞 'a/an' 的使用錯誤",
+            category: "拼寫與格式錯誤",
+            subcategory: "D", 
+            masteryLevel: 0.25,
+            studyCount: 3,
+            incorrectPhrase: "an advantageous"
+        ),
+        KnowledgePoint.example(
+            id: 4,
+            title: "語意表達需要改進",
+            category: "語意與語用錯誤",
+            subcategory: "C",
+            masteryLevel: 0.92,
+            studyCount: 22,
+            incorrectPhrase: "meaning clarity"
         )
     ]
     
     NavigationView {
         ScrollView {
-            VStack(spacing: ModernSpacing.lg) {
-                KnowledgePointGrid(knowledgePoints: samplePoints)
+            LazyVStack(spacing: ModernSpacing.lg) {
+                // 標題區域
+                VStack(alignment: .leading, spacing: ModernSpacing.md) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("拼字與格式錯誤")
+                                .font(.appTitle(for: "頁面標題"))
+                                .foregroundStyle(Color.modernTextPrimary)
+                                .fontWeight(.bold)
+                            
+                            Text("共 \(samplePoints.count) 個知識點")
+                                .font(.appCallout(for: "統計資訊"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        // 格式選擇器
+                        ModernSegmentedControl(
+                            selection: .constant("網格"),
+                            options: [
+                                (value: "網格", label: "網格", icon: "square.grid.2x2"),
+                                (value: "列表", label: "列表", icon: "list.bullet")
+                            ]
+                        )
+                    }
+                    
+                    // 簡約分類統計
+                    HStack(spacing: ModernSpacing.sm) {
+                        CategoryBadge(category: "A", count: 1)
+                        CategoryBadge(category: "B", count: 1) 
+                        CategoryBadge(category: "C", count: 1)
+                        CategoryBadge(category: "D", count: 1)
+                        
+                        Spacer()
+                    }
+                }
                 
+                // 知識點網格
+                KnowledgePointGrid(knowledgePoints: samplePoints, columns: 2)
+                
+                // 分隔線
+                ModernDivider()
+                
+                // 空狀態展示
                 EmptyKnowledgePointsView(onCreateFirst: {})
             }
             .padding()
         }
         .background(Color.modernBackground)
-        .navigationTitle("知識點網格預覽")
+        .navigationTitle("知識點展示")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// 簡約分類徽章組件
+struct CategoryBadge: View {
+    let category: String
+    let count: Int
+    
+    var body: some View {
+        HStack(spacing: ModernSpacing.xs) {
+            Text(category)
+                .font(.appCaption2(for: "分類標籤"))
+                .fontWeight(.medium)
+                .foregroundStyle(Color.modernTextPrimary)
+            
+            Text("\(count)")
+                .font(.appCaption2(for: "分類數量"))
+                .foregroundStyle(Color.modernTextSecondary)
+        }
+        .padding(.horizontal, ModernSpacing.sm)
+        .padding(.vertical, ModernSpacing.xs)
+        .background(Color.modernAccent.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: ModernRadius.xs))
     }
 }
 
@@ -320,17 +410,17 @@ struct EmptyKnowledgePointsView: View {
 extension KnowledgePoint {
     // 顯示用的標題
     var displayTitle: String {
-        return key_point_summary ?? correct_phrase
+        return keyPointSummary ?? correctPhrase
     }
     
     // 學習次數（基於錯誤和正確次數）
     var studyCount: Int {
-        return mistake_count + correct_count
+        return mistakeCount + correctCount
     }
     
     // 最後學習時間（從 API 格式轉換）
     var lastStudiedAt: Date? {
-        guard let dateString = last_ai_review_date else { return nil }
+        guard let dateString = lastAiReviewDate else { return nil }
         let formatter = ISO8601DateFormatter()
         return formatter.date(from: dateString)
     }
@@ -340,24 +430,30 @@ extension KnowledgePoint {
         id: Int,
         title: String,
         category: String,
-        masteryLevel: Double
+        subcategory: String = "",
+        masteryLevel: Double,
+        studyCount: Int = 0,
+        incorrectPhrase: String? = nil
     ) -> KnowledgePoint {
+        let mistakeCount = studyCount > 0 ? Int.random(in: 1...max(1, studyCount/3)) : 0
+        let correctCount = max(0, studyCount - mistakeCount)
+        
         return KnowledgePoint(
             id: id,
             category: category,
-            subcategory: "",
-            correct_phrase: title,
-            explanation: "範例解釋",
-            user_context_sentence: nil,
-            incorrect_phrase_in_context: nil,
-            key_point_summary: title,
-            mastery_level: masteryLevel,
-            mistake_count: Int.random(in: 0...5),
-            correct_count: Int.random(in: 1...10),
-            next_review_date: nil,
-            is_archived: false,
-            ai_review_notes: nil,
-            last_ai_review_date: ISO8601DateFormatter().string(from: Date())
+            subcategory: subcategory,
+            correctPhrase: title,
+            explanation: "這是一個關於 \(category) 的知識點範例解釋。",
+            userContextSentence: incorrectPhrase != nil ? "使用者在句子中寫了：\(incorrectPhrase!)" : nil,
+            incorrectPhraseInContext: incorrectPhrase,
+            keyPointSummary: title,
+            masteryLevel: masteryLevel,
+            mistakeCount: mistakeCount,
+            correctCount: correctCount,
+            nextReviewDate: nil,
+            isArchived: false,
+            aiReviewNotes: masteryLevel > 0.8 ? "表現優秀！" : masteryLevel > 0.5 ? "需要多練習。" : "建議重新學習基礎概念。",
+            lastAiReviewDate: ISO8601DateFormatter().string(from: Date().addingTimeInterval(-Double.random(in: 0...86400*7)))
         )
     }
 }

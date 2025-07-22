@@ -36,19 +36,19 @@ struct KnowledgePointGridView: View {
         case .all:
             filtered = points
         case .weak:
-            filtered = points.filter { $0.mastery_level < 1.5 }
+            filtered = points.filter { $0.masteryLevel < 1.5 }
         case .medium:
-            filtered = points.filter { $0.mastery_level >= 1.5 && $0.mastery_level < 3.5 }
+            filtered = points.filter { $0.masteryLevel >= 1.5 && $0.masteryLevel < 3.5 }
         case .strong:
-            filtered = points.filter { $0.mastery_level >= 3.5 }
+            filtered = points.filter { $0.masteryLevel >= 3.5 }
         }
         
         // 2. 執行排序
         switch sortOption {
         case .lowToHigh:
-            return filtered.sorted { $0.mastery_level < $1.mastery_level }
+            return filtered.sorted { $0.masteryLevel < $1.masteryLevel }
         case .highToLow:
-            return filtered.sorted { $0.mastery_level > $1.mastery_level }
+            return filtered.sorted { $0.masteryLevel > $1.masteryLevel }
         }
     }
     
@@ -64,23 +64,23 @@ struct KnowledgePointGridView: View {
                         NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                             VStack(alignment: .leading, spacing: ModernSpacing.md) {
                                 // 【核心修改】: 主要標題改為顯示 AI 生成的要點標題
-                                Text(point.key_point_summary ?? "核心觀念")
-                                    .font(.appHeadline(for: point.key_point_summary ?? "核心觀念"))
+                                Text(point.keyPointSummary ?? "核心觀念")
+                                    .font(.appHeadline(for: point.keyPointSummary ?? "核心觀念"))
                                     .foregroundStyle(.primary)
                                     .lineLimit(2) // 限制為兩行
                                     .minimumScaleFactor(0.8) // 如果文字太長，允許縮小
                                     .frame(height: 45, alignment: .top) // 固定文字區塊高度
                                 
                                 // 將原本的正確用法作為補充說明，放在下方
-                                Text(point.correct_phrase)
-                                    .font(.appCaption(for: point.correct_phrase))
+                                Text(point.correctPhrase)
+                                    .font(.appCaption(for: point.correctPhrase))
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
                                     .truncationMode(.tail)
                                 
                                 Spacer(minLength: 0)
                                 
-                                MasteryBarView(masteryLevel: point.mastery_level)
+                                MasteryBarView(masteryLevel: point.masteryLevel)
                             }
                             .padding()
                             .frame(minHeight: 120)

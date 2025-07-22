@@ -5,26 +5,17 @@ import SwiftUI
 
 @MainActor
 class AuthenticationManager: ObservableObject {
+    static let shared = AuthenticationManager()
+    
     @Published var authState: UserAuthState = .unauthenticated
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     private let keychain = KeychainManager()
-    private let guestDataManager = GuestDataManager.shared
     
-    // 便利屬性，保持向後兼容
+    // 便利屬性
     var isAuthenticated: Bool { authState.isAuthenticated }
-    var isGuest: Bool { authState.isGuest }
-    var currentUser: User? { 
-        switch authState {
-        case .authenticated(let user):
-            return user
-        case .guest:
-            return guestDataManager.guestUser.asDisplayUser
-        case .unauthenticated:
-            return nil
-        }
-    }
+    var currentUser: User? { authState.currentUser }
     
     init() {
         // 初始化時檢查是否已有有效的 token
@@ -39,7 +30,8 @@ class AuthenticationManager: ObservableObject {
         errorMessage = nil
         
         do {
-            let authResponse = try await KnowledgePointAPIService.login(email: email, password: password)
+            // 使用新的統一API服務
+            let authResponse = try await UnifiedAPIService.shared.login(email: email, password: password)
             
             // 儲存 tokens 到 Keychain
             try keychain.save(authResponse.accessToken, for: .accessToken)
@@ -47,11 +39,6 @@ class AuthenticationManager: ObservableObject {
             
             // 更新狀態
             authState = .authenticated(authResponse.user)
-            
-            // 如果之前是訪客模式，可以選擇是否遷移數據
-            if authState.isGuest {
-                // 這裡可以實作數據遷移邏輯
-            }
             
         } catch let error as AuthError {
             errorMessage = error.localizedDescription
@@ -80,7 +67,7 @@ class AuthenticationManager: ObservableObject {
         isLoading = false
     }
     
-    // MARK: - 註冊
+    // MARK: - 正式用戶註冊
     func register(
         username: String,
         email: String,
@@ -106,7 +93,7 @@ class AuthenticationManager: ObservableObject {
             
             // 先嘗試真實API，如果失敗則使用 mock 模式
             do {
-                let authResponse = try await KnowledgePointAPIService.register(request: registerRequest)
+                let authResponse = try await UnifiedAPIService.shared.register(request: registerRequest)
                 
                 // 儲存 tokens 到 Keychain
                 try keychain.save(authResponse.accessToken, for: .accessToken)
@@ -131,7 +118,8 @@ class AuthenticationManager: ObservableObject {
                     totalLearningTime: 0,
                     knowledgePointsCount: 0,
                     createdAt: ISO8601DateFormatter().string(from: Date()),
-                    lastLoginAt: nil
+                    lastLoginAt: nil,
+                    isAnonymous: false
                 )
                 
                 // 儲存 mock tokens
@@ -171,13 +159,66 @@ class AuthenticationManager: ObservableObject {
         isLoading = false
     }
     
+    // MARK: - 匿名用戶註冊
+    func registerAnonymously(
+        displayName: String? = nil,
+        nativeLanguage: String? = "中文",
+        targetLanguage: String? = "英文"
+    ) async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let registerRequest = RegisterRequest(
+                displayName: displayName,
+                nativeLanguage: nativeLanguage,
+                targetLanguage: targetLanguage
+            )
+            
+            let authResponse = try await UnifiedAPIService.shared.register(request: registerRequest)
+            
+            // 儲存 tokens 到 Keychain
+            try keychain.save(authResponse.accessToken, for: .accessToken)
+            try keychain.save(authResponse.refreshToken, for: .refreshToken)
+            
+            // 更新狀態
+            authState = .authenticated(authResponse.user)
+            print("✅ 匿名用戶註冊成功")
+            
+        } catch let error as AuthError {
+            errorMessage = error.localizedDescription
+            print("匿名註冊錯誤 (AuthError): \(error)")
+        } catch let error as APIError {
+            switch error {
+            case .invalidURL:
+                errorMessage = "API 網址錯誤"
+            case .requestFailed(let underlyingError):
+                errorMessage = "網路請求失敗：\(underlyingError.localizedDescription)"
+            case .invalidResponse:
+                errorMessage = "伺服器回應無效"
+            case .serverError(let statusCode, let message):
+                errorMessage = "伺服器錯誤 (\(statusCode))：\(message)"
+            case .decodingError(let underlyingError):
+                errorMessage = "數據解析錯誤：\(underlyingError.localizedDescription)"
+            case .unknownError:
+                errorMessage = "未知的API錯誤"
+            }
+            print("匿名註冊錯誤 (APIError): \(error)")
+        } catch {
+            errorMessage = "匿名註冊時發生未知錯誤：\(error.localizedDescription)"
+            print("匿名註冊錯誤 (其他): \(error)")
+        }
+        
+        isLoading = false
+    }
+    
     // MARK: - 登出
     func logout() async {
         isLoading = true
         
         do {
             // 通知伺服器登出
-            try await KnowledgePointAPIService.logout()
+            try await UnifiedAPIService.shared.logout()
         } catch {
             // 即使伺服器登出失敗，也要清除本地資料
             print("伺服器登出失敗，但仍清除本地資料")
@@ -200,7 +241,7 @@ class AuthenticationManager: ObservableObject {
         
         // 檢查 token 是否有效
         do {
-            let user = try await KnowledgePointAPIService.getCurrentUser()
+            let user = try await UnifiedAPIService.shared.getCurrentUser()
             authState = .authenticated(user)
         } catch {
             // Token 無效，嘗試刷新
@@ -216,7 +257,7 @@ class AuthenticationManager: ObservableObject {
         }
         
         do {
-            let authResponse = try await KnowledgePointAPIService.refreshToken(refreshToken: refreshToken)
+            let authResponse = try await UnifiedAPIService.shared.refreshToken(refreshToken)
             
             // 更新 tokens
             try keychain.save(authResponse.accessToken, for: .accessToken)
@@ -235,51 +276,6 @@ class AuthenticationManager: ObservableObject {
         return keychain.retrieve(.accessToken)
     }
     
-    // MARK: - 訪客模式
-    func enterGuestMode() {
-        authState = .guest
-        guestDataManager.guestUser = GuestUser() // 重置訪客數據
-        print("✅ 已成功進入訪客模式")
-        print("🔍 當前認證狀態: \(authState)")
-    }
-    
-    func exitGuestMode() {
-        authState = .unauthenticated
-    }
-    
-    // MARK: - 功能權限檢查
-    func canUseFeature(_ feature: GuestFeatureLimit) -> Bool {
-        switch authState {
-        case .authenticated:
-            return true // 已登入用戶有所有權限
-        case .guest:
-            return guestDataManager.canUseFeature(feature)
-        case .unauthenticated:
-            return false // 未認證用戶無權限
-        }
-    }
-    
-    // MARK: - 註冊提示檢查
-    func shouldShowRegistrationPrompt() -> Bool {
-        if case .guest = authState {
-            return guestDataManager.shouldShowRegistrationPrompt()
-        }
-        return false
-    }
-    
-    // MARK: - 數據遷移
-    func migrateGuestDataToUser() async -> Bool {
-        guard case .authenticated(_) = authState else { return false }
-        
-        // 準備遷移數據
-        _ = guestDataManager.prepareDataForMigration()
-        
-        // 這裡可以實作將訪客數據上傳到用戶帳戶的邏輯
-        // 目前先簡單清除訪客數據
-        guestDataManager.clearGuestData()
-        
-        return true
-    }
     
     // MARK: - 清除錯誤訊息
     func clearError() {

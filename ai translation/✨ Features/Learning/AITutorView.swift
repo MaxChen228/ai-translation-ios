@@ -4,10 +4,16 @@ import SwiftUI
 
 struct AITutorView: View {
     @EnvironmentObject var sessionManager: SessionManager
+    @StateObject private var viewModel: AITutorViewModel
     
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showStartLearning = true
+    
+    init() {
+        // 在初始化時創建 ViewModel，但會在 onAppear 時獲取 sessionManager
+        _viewModel = StateObject(wrappedValue: AITutorViewModel(sessionManager: SessionManager()))
+    }
 
     var body: some View {
         NavigationView {
@@ -59,6 +65,19 @@ struct AITutorView: View {
             .navigationTitle("AI 英文家教")
             .navigationBarTitleDisplayMode(.large)
         }
+        .onAppear {
+            // 更新 ViewModel 的 sessionManager 引用
+            viewModel.updateSessionManager(sessionManager)
+        }
+        .sheet(isPresented: $viewModel.showingResults) {
+            SessionResultsView(
+                viewModel: viewModel,
+                onDismiss: {
+                    viewModel.showingResults = false
+                    viewModel.restartSession()
+                }
+            )
+        }
     }
     
     func fetchQuestions() async {
@@ -95,8 +114,9 @@ struct AITutorView: View {
         print("Requesting URL: \(url.absoluteString)")
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let decodedResponse = try JSONDecoder().decode(QuestionsResponse.self, from: data)
+            let (data, response) = try await NetworkManager.shared.performGETRequest(url: url, requireAuth: false)
+            try NetworkManager.shared.validateHTTPResponse(response, data: data)
+            let decodedResponse = try NetworkManager.shared.safeDecodeJSON(data, as: QuestionsResponse.self)
             sessionManager.startNewSession(questions: decodedResponse.questions)
         } catch {
             self.errorMessage = "無法獲取題目，請檢查網路連線或稍後再試。\n(\(error.localizedDescription))"
@@ -457,8 +477,8 @@ struct ModernQuestionItem: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 // 中文句子預覽
-                Text(sessionQuestion.question.new_sentence)
-                    .font(.appCallout(for: sessionQuestion.question.new_sentence))
+                Text(sessionQuestion.question.newSentence)
+                    .font(.appCallout(for: sessionQuestion.question.newSentence))
                     .foregroundStyle(.primary)
                     .lineLimit(2)
                 
@@ -474,7 +494,7 @@ struct ModernQuestionItem: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    if let hint = sessionQuestion.question.hint_text, !hint.isEmpty {
+                    if let hint = sessionQuestion.question.hintText, !hint.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "lightbulb.fill")
                                 .font(.appCaption2())

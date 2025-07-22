@@ -98,7 +98,7 @@ struct StudySummaryView: View {
         VStack(spacing: ModernSpacing.md) {
             HStack {
                 Text("學習成果")
-                    .font(.headline)
+                    .font(.appHeadline())
                     .fontWeight(.semibold)
                 
                 Spacer()
@@ -108,7 +108,7 @@ struct StudySummaryView: View {
                         showingDetailedStats.toggle()
                     }
                 }
-                .font(.caption)
+                .font(.appCaption())
                 .foregroundStyle(Color.modernAccent)
             }
             
@@ -128,14 +128,14 @@ struct StudySummaryView: View {
                             .rotationEffect(.degrees(-90))
                             .animation(.easeOut(duration: 1.5).delay(0.3), value: animateProgress)
                         
-                        Text("\(Int(summary.accuracyRate))%")
-                            .font(.headline)
+                        Text("\(safeIntFromDouble(summary.accuracyRate))%")
+                            .font(.appHeadline())
                             .fontWeight(.bold)
                             .foregroundStyle(accuracyColor)
                     }
                     
                     Text("正確率")
-                        .font(.caption)
+                        .font(.appCaption())
                         .foregroundStyle(Color.modernTextSecondary)
                 }
                 
@@ -177,21 +177,21 @@ struct StudySummaryView: View {
     private var detailedStatsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("詳細分析")
-                .font(.headline)
+                .font(.appHeadline())
                 .fontWeight(.semibold)
             
             VStack(spacing: ModernSpacing.md) {
                 DetailedStatRow(
                     title: "平均回答時間",
-                    value: "\(String(format: "%.1f", summary.studyTime / Double(summary.totalQuestions)))秒/題",
-                    progress: min(summary.studyTime / Double(summary.totalQuestions) / 30.0, 1.0), // 假設30秒為滿分
+                    value: "\(safeAverageTime)秒/題",
+                    progress: safeTimeProgress,
                     color: Color.modernSuccess
                 )
                 
                 DetailedStatRow(
                     title: "學習效率",
                     value: efficiency,
-                    progress: summary.accuracyRate / 100.0,
+                    progress: safeAccuracyProgress,
                     color: Color.modernSuccess
                 )
                 
@@ -199,7 +199,7 @@ struct StudySummaryView: View {
                     DetailedStatRow(
                         title: "新掌握單字",
                         value: "\(summary.newMasteryAchievements.count)個",
-                        progress: Double(summary.newMasteryAchievements.count) / Double(summary.totalQuestions),
+                        progress: safeMasteryProgress,
                         color: Color.modernAccent
                     )
                 }
@@ -217,13 +217,13 @@ struct StudySummaryView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("學習的單字")
-                    .font(.headline)
+                    .font(.appHeadline())
                     .fontWeight(.semibold)
                 
                 Spacer()
                 
                 Text("共 \(summary.wordsStudied.count) 個")
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundStyle(Color.modernTextSecondary)
             }
             
@@ -251,7 +251,7 @@ struct StudySummaryView: View {
     private var newMasterySection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("新掌握單字")
-                .font(.headline)
+                .font(.appHeadline())
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.modernTextPrimary)
             
@@ -260,19 +260,19 @@ struct StudySummaryView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                             Text(word.word)
-                                .font(.headline)
+                                .font(.appHeadline())
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color.modernTextPrimary)
                             
                             Text(word.definitionZH)
-                                .font(.caption)
+                                .font(.appCaption())
                                 .foregroundStyle(Color.modernTextSecondary)
                         }
                         
                         Spacer()
                         
                         Text("掌握")
-                            .font(.caption)
+                            .font(.appCaption())
                             .fontWeight(.medium)
                             .foregroundStyle(.white)
                             .padding(.horizontal, ModernSpacing.sm)
@@ -367,10 +367,55 @@ struct StudySummaryView: View {
     }
     
     private var efficiency: String {
+        guard summary.studyTime > 0 else { return "無數據" }
         let wordsPerMinute = Double(summary.correctAnswers) / (summary.studyTime / 60.0)
+        if wordsPerMinute.isNaN || wordsPerMinute.isInfinite { return "無數據" }
         if wordsPerMinute >= 2.0 { return "高效" }
         else if wordsPerMinute >= 1.0 { return "良好" }
         else { return "需加強" }
+    }
+    
+    // MARK: - 安全計算方法
+    
+    private func safeIntFromDouble(_ value: Double) -> Int {
+        if value.isNaN || value.isInfinite {
+            return 0
+        }
+        return max(0, min(100, Int(value.rounded())))
+    }
+    
+    private var safeAverageTime: String {
+        guard summary.totalQuestions > 0, summary.studyTime > 0 else { return "0.0" }
+        let average = summary.studyTime / Double(summary.totalQuestions)
+        if average.isNaN || average.isInfinite {
+            return "0.0"
+        }
+        return String(format: "%.1f", average)
+    }
+    
+    private var safeTimeProgress: Double {
+        guard summary.totalQuestions > 0, summary.studyTime > 0 else { return 0.0 }
+        let average = summary.studyTime / Double(summary.totalQuestions)
+        if average.isNaN || average.isInfinite {
+            return 0.0
+        }
+        return min(average / 30.0, 1.0) // 假設30秒為滿分
+    }
+    
+    private var safeAccuracyProgress: Double {
+        if summary.accuracyRate.isNaN || summary.accuracyRate.isInfinite {
+            return 0.0
+        }
+        return max(0.0, min(1.0, summary.accuracyRate / 100.0))
+    }
+    
+    private var safeMasteryProgress: Double {
+        guard summary.totalQuestions > 0 else { return 0.0 }
+        let progress = Double(summary.newMasteryAchievements.count) / Double(summary.totalQuestions)
+        if progress.isNaN || progress.isInfinite {
+            return 0.0
+        }
+        return max(0.0, min(1.0, progress))
     }
     
     // MARK: - 輔助方法
@@ -398,13 +443,13 @@ struct StatRow: View {
                 .frame(width: 16)
             
             Text(label)
-                .font(.caption)
+                .font(.appCaption())
                 .foregroundStyle(Color.modernTextSecondary)
             
             Spacer()
             
             Text(value)
-                .font(.caption)
+                .font(.appCaption())
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.modernTextPrimary)
         }
@@ -421,13 +466,13 @@ struct DetailedStatRow: View {
         VStack(alignment: .leading, spacing: ModernSpacing.sm) {
             HStack {
                 Text(title)
-                    .font(.subheadline)
+                    .font(.appSubheadline())
                     .foregroundStyle(Color.modernTextPrimary)
                 
                 Spacer()
                 
                 Text(value)
-                    .font(.subheadline)
+                    .font(.appSubheadline())
                     .fontWeight(.semibold)
                     .foregroundStyle(color)
             }
@@ -458,7 +503,7 @@ struct WordSummaryRow: View {
         HStack(spacing: ModernSpacing.md) {
             // 序號
             Text("\(index + 1)")
-                .font(.caption)
+                .font(.appCaption())
                 .fontWeight(.medium)
                 .foregroundStyle(.white)
                 .frame(width: 20, height: 20)
@@ -468,11 +513,11 @@ struct WordSummaryRow: View {
             // 單字資訊
             VStack(alignment: .leading, spacing: ModernSpacing.xs) {
                 Text(word.word)
-                    .font(.subheadline)
+                    .font(.appSubheadline())
                     .fontWeight(.semibold)
                 
                 Text(word.definitionZH)
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
@@ -482,11 +527,11 @@ struct WordSummaryRow: View {
             // 掌握度指示器
             HStack(spacing: ModernSpacing.xs) {
                 Image(systemName: masteryIcon(for: word.masteryLevel))
-                    .font(.caption)
+                    .font(.appCaption())
                     .foregroundStyle(masteryColor(for: word.masteryLevel))
                 
                 Text(String(format: "%.1f", word.masteryLevel))
-                    .font(.caption)
+                    .font(.appCaption())
                     .fontWeight(.medium)
                     .foregroundStyle(masteryColor(for: word.masteryLevel))
             }

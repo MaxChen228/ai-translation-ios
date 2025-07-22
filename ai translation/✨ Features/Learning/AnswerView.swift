@@ -4,11 +4,13 @@ import SwiftUI
 
 struct AnswerView: View {
     @EnvironmentObject var sessionManager: SessionManager
+    @EnvironmentObject var authManager: AuthenticationManager
     let sessionQuestionId: UUID
+    @Environment(\.dismiss) private var dismiss
     
     private var sessionQuestion: SessionQuestion {
         guard let question = sessionManager.sessionQuestions.first(where: { $0.id == sessionQuestionId }) else {
-            return SessionQuestion(id: UUID(), question: Question(new_sentence: "錯誤：找不到題目", type: "error", hint_text: nil, knowledge_point_id: nil, mastery_level: nil))
+            return SessionQuestion(id: UUID(), question: Question(newSentence: "錯誤：找不到題目", type: "error", hintText: nil, knowledgePointId: nil, masteryLevel: nil))
         }
         return question
     }
@@ -17,6 +19,10 @@ struct AnswerView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var showKeyboard = false
+    @State private var showSaveSuccessAlert = false
+    @State private var savedKnowledgePointsCount = 0
+    @State private var isLocalStorage = false
+    @State private var shouldNavigateToDashboard = false
     
     var body: some View {
         ScrollView {
@@ -47,7 +53,11 @@ struct AnswerView: View {
                     FeedbackCard(
                         feedback: feedback,
                         questionData: sessionQuestion.question,
-                        userAnswer: userAnswer
+                        userAnswer: userAnswer,
+                        savedKnowledgePointsCount: $savedKnowledgePointsCount,
+                        showSaveSuccessAlert: $showSaveSuccessAlert,
+                        isLocalStorage: $isLocalStorage,
+                        isAuthenticated: authManager.isAuthenticated
                     )
                 }
             }
@@ -60,6 +70,21 @@ struct AnswerView: View {
             if let answer = sessionQuestion.userAnswer, !answer.isEmpty {
                 self.userAnswer = answer
             }
+        }
+        .alert("成功儲存知識點", isPresented: $showSaveSuccessAlert) {
+            Button("查看知識點") {
+                shouldNavigateToDashboard = true
+            }
+            Button("繼續學習") { }
+        } message: {
+            if isLocalStorage {
+                Text("已儲存 \(savedKnowledgePointsCount) 個知識點至本地資料庫。由於伺服器端點暫時不可用，知識點已保存在本地，您仍可在「儀表板」中查看它們。")
+            } else {
+                Text("已成功儲存 \(savedKnowledgePointsCount) 個知識點至雲端資料庫。您可以在「儀表板」中查看和管理它們。")
+            }
+        }
+        .navigationDestination(isPresented: $shouldNavigateToDashboard) {
+            DashboardView()
         }
     }
     
@@ -77,19 +102,15 @@ struct AnswerView: View {
             return
         }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
         var questionDataDict: [String: Any?] = [
-            "new_sentence": sessionQuestion.question.new_sentence,
+            "new_sentence": sessionQuestion.question.newSentence,
             "type": sessionQuestion.question.type,
-            "hint_text": sessionQuestion.question.hint_text
+            "hint_text": sessionQuestion.question.hintText
         ]
         
         if sessionQuestion.question.type == "review" {
-            questionDataDict["knowledge_point_id"] = sessionQuestion.question.knowledge_point_id
-            questionDataDict["mastery_level"] = sessionQuestion.question.mastery_level
+            questionDataDict["knowledge_point_id"] = sessionQuestion.question.knowledgePointId
+            questionDataDict["mastery_level"] = sessionQuestion.question.masteryLevel
         }
         
         let body: [String: Any] = [
@@ -99,11 +120,11 @@ struct AnswerView: View {
         ]
         
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            let bodyData = try JSONSerialization.data(withJSONObject: body, options: [])
+            let (data, response) = try await NetworkManager.shared.performPOSTRequest(url: url, body: bodyData, requireAuth: false)
             
-            let (data, _) = try await URLSession.shared.data(for: request)
-            
-            let feedback = try JSONDecoder().decode(FeedbackResponse.self, from: data)
+            try NetworkManager.shared.validateHTTPResponse(response, data: data)
+            let feedback = try NetworkManager.shared.safeDecodeJSON(data, as: FeedbackResponse.self)
             
             sessionManager.updateQuestion(id: sessionQuestionId, userAnswer: userAnswer, feedback: feedback)
 
@@ -166,8 +187,8 @@ struct ModernQuestionCard: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
                 
-                Text(question.new_sentence)
-                    .font(.appHeadline(for: question.new_sentence))
+                Text(question.newSentence)
+                    .font(.appHeadline(for: question.newSentence))
                     .fontWeight(.medium)
                     .foregroundStyle(.primary)
                     .lineSpacing(4)
@@ -184,10 +205,10 @@ struct ModernQuestionCard: View {
             }
             
             // 提示區域 - 修改這裡，現在可以正確傳遞 userAnswer
-            if let hint = question.hint_text, !hint.isEmpty {
+            if let hint = question.hintText, !hint.isEmpty {
                 ModernHintCard(
                     hintText: hint,
-                    chineseSentence: question.new_sentence,
+                    chineseSentence: question.newSentence,
                     userAnswer: $userAnswer  // 現在這個參數可以正確傳遞了
                 )
             }
@@ -383,19 +404,19 @@ struct ModernHintCard: View {
                     } else if let smartHint = smartHintData {
                         VStack(alignment: .leading, spacing: 16) {
                             // 主要引導提示
-                            Text(smartHint.smart_hint)
+                            Text(smartHint.smartHint)
                                 .font(.appBody())
                                 .foregroundStyle(.primary)
                                 .lineSpacing(2)
                             
                             // 思考問題
-                            if !smartHint.thinking_questions.isEmpty {
+                            if !smartHint.thinkingQuestions.isEmpty {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("思考一下：")
                                         .font(.appCallout())
                                         .foregroundStyle(Color.modernSpecial)
                                     
-                                    ForEach(Array(smartHint.thinking_questions.enumerated()), id: \.offset) { index, question in
+                                    ForEach(Array(smartHint.thinkingQuestions.enumerated()), id: \.offset) { index, question in
                                         HStack(alignment: .top, spacing: 8) {
                                             Text("\(index + 1).")
                                                 .font(.appSubheadline())
@@ -452,10 +473,6 @@ struct ModernHintCard: View {
             return
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
         let body: [String: Any] = [
             "chinese_sentence": chineseSentence,
             "user_current_input": userAnswer,
@@ -464,14 +481,14 @@ struct ModernHintCard: View {
         ]
         
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+            let bodyData = try JSONSerialization.data(withJSONObject: body, options: [])
+            let (data, response) = try await NetworkManager.shared.performPOSTRequest(url: url, body: bodyData, requireAuth: false)
             
-            let (data, _) = try await URLSession.shared.data(for: request)
-            
-            let response = try JSONDecoder().decode(SmartHintResponse.self, from: data)
+            try NetworkManager.shared.validateHTTPResponse(response, data: data)
+            let smartResponse = try NetworkManager.shared.safeDecodeJSON(data, as: SmartHintResponse.self)
             
             await MainActor.run {
-                self.smartHintData = response
+                self.smartHintData = smartResponse
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self.showSmartHint = true
                 }
@@ -533,12 +550,8 @@ struct ModernAnswerCard: View {
                         .font(.appBody())
                         .scrollContentBackground(.hidden)
                         .padding(ModernSpacing.sm + 4)
-                        .onTapGesture {
-                            showKeyboard = true
-                        }
-                        .onChange(of: userAnswer) { _, _ in
-                            showKeyboard = !userAnswer.isEmpty
-                        }
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                 }
                 
                 // 字數統計
@@ -621,6 +634,10 @@ struct FeedbackCard: View {
     let feedback: FeedbackResponse
     let questionData: Question
     let userAnswer: String
+    @Binding var savedKnowledgePointsCount: Int
+    @Binding var showSaveSuccessAlert: Bool
+    @Binding var isLocalStorage: Bool
+    let isAuthenticated: Bool
     
     @State private var editableErrors: [ErrorAnalysis] = []
     @State private var isEditMode: Bool = false
@@ -628,6 +645,7 @@ struct FeedbackCard: View {
     @State private var isMerging: Bool = false
     @State private var mergeError: String?
     @State private var isSaving: Bool = false
+    @State private var saveTask: Task<Void, Never>?
     @State private var saveMessage: String?
     @State private var showSaveAlert: Bool = false
     
@@ -652,6 +670,7 @@ struct FeedbackCard: View {
                     editableErrors: editableErrors,
                     isSaving: isSaving,
                     saveMessage: saveMessage,
+                    isAuthenticated: isAuthenticated,
                     onSave: { showSaveAlert = true }
                 )
             } else {
@@ -659,7 +678,7 @@ struct FeedbackCard: View {
             }
         }
         .onAppear {
-            editableErrors = feedback.error_analysis
+            editableErrors = feedback.errorAnalysis
         }
         .alert("確認儲存", isPresented: $showSaveAlert) {
             Button("取消", role: .cancel) { }
@@ -687,7 +706,7 @@ struct FeedbackCard: View {
         }
         
         do {
-            let mergedError = try await KnowledgePointAPIService.mergeErrors(error1: error1, error2: error2)
+            let mergedError = try await UnifiedAPIService.shared.mergeErrors(error1: error1, error2: error2)
             
             withAnimation {
                 editableErrors.removeAll { selectedForMerge.contains($0.id) }
@@ -702,34 +721,94 @@ struct FeedbackCard: View {
     }
     
     private func saveToKnowledgeBase() async {
-        isSaving = true
-        saveMessage = nil
+        // Cancel any existing save task
+        saveTask?.cancel()
         
-        let questionDataDict: [String: Any?] = [
-            "new_sentence": questionData.new_sentence,
-            "type": questionData.type,
-            "hint_text": questionData.hint_text,
-            "knowledge_point_id": questionData.knowledge_point_id,
-            "mastery_level": questionData.mastery_level
-        ]
-        
-        do {
-            let savedCount = try await KnowledgePointAPIService.finalizeKnowledgePoints(
-                errors: editableErrors,
-                questionData: questionDataDict,
-                userAnswer: userAnswer
-            )
+        saveTask = Task {
+            isSaving = true
+            saveMessage = nil
             
-            saveMessage = "成功儲存 \(savedCount) 個知識點"
+            let questionDataDict: [String: Any?] = [
+                "new_sentence": questionData.newSentence,
+                "type": questionData.type,
+                "hint_text": questionData.hintText,
+                "knowledge_point_id": questionData.knowledgePointId,
+                "mastery_level": questionData.masteryLevel
+            ]
             
-            withAnimation {
-                editableErrors.removeAll()
+            do {
+                // Check for cancellation
+                guard !Task.isCancelled else {
+                    print("🚫 Save task was cancelled")
+                    return
+                }
+                
+                let savedCount = try await UnifiedAPIService.shared.finalizeKnowledgePoints(
+                    errors: editableErrors,
+                    questionData: questionDataDict,
+                    userAnswer: userAnswer
+                )
+                
+                // Check for cancellation again after async operation
+                guard !Task.isCancelled else {
+                    print("🚫 Save task was cancelled after API call")
+                    return
+                }
+                
+                await MainActor.run {
+                    // Check if local storage was used (negative return value)
+                    if savedCount < 0 {
+                        isLocalStorage = true
+                        savedKnowledgePointsCount = abs(savedCount)
+                        saveMessage = "已儲存至本地 \(abs(savedCount)) 個知識點"
+                    } else {
+                        isLocalStorage = false
+                        savedKnowledgePointsCount = savedCount
+                        saveMessage = "成功儲存 \(savedCount) 個知識點"
+                    }
+                    
+                    showSaveSuccessAlert = true
+                    
+                    // Add haptic feedback for success
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                    impactFeedback.impactOccurred()
+                    
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        editableErrors.removeAll()
+                    }
+                }
+                
+            } catch is CancellationError {
+                print("🚫 Save operation was cancelled")
+            } catch let apiError as APIError {
+                await MainActor.run {
+                    switch apiError {
+                    case .requestFailed(let underlyingError):
+                        saveMessage = "網路請求失敗：\(underlyingError.localizedDescription)"
+                    case .serverError(let statusCode, let message):
+                        saveMessage = "伺服器錯誤 (\(statusCode)): \(message)"
+                    case .decodingError:
+                        saveMessage = "資料解析錯誤，請稍後再試"
+                    case .invalidURL:
+                        saveMessage = "無效的網址配置"
+                    case .invalidResponse:
+                        saveMessage = "無效的伺服器回應"
+                    case .unknownError:
+                        saveMessage = "未知錯誤，請稍後再試"
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    saveMessage = "儲存失敗：\(error.localizedDescription)"
+                }
             }
-        } catch {
-            saveMessage = "儲存失敗：\(error.localizedDescription)"
+            
+            await MainActor.run {
+                isSaving = false
+            }
         }
         
-        isSaving = false
+        await saveTask?.value
     }
 }
 
@@ -764,16 +843,16 @@ struct ModernOverallAssessment: View {
             HStack(spacing: 16) {
                 ZStack {
                     Circle()
-                        .fill(feedback.is_generally_correct ? Color.modernSuccess.opacity(0.15) : Color.modernAccent.opacity(0.15))
+                        .fill(feedback.isGenerallyCorrect ? Color.modernSuccess.opacity(0.15) : Color.modernAccent.opacity(0.15))
                         .frame(width: 50, height: 50)
                     
-                    Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    Image(systemName: feedback.isGenerallyCorrect ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                         .font(.appTitle2())
-                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernAccent)
+                        .foregroundStyle(feedback.isGenerallyCorrect ? Color.modernSuccess : Color.modernAccent)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(feedback.is_generally_correct ? "整體大致正確" : "存在主要錯誤")
+                    Text(feedback.isGenerallyCorrect ? "整體大致正確" : "存在主要錯誤")
                         .font(.appHeadline())
                         .foregroundStyle(.primary)
                     
@@ -792,7 +871,7 @@ struct ModernOverallAssessment: View {
                     .font(.appCallout())
                     .foregroundStyle(.secondary)
                 
-                Text(feedback.overall_suggestion)
+                Text(feedback.overallSuggestion)
                     .font(.appBody())
                     .foregroundStyle(.primary)
                     .lineSpacing(2)
@@ -819,9 +898,9 @@ struct ModernReviewResultCard: View {
     
     private var masteryChange: String {
         // 根據複習結果顯示熟練度變化
-        if feedback.did_master_review_concept == true {
+        if feedback.didMasterReviewConcept == true {
             return "熟練度提升！"
-        } else if feedback.is_generally_correct {
+        } else if feedback.isGenerallyCorrect {
             return "輕微進步"
         } else {
             return "需要再次複習"
@@ -829,9 +908,9 @@ struct ModernReviewResultCard: View {
     }
     
     private var masteryColor: Color {
-        if feedback.did_master_review_concept == true {
+        if feedback.didMasterReviewConcept == true {
             return Color.modernSuccess
-        } else if feedback.is_generally_correct {
+        } else if feedback.isGenerallyCorrect {
             return Color.modernSpecial
         } else {
             return Color.modernAccent
@@ -854,19 +933,19 @@ struct ModernReviewResultCard: View {
                 
                 // 【明顯標示】正確/錯誤指示器
                 HStack(spacing: 6) {
-                    Image(systemName: feedback.is_generally_correct ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    Image(systemName: feedback.isGenerallyCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.appHeadline())
-                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernError)
+                        .foregroundStyle(feedback.isGenerallyCorrect ? Color.modernSuccess : Color.modernError)
                     
-                    Text(feedback.is_generally_correct ? "答對" : "答錯")
+                    Text(feedback.isGenerallyCorrect ? "答對" : "答錯")
                         .font(.appCallout())
-                        .foregroundStyle(feedback.is_generally_correct ? Color.modernSuccess : Color.modernError)
+                        .foregroundStyle(feedback.isGenerallyCorrect ? Color.modernSuccess : Color.modernError)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background {
                     Capsule()
-                        .fill((feedback.is_generally_correct ? Color.modernSuccess : Color.modernError).opacity(0.15))
+                        .fill((feedback.isGenerallyCorrect ? Color.modernSuccess : Color.modernError).opacity(0.15))
                 }
             }
             
@@ -885,7 +964,7 @@ struct ModernReviewResultCard: View {
                 Spacer()
                 
                 // 【新增】熟練度進度條
-                if let masteryLevel = questionData.mastery_level {
+                if let masteryLevel = questionData.masteryLevel {
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("熟練度")
                             .font(.appCaption())
@@ -939,6 +1018,24 @@ struct ErrorAnalysisCard: View {
                 
                 if !editableErrors.isEmpty {
                     HStack(spacing: 12) {
+                        // 編輯提示
+                        if isEditMode && !editableErrors.isEmpty {
+                            HStack(spacing: 4) {
+                                Image(systemName: "info.circle.fill")
+                                    .font(.appCaption())
+                                    .foregroundStyle(Color.orange)
+                                Text("記得儲存")
+                                    .font(.appCaption())
+                                    .foregroundStyle(Color.orange)
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background {
+                                Capsule()
+                                    .fill(Color.orange.opacity(0.15))
+                            }
+                        }
+                        
                         if isEditMode && selectedForMerge.count == 2 {
                             Button(action: {
                                 Task {
@@ -1077,7 +1174,7 @@ struct ModernErrorAnalysisRow: View {
                 Divider()
                 
                 // 核心觀念
-                Text(error.key_point_summary)
+                Text(error.keyPointSummary)
                     .font(.appHeadline())
                     .foregroundStyle(.primary)
                 
@@ -1088,7 +1185,7 @@ struct ModernErrorAnalysisRow: View {
                             .font(.appSubheadline())
                             .foregroundStyle(.secondary)
                         
-                        Text("\"\(error.original_phrase)\"")
+                        Text("\"\(error.originalPhrase)\"")
                             .font(.appSubheadline())
                             .foregroundStyle(Color.modernError)
                             .strikethrough(color: Color.modernError)
@@ -1169,17 +1266,46 @@ struct ModernSaveSection: View {
     let editableErrors: [ErrorAnalysis]
     let isSaving: Bool
     let saveMessage: String?
+    let isAuthenticated: Bool
     let onSave: () -> Void
+    
+    @State private var pulseAnimation = false
+    @State private var showLoginPrompt = false
     
     var body: some View {
         VStack(spacing: 16) {
-            Button(action: onSave) {
+            // 醒目提示區
+            if !editableErrors.isEmpty && !isSaving {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(Color.orange)
+                    Text("有 \(editableErrors.count) 個錯誤分析待儲存")
+                        .font(.appCallout())
+                        .foregroundStyle(Color.orange)
+                    Spacer()
+                }
+                .padding(ModernSpacing.sm)
+                .background {
+                    RoundedRectangle(cornerRadius: ModernRadius.sm)
+                        .fill(Color.orange.opacity(0.1))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                        }
+                }
+            }
+            
+            Button(action: isAuthenticated ? onSave : { showLoginPrompt = true }) {
                 HStack(spacing: 12) {
                     if isSaving {
                         ProgressView()
                             .scaleEffect(0.9)
                             .tint(.white)
                         Text("儲存中...")
+                    } else if !isAuthenticated {
+                        Image(systemName: "lock.fill")
+                            .font(.appHeadline())
+                        Text("登入後即可儲存")
                     } else {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.appHeadline())
@@ -1187,15 +1313,22 @@ struct ModernSaveSection: View {
                     }
                 }
                 .font(.appHeadline())
-                .foregroundStyle(.white)
+                .foregroundStyle(isAuthenticated ? .white : Color.modernTextSecondary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background {
                     RoundedRectangle(cornerRadius: ModernRadius.md)
-                        .fill(editableErrors.isEmpty ? Color.modernBorder : Color.modernSuccess)
+                        .fill(isAuthenticated ? (editableErrors.isEmpty ? Color.modernBorder : Color.modernSuccess) : Color.modernBorder.opacity(0.5))
+                        .scaleEffect(pulseAnimation && !editableErrors.isEmpty ? 1.02 : 1.0)
+                        .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulseAnimation)
                 }
             }
             .disabled(editableErrors.isEmpty || isSaving)
+            .onAppear {
+                if !editableErrors.isEmpty {
+                    pulseAnimation = true
+                }
+            }
             
             if let saveMessage = saveMessage {
                 Text(saveMessage)
@@ -1214,6 +1347,14 @@ struct ModernSaveSection: View {
                 .fill(Color.modernSurface)
                 .modernShadow()
         }
+        .alert("需要登入", isPresented: $showLoginPrompt) {
+            Button("稍後") { }
+            Button("登入/註冊") {
+                // 這裡可以添加導航到登入/註冊頁面的邏輯
+            }
+        } message: {
+            Text("需要登入才能將知識點儲存到雲端資料庫。訪客模式的學習記錄將僅保存在本地。")
+        }
     }
 }
 
@@ -1221,5 +1362,6 @@ struct ModernSaveSection: View {
     NavigationView {
         AnswerView(sessionQuestionId: UUID())
             .environmentObject(SessionManager())
+            .environmentObject(AuthenticationManager.shared)
     }
 }

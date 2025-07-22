@@ -19,8 +19,8 @@ struct KnowledgePointEditView: View {
                 }
                 
                 Section(header: Text("核心知識點")) {
-                    TextField("核心觀念", text: $point.key_point_summary)
-                    TextField("正確用法", text: $point.correct_phrase)
+                    TextField("核心觀念", text: $point.keyPointSummary)
+                    TextField("正確用法", text: $point.correctPhrase)
                 }
                 
                 Section(header: Text("詳細說明")) {
@@ -59,8 +59,8 @@ struct KnowledgePointEditView: View {
     private var isValid: Bool {
         !point.category.isEmpty &&
         !point.subcategory.isEmpty &&
-        !point.key_point_summary.isEmpty &&
-        !point.correct_phrase.isEmpty
+        !point.keyPointSummary.isEmpty &&
+        !point.correctPhrase.isEmpty
     }
     
     private func saveChanges() {
@@ -82,8 +82,8 @@ struct KnowledgePointEditView: View {
     @Previewable @State var samplePoint = EditableKnowledgePoint(
         category: "文法結構錯誤",
         subcategory: "動詞時態",
-        key_point_summary: "現在完成進行式",
-        correct_phrase: "has been studying",
+        keyPointSummary: "現在完成進行式",
+        correctPhrase: "has been studying",
         explanation: "當描述一個從過去持續到現在的動作時，應該使用現在完成進行式。"
     )
     

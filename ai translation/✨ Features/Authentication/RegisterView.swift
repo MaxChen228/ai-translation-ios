@@ -16,6 +16,7 @@ struct RegisterView: View {
     @State private var learningLevel = "初級"
     @State private var showPassword = false
     @State private var showConfirmPassword = false
+    @FocusState private var focusField: RegisterField?
     
     private let languages = ["中文", "英文", "日文", "韓文", "法文", "德文", "西班牙文"]
     private let levels = ["初級", "中級", "高級"]
@@ -162,14 +163,15 @@ struct RegisterView: View {
                 }
             }
             .onTapGesture {
-                hideKeyboard()
+                focusField = nil
             }
         }
     }
     
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
+}
+
+enum RegisterField: Hashable {
+    case username, email, password, confirmPassword, displayName
 }
 
 #Preview {

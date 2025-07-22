@@ -19,11 +19,11 @@ struct AllKnowledgePointsListView: View {
                 ForEach(points) { point in
                     NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(point.key_point_summary ?? "核心觀念")
-                                .font(.appHeadline(for: point.key_point_summary ?? "核心觀念"))
+                            Text(point.keyPointSummary ?? "核心觀念")
+                                .font(.appHeadline(for: point.keyPointSummary ?? "核心觀念"))
                                 .lineLimit(1)
-                            Text(point.correct_phrase)
-                                .font(.appCaption(for: point.correct_phrase))
+                            Text(point.correctPhrase)
+                                .font(.appCaption(for: point.correctPhrase))
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
                         }
@@ -65,7 +65,7 @@ struct AllKnowledgePointsListView: View {
         let selectedIDs = Array(selection)
         
         do {
-            try await KnowledgePointAPIService.batchArchiveKnowledgePoints(ids: selectedIDs)
+            try await UnifiedAPIService.shared.batchArchiveKnowledgePoints(ids: selectedIDs)
             // 清空選中項目
             selection.removeAll()
             // 退出編輯模式

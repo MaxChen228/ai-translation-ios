@@ -27,7 +27,9 @@ struct FlashcardView: View {
     }
     
     private var progress: Double {
-        Double(currentIndex) / Double(quiz.questions.count)
+        guard quiz.questions.count > 0 else { return 0.0 }
+        let result = Double(currentIndex) / Double(quiz.questions.count)
+        return result.isNaN || result.isInfinite ? 0.0 : min(1.0, max(0.0, result))
     }
     
     var body: some View {
@@ -102,7 +104,7 @@ struct FlashcardView: View {
                 
                 Spacer()
                 
-                Text("正確率: \(currentIndex > 0 ? Int(Double(correctAnswers) / Double(currentIndex) * 100) : 0)%")
+                Text("正確率: \(safeAccuracyPercentage)%")
                     .font(.appCaption(for: "正確率"))
                     .foregroundStyle(Color.modernAccent)
             }
@@ -337,7 +339,7 @@ struct FlashcardView: View {
     private var studyCompleteView: some View {
         VStack(spacing: ModernSpacing.lg) {
             Image(systemName: "star.circle.fill")
-                .font(.system(size: 64))
+                .font(.appLargeTitle())
                 .foregroundStyle(Color.modernSpecial)
             
             Text("練習完成！")
@@ -345,9 +347,9 @@ struct FlashcardView: View {
                 .foregroundStyle(Color.modernTextPrimary)
             
             VStack(spacing: ModernSpacing.md) {
-                Text("答對率: \(Int(Double(correctAnswers) / Double(quiz.questions.count) * 100))%")
+                Text("答對率: \(safeFinalAccuracyPercentage)%")
                     .font(.appTitle2(for: "答對率"))
-                    .foregroundStyle(correctAnswers >= quiz.questions.count / 2 ? Color.modernSuccess : Color.modernWarning)
+                    .foregroundStyle(safeFinalAccuracyPercentage >= 50 ? Color.modernSuccess : Color.modernWarning)
                 
                 Text("共完成 \(quiz.questions.count) 個單字")
                     .font(.appHeadline(for: "題目數量"))
@@ -452,5 +454,25 @@ struct FlashcardView: View {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
+    }
+    
+    // MARK: - 安全計算方法
+    
+    private var safeAccuracyPercentage: Int {
+        guard currentIndex > 0 else { return 0 }
+        let accuracy = Double(correctAnswers) / Double(currentIndex) * 100
+        if accuracy.isNaN || accuracy.isInfinite {
+            return 0
+        }
+        return max(0, min(100, Int(accuracy.rounded())))
+    }
+    
+    private var safeFinalAccuracyPercentage: Int {
+        guard quiz.questions.count > 0 else { return 0 }
+        let accuracy = Double(correctAnswers) / Double(quiz.questions.count) * 100
+        if accuracy.isNaN || accuracy.isInfinite {
+            return 0
+        }
+        return max(0, min(100, Int(accuracy.rounded())))
     }
 }

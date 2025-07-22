@@ -69,7 +69,7 @@ struct LearningCalendarView: View {
     
     private func fetchHeatmapData(year: Int, month: Int) async {
         do {
-            let response = try await KnowledgePointAPIService.getCalendarHeatmap(year: year, month: month)
+            let response = try await UnifiedAPIService.shared.getCalendarHeatmap(year: year, month: month)
             
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withFullDate]
@@ -110,7 +110,8 @@ struct MonthStats {
         totalDays = data.count
         activeDays = counts.filter { $0 > 0 }.count
         totalQuestions = counts.reduce(0, +)
-        averagePerDay = activeDays > 0 ? Double(totalQuestions) / Double(activeDays) : 0
+        let rawAverage = activeDays > 0 ? Double(totalQuestions) / Double(activeDays) : 0
+        averagePerDay = rawAverage.isNaN || rawAverage.isInfinite ? 0 : rawAverage
         goalAchievedDays = counts.filter { $0 >= goal }.count
         
         // 計算連續學習天數（簡化版）
@@ -142,7 +143,7 @@ struct MonthStatsCard: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: ModernSpacing.md), count: 2), spacing: ModernSpacing.md) {
                 StatMini(title: "學習天數", value: "\(stats.activeDays)", icon: "calendar.badge.checkmark")
                 StatMini(title: "總題數", value: "\(stats.totalQuestions)", icon: "list.number")
-                StatMini(title: "日均題數", value: String(format: "%.1f", stats.averagePerDay), icon: "chart.line.uptrend.xyaxis")
+                StatMini(title: "日均題數", value: safeFormatDouble(stats.averagePerDay), icon: "chart.line.uptrend.xyaxis")
                 StatMini(title: "達標天數", value: "\(stats.goalAchievedDays)", icon: "target")
             }
         }
@@ -192,7 +193,9 @@ struct GoalIndicator: View {
     let total: Int
     
     private var percentage: Double {
-        total == 0 ? 0 : Double(achieved) / Double(total)
+        guard total > 0 else { return 0 }
+        let result = Double(achieved) / Double(total)
+        return result.isNaN || result.isInfinite ? 0 : min(1.0, max(0.0, result))
     }
     
     var body: some View {
@@ -436,4 +439,13 @@ struct DateCell: View {
 
 struct HeatmapResponse: Codable {
     let heatmap_data: [String: Int]
+}
+
+// MARK: - 安全的格式化輔助函數
+
+private func safeFormatDouble(_ value: Double) -> String {
+    if value.isNaN || value.isInfinite {
+        return "0.0"
+    }
+    return String(format: "%.1f", value)
 }

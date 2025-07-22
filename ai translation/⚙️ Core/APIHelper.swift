@@ -23,26 +23,18 @@ struct APIHelper {
     
     /// 執行通用請求並處理回應
     static func performRequest(request: URLRequest) async throws {
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            if let errorBody = try? JSONDecoder().decode([String: String].self, from: data),
-               let message = errorBody["error"] ?? errorBody["message"] {
-                throw APIError.serverError(statusCode: httpResponse.statusCode, message: message)
-            }
-            throw APIError.serverError(statusCode: httpResponse.statusCode, message: "未知伺服器錯誤")
-        }
+        let (data, response) = try await NetworkManager.shared.performRequest(request)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
     }
     
     /// 建立標準 POST 請求
     static func createPostRequest(url: URL, body: Data? = nil) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.timeoutInterval = 30.0
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
         request.httpBody = body
         return request
     }
@@ -51,6 +43,9 @@ struct APIHelper {
     static func createGetRequest(url: URL) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        request.timeoutInterval = 30.0
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
         return request
     }
     

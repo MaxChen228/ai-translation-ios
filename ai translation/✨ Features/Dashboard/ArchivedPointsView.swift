@@ -35,11 +35,11 @@ struct ArchivedPointsView: View {
                 List {
                     ForEach(archivedPoints) { point in
                         VStack(alignment: .leading, spacing: ModernSpacing.sm) {
-                            Text(point.correct_phrase)
-                                .font(.appCallout(for: point.correct_phrase))
+                            Text(point.correctPhrase)
+                                .font(.appCallout(for: point.correctPhrase))
                                 .fontWeight(.medium)
-                            Text(point.key_point_summary ?? "核心觀念")
-                                .font(.appCaption(for: point.key_point_summary ?? "核心觀念"))
+                            Text(point.keyPointSummary ?? "核心觀念")
+                                .font(.appCaption(for: point.keyPointSummary ?? "核心觀念"))
                                 .foregroundStyle(Color.modernTextSecondary)
                         }
                         .padding(.vertical, ModernSpacing.sm)
@@ -66,7 +66,7 @@ struct ArchivedPointsView: View {
             isLoading = true
             errorMessage = nil
             do {
-                self.archivedPoints = try await KnowledgePointAPIService.fetchArchivedKnowledgePoints()
+                self.archivedPoints = try await UnifiedAPIService.shared.fetchArchivedKnowledgePoints()
             } catch {
                 if let apiError = error as? APIError {
                     switch apiError {
@@ -91,7 +91,7 @@ struct ArchivedPointsView: View {
     
     private func unarchivePoint(id: Int) async {
         do {
-            try await KnowledgePointAPIService.unarchiveKnowledgePoint(id: id)
+            try await UnifiedAPIService.shared.unarchiveKnowledgePoint(id: id)
             // 重新載入資料
             fetchArchivedPoints()
         } catch {

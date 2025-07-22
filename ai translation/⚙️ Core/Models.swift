@@ -6,14 +6,18 @@ import SwiftUI
 // 單一一題的結構
 struct Question: Codable, Identifiable {
     let id = UUID()
-    let new_sentence: String
+    let newSentence: String
     let type: String
-    let hint_text: String?
-    let knowledge_point_id: Int?
-    let mastery_level: Double?
+    let hintText: String?
+    let knowledgePointId: Int?
+    let masteryLevel: Double?
 
     private enum CodingKeys: String, CodingKey {
-        case new_sentence, type, hint_text, knowledge_point_id, mastery_level
+        case newSentence = "new_sentence"
+        case type
+        case hintText = "hint_text"
+        case knowledgePointId = "knowledge_point_id"
+        case masteryLevel = "mastery_level"
     }
 }
 
@@ -25,19 +29,24 @@ struct QuestionsResponse: Codable {
 // 錯誤分析結構
 struct ErrorAnalysis: Codable, Identifiable {
     let id = UUID()
-    let error_type_code: String
-    let key_point_summary: String
-    let original_phrase: String
+    let errorTypeCode: String
+    let keyPointSummary: String
+    let originalPhrase: String
     let correction: String
     let explanation: String
     let severity: String
 
     private enum CodingKeys: String, CodingKey {
-        case error_type_code, key_point_summary, original_phrase, correction, explanation, severity
+        case errorTypeCode = "error_type_code"
+        case keyPointSummary = "key_point_summary"
+        case originalPhrase = "original_phrase"
+        case correction
+        case explanation
+        case severity
     }
 
     var categoryName: String {
-        switch error_type_code {
+        switch errorTypeCode {
         case "A": return "詞彙與片語錯誤"
         case "B": return "語法結構錯誤"
         case "C": return "語意與語用錯誤"
@@ -48,9 +57,9 @@ struct ErrorAnalysis: Codable, Identifiable {
     }
     
     var categoryIcon: String {
-        switch error_type_code {
+        switch errorTypeCode {
         case "A": return "text.book.closed.fill"
-        case "B": return "sitemap.fill"
+        case "B": return "flowchart.fill"
         case "C": return "bubble.left.and.bubble.right.fill"
         case "D": return "textformat"
         default: return "exclamationmark.triangle.fill"
@@ -58,7 +67,7 @@ struct ErrorAnalysis: Codable, Identifiable {
     }
     
     var categoryColor: Color {
-        switch error_type_code {
+        switch errorTypeCode {
         case "A": return Color.modernSpecial
         case "B": return Color.modernWarning
         case "C": return Color.modernAccent
@@ -70,10 +79,17 @@ struct ErrorAnalysis: Codable, Identifiable {
 
 // AI 點評回傳的結構
 struct FeedbackResponse: Codable {
-    let is_generally_correct: Bool
-    let overall_suggestion: String
-    let error_analysis: [ErrorAnalysis]
-    let did_master_review_concept: Bool? // 複習題才會有
+    let isGenerallyCorrect: Bool
+    let overallSuggestion: String
+    let errorAnalysis: [ErrorAnalysis]
+    let didMasterReviewConcept: Bool? // 複習題才會有
+    
+    private enum CodingKeys: String, CodingKey {
+        case isGenerallyCorrect = "is_generally_correct"
+        case overallSuggestion = "overall_suggestion"
+        case errorAnalysis = "error_analysis"
+        case didMasterReviewConcept = "did_master_review_concept"
+    }
 }
 
 // 知識點結構
@@ -82,50 +98,82 @@ struct KnowledgePoint: Codable, Identifiable {
     let id: Int
     let category: String
     let subcategory: String
-    let correct_phrase: String
+    let correctPhrase: String
     let explanation: String?
-    let user_context_sentence: String?
-    let incorrect_phrase_in_context: String?
-    let key_point_summary: String?
-    let mastery_level: Double
-    let mistake_count: Int
-    let correct_count: Int
-    let next_review_date: String?
-    let is_archived: Bool?
-    let ai_review_notes: String?
-    let last_ai_review_date: String?
+    let userContextSentence: String?
+    let incorrectPhraseInContext: String?
+    let keyPointSummary: String?
+    let masteryLevel: Double
+    let mistakeCount: Int
+    let correctCount: Int
+    let nextReviewDate: String?
+    let isArchived: Bool?
+    let aiReviewNotes: String?
+    let lastAiReviewDate: String?
 
     private enum CodingKeys: String, CodingKey {
-        case id, category, subcategory, correct_phrase, explanation, user_context_sentence, incorrect_phrase_in_context, key_point_summary, mastery_level, mistake_count, correct_count, next_review_date, is_archived, ai_review_notes, last_ai_review_date
+        case id
+        case category
+        case subcategory
+        case correctPhrase = "correct_phrase"
+        case explanation
+        case userContextSentence = "user_context_sentence"
+        case incorrectPhraseInContext = "incorrect_phrase_in_context"
+        case keyPointSummary = "key_point_summary"
+        case masteryLevel = "mastery_level"
+        case mistakeCount = "mistake_count"
+        case correctCount = "correct_count"
+        case nextReviewDate = "next_review_date"
+        case isArchived = "is_archived"
+        case aiReviewNotes = "ai_review_notes"
+        case lastAiReviewDate = "last_ai_review_date"
     }
 }
 
 // AI 審閱結果結構
 struct AIReviewResult: Codable {
-    let overall_assessment: String
-    let accuracy_score: Int
-    let clarity_score: Int
-    let teaching_effectiveness: Int
-    let improvement_suggestions: [String]
-    let potential_confusions: [String]
-    let recommended_category: String
-    let additional_examples: [String]
+    let overallAssessment: String
+    let accuracyScore: Int
+    let clarityScore: Int
+    let teachingEffectiveness: Int
+    let improvementSuggestions: [String]
+    let potentialConfusions: [String]
+    let recommendedCategory: String
+    let additionalExamples: [String]
+    
+    private enum CodingKeys: String, CodingKey {
+        case overallAssessment = "overall_assessment"
+        case accuracyScore = "accuracy_score"
+        case clarityScore = "clarity_score"
+        case teachingEffectiveness = "teaching_effectiveness"
+        case improvementSuggestions = "improvement_suggestions"
+        case potentialConfusions = "potential_confusions"
+        case recommendedCategory = "recommended_category"
+        case additionalExamples = "additional_examples"
+    }
 }
 
 // 其他結構
 struct DashboardResponse: Codable {
-    let knowledge_points: [KnowledgePoint]
+    let knowledgePoints: [KnowledgePoint]
+    
+    private enum CodingKeys: String, CodingKey {
+        case knowledgePoints = "knowledge_points"
+    }
 }
 
 struct Flashcard: Codable, Identifiable {
     let id = UUID()
     let front: String
-    let back_correction: String
-    let back_explanation: String
+    let backCorrection: String
+    let backExplanation: String
     let category: String
     
     private enum CodingKeys: String, CodingKey {
-        case front, back_correction, back_explanation, category
+        case front
+        case backCorrection = "back_correction"
+        case backExplanation = "back_explanation"
+        case category
     }
 }
 
@@ -134,9 +182,15 @@ struct FlashcardsResponse: Codable {
 }
 
 struct DailyDetailResponse: Codable {
-    let total_learning_time_seconds: Int
-    let reviewed_knowledge_points: [LearnedPoint]
-    let new_knowledge_points: [LearnedPoint]
+    let totalLearningTimeSeconds: Int
+    let reviewedKnowledgePoints: [LearnedPoint]
+    let newKnowledgePoints: [LearnedPoint]
+    
+    private enum CodingKeys: String, CodingKey {
+        case totalLearningTimeSeconds = "total_learning_time_seconds"
+        case reviewedKnowledgePoints = "reviewed_knowledge_points"
+        case newKnowledgePoints = "new_knowledge_points"
+    }
 }
 
 struct LearnedPoint: Codable, Identifiable {
@@ -150,26 +204,26 @@ struct LearnedPoint: Codable, Identifiable {
 }
 
 struct SmartHintResponse: Codable {
-    let smart_hint: String
-    let thinking_questions: [String]
+    let smartHint: String
+    let thinkingQuestions: [String]
     let encouragement: String
+    
+    private enum CodingKeys: String, CodingKey {
+        case smartHint = "smart_hint"
+        case thinkingQuestions = "thinking_questions"
+        case encouragement
+    }
 }
 
 // MARK: - 認證相關資料結構
 
-// 認證狀態枚舉
+// 認證狀態枚舉 - 簡化為二元狀態
 enum UserAuthState: Equatable {
-    case guest                          // 訪客模式
-    case authenticated(User)            // 已登入用戶
-    case unauthenticated               // 未登入（首次啟動）
+    case authenticated(User)            // 已登入用戶（包含匿名用戶）
+    case unauthenticated               // 未登入
     
     var isAuthenticated: Bool {
         if case .authenticated = self { return true }
-        return false
-    }
-    
-    var isGuest: Bool {
-        if case .guest = self { return true }
         return false
     }
     
@@ -179,43 +233,6 @@ enum UserAuthState: Equatable {
     }
 }
 
-// 訪客使用者資料
-struct GuestUser: Codable {
-    let id: String
-    let username: String
-    let displayName: String
-    let createdAt: Date
-    var totalLearningTime: Int
-    var knowledgePointsCount: Int
-    var sessionsCompleted: Int
-    
-    init() {
-        self.id = "guest_\(UUID().uuidString)"
-        self.username = "訪客用戶"
-        self.displayName = "訪客模式"
-        self.createdAt = Date()
-        self.totalLearningTime = 0
-        self.knowledgePointsCount = 0
-        self.sessionsCompleted = 0
-    }
-    
-    // 轉換為展示用的 User 格式
-    var asDisplayUser: User {
-        return User(
-            id: 0,
-            username: username,
-            email: "guest@example.com",
-            displayName: displayName,
-            nativeLanguage: "中文",
-            targetLanguage: "英文",
-            learningLevel: "體驗中",
-            totalLearningTime: totalLearningTime,
-            knowledgePointsCount: knowledgePointsCount,
-            createdAt: ISO8601DateFormatter().string(from: createdAt),
-            lastLoginAt: nil
-        )
-    }
-}
 
 // 使用者資料模型
 struct User: Codable, Identifiable, Equatable {
@@ -230,6 +247,12 @@ struct User: Codable, Identifiable, Equatable {
     let knowledgePointsCount: Int
     let createdAt: String
     let lastLoginAt: String?
+    let isAnonymous: Bool
+    
+    // 便利屬性
+    var isRegisteredUser: Bool {
+        return !isAnonymous
+    }
     
     private enum CodingKeys: String, CodingKey {
         case id, username, email
@@ -241,6 +264,7 @@ struct User: Codable, Identifiable, Equatable {
         case knowledgePointsCount = "knowledge_points_count"
         case createdAt = "created_at"
         case lastLoginAt = "last_login_at"
+        case isAnonymous = "is_anonymous"
     }
 }
 
@@ -252,13 +276,38 @@ struct LoginRequest: Codable {
 
 // 註冊請求
 struct RegisterRequest: Codable {
-    let username: String
-    let email: String
-    let password: String
+    let username: String?
+    let email: String?
+    let password: String?
     let displayName: String?
     let nativeLanguage: String?
     let targetLanguage: String?
     let learningLevel: String?
+    let isAnonymous: Bool
+    
+    // 正式用戶註冊
+    init(username: String, email: String, password: String, displayName: String? = nil, nativeLanguage: String? = "中文", targetLanguage: String? = "英文", learningLevel: String? = "初級") {
+        self.username = username
+        self.email = email
+        self.password = password
+        self.displayName = displayName
+        self.nativeLanguage = nativeLanguage
+        self.targetLanguage = targetLanguage
+        self.learningLevel = learningLevel
+        self.isAnonymous = false
+    }
+    
+    // 匿名用戶註冊
+    init(displayName: String? = nil, nativeLanguage: String? = "中文", targetLanguage: String? = "英文") {
+        self.username = nil
+        self.email = nil
+        self.password = nil
+        self.displayName = displayName
+        self.nativeLanguage = nativeLanguage
+        self.targetLanguage = targetLanguage
+        self.learningLevel = "初級"
+        self.isAnonymous = true
+    }
     
     private enum CodingKeys: String, CodingKey {
         case username, email, password
@@ -266,6 +315,7 @@ struct RegisterRequest: Codable {
         case nativeLanguage = "native_language"
         case targetLanguage = "target_language"
         case learningLevel = "learning_level"
+        case isAnonymous = "is_anonymous"
     }
 }
 
@@ -319,6 +369,88 @@ enum AuthError: Error, LocalizedError {
             return "伺服器錯誤：\(message)"
         case .unknown:
             return "未知錯誤"
+        }
+    }
+}
+
+// MARK: - API 錯誤類型
+enum APIError: Error, LocalizedError {
+    case invalidURL
+    case requestFailed(Error)
+    case invalidResponse
+    case serverError(statusCode: Int, message: String)
+    case decodingError(Error)
+    case unknownError
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "無效的 URL"
+        case .requestFailed(let error):
+            return "請求失敗：\(error.localizedDescription)"
+        case .invalidResponse:
+            return "無效的伺服器回應"
+        case .serverError(let statusCode, let message):
+            return "伺服器錯誤 (\(statusCode))：\(message)"
+        case .decodingError(let error):
+            return "數據解析錯誤：\(error.localizedDescription)"
+        case .unknownError:
+            return "未知的 API 錯誤"
+        }
+    }
+}
+
+// MARK: - 額外的回應類型
+struct DailyDetailsResponse: Codable {
+    let date: String
+    let knowledgePoints: [KnowledgePoint]
+    let totalStudyTime: Int
+    let correctAnswers: Int
+    let totalAnswers: Int
+    
+    private enum CodingKeys: String, CodingKey {
+        case date
+        case knowledgePoints = "knowledge_points"
+        case totalStudyTime = "total_study_time"
+        case correctAnswers = "correct_answers"
+        case totalAnswers = "total_answers"
+    }
+}
+
+// DailySummaryResponse is defined in DailyDetailView.swift
+
+struct HelixConnectionResponse: Codable {
+    let data: HelixConnectionData
+    
+    struct HelixConnectionData: Codable {
+        let connections: [HelixConnection]
+    }
+    
+    struct HelixConnection: Codable {
+        let connectedPointId: Int
+        let connectionStrength: Double
+        let connectedPointDetails: ConnectedPointDetails?
+        
+        private enum CodingKeys: String, CodingKey {
+            case connectedPointId = "connected_point_id"
+            case connectionStrength = "connection_strength"
+            case connectedPointDetails = "connected_point_details"
+        }
+        
+        struct ConnectedPointDetails: Codable {
+            let category: String
+            let subcategory: String
+            let correctPhrase: String
+            let keyPointSummary: String
+            let masteryLevel: Double
+            
+            private enum CodingKeys: String, CodingKey {
+                case category
+                case subcategory
+                case correctPhrase = "correct_phrase"
+                case keyPointSummary = "key_point_summary"
+                case masteryLevel = "mastery_level"
+            }
         }
     }
 }

@@ -245,15 +245,15 @@ struct DashboardStats {
     
     init(from knowledgePoints: [KnowledgePoint]) {
         self.totalPoints = knowledgePoints.count
-        self.masteredPoints = knowledgePoints.filter { $0.mastery_level >= 0.8 }.count
+        self.masteredPoints = knowledgePoints.filter { $0.masteryLevel >= 0.8 }.count
         
         // 計算不同熟練度的分布
-        self.weakPoints = knowledgePoints.filter { $0.mastery_level < 1.5 }.count
-        self.mediumPoints = knowledgePoints.filter { $0.mastery_level >= 1.5 && $0.mastery_level < 3.5 }.count
-        self.strongPoints = knowledgePoints.filter { $0.mastery_level >= 3.5 }.count
+        self.weakPoints = knowledgePoints.filter { $0.masteryLevel < 1.5 }.count
+        self.mediumPoints = knowledgePoints.filter { $0.masteryLevel >= 1.5 && $0.masteryLevel < 3.5 }.count
+        self.strongPoints = knowledgePoints.filter { $0.masteryLevel >= 3.5 }.count
         
         if totalPoints > 0 {
-            self.averageMastery = knowledgePoints.reduce(0) { $0 + $1.mastery_level } / Double(totalPoints)
+            self.averageMastery = knowledgePoints.reduce(0) { $0 + $1.masteryLevel } / Double(totalPoints)
             self.completionRate = Double(masteredPoints) / Double(totalPoints)
         } else {
             self.averageMastery = 0.0
@@ -266,7 +266,7 @@ struct DashboardStats {
         self.currentStreak = 7 // 當前連續學習 7 天
         self.needReviewToday = knowledgePoints.filter { point in
             // 簡單的複習邏輯：低熟練度的需要複習
-            point.mastery_level < 2.0
+            point.masteryLevel < 2.0
         }.count
         
         // 計算類別數量

@@ -204,7 +204,7 @@ struct OverviewSection: View {
             ModernMasteryCard(stats: stats)
             
             // 關注區域
-            ModernFocusCard(points: points.filter { $0.mastery_level < 2.0 }.sorted { $0.mastery_level < $1.mastery_level }.prefix(5))
+            ModernFocusCard(points: points.filter { $0.masteryLevel < 2.0 }.sorted { $0.masteryLevel < $1.masteryLevel }.prefix(5))
         }
     }
 }
@@ -329,28 +329,28 @@ struct ModernFocusCard: View {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack(spacing: 8) {
-                                        Text(point.key_point_summary ?? "核心觀念")
-                                            .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
+                                        Text(point.keyPointSummary ?? "核心觀念")
+                                            .font(.appCallout(for: point.keyPointSummary ?? "核心觀念"))
                                             .foregroundStyle(Color.modernTextPrimary)
                                             .lineLimit(1)
                                         
                                         // 本地知識點標識
-                                        if point.ai_review_notes == "本地儲存" {
+                                        if point.aiReviewNotes == "本地儲存" {
                                             Image(systemName: "internaldrive")
                                                 .font(.appCaption())
                                                 .foregroundStyle(Color.modernWarning)
                                         }
                                     }
                                     
-                                    Text(point.correct_phrase)
-                                        .font(.appCaption(for: point.correct_phrase))
+                                    Text(point.correctPhrase)
+                                        .font(.appCaption(for: point.correctPhrase))
                                         .foregroundStyle(Color.modernTextSecondary)
                                         .lineLimit(1)
                                 }
                                 
                                 Spacer()
                                 
-                                MasteryBarView(masteryLevel: point.mastery_level)
+                                MasteryBarView(masteryLevel: point.masteryLevel)
                                     .frame(width: 40)
                             }
                             .padding(.vertical, 12)
@@ -405,11 +405,11 @@ struct ModernCategoryCard: View {
     let points: [KnowledgePoint]
     
     private var averageMastery: Double {
-        points.isEmpty ? 0 : points.map { $0.mastery_level }.reduce(0, +) / Double(points.count)
+        points.isEmpty ? 0 : points.map { $0.masteryLevel }.reduce(0, +) / Double(points.count)
     }
     
     private var weakPointsCount: Int {
-        points.filter { $0.mastery_level < 2.0 }.count
+        points.filter { $0.masteryLevel < 2.0 }.count
     }
     
     var body: some View {
@@ -459,7 +459,7 @@ struct ProgressSection: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            ForEach(points.sorted { $0.mastery_level < $1.mastery_level }) { point in
+            ForEach(points.sorted { $0.masteryLevel < $1.masteryLevel }) { point in
                 NavigationLink(destination: KnowledgePointDetailView(point: point)) {
                     KnowledgePointProgressCard(point: point)
                 }
@@ -476,21 +476,21 @@ struct KnowledgePointProgressCard: View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
-                    Text(point.key_point_summary ?? "核心觀念")
-                        .font(.appCallout(for: point.key_point_summary ?? "核心觀念"))
+                    Text(point.keyPointSummary ?? "核心觀念")
+                        .font(.appCallout(for: point.keyPointSummary ?? "核心觀念"))
                         .foregroundStyle(Color.modernTextPrimary)
                         .lineLimit(1)
                     
                     // 本地知識點標識
-                    if point.ai_review_notes == "本地儲存" {
+                    if point.aiReviewNotes == "本地儲存" {
                         Image(systemName: "internaldrive")
                             .font(.appCaption())
                             .foregroundStyle(Color.modernWarning)
                     }
                 }
                 
-                Text(point.correct_phrase)
-                    .font(.appCaption(for: point.correct_phrase))
+                Text(point.correctPhrase)
+                    .font(.appCaption(for: point.correctPhrase))
                     .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
@@ -498,11 +498,11 @@ struct KnowledgePointProgressCard: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(String(format: "%.1f", point.mastery_level))
+                Text(String(format: "%.1f", point.masteryLevel))
                     .font(.appHeadline())
                     .foregroundStyle(Color.modernTextPrimary)
                 
-                MasteryBarView(masteryLevel: point.mastery_level)
+                MasteryBarView(masteryLevel: point.masteryLevel)
                     .frame(width: 60)
             }
         }
@@ -520,7 +520,7 @@ struct ScheduleSection: View {
     let points: [KnowledgePoint]
     
     private var scheduledPoints: [KnowledgePoint] {
-        points.filter { $0.next_review_date != nil }.sorted { $0.next_review_date! < $1.next_review_date! }
+        points.filter { $0.nextReviewDate != nil }.sorted { $0.nextReviewDate! < $1.nextReviewDate! }
     }
     
     var body: some View {
@@ -550,7 +550,7 @@ struct ModernScheduleCard: View {
     }
     
     private var isOverdue: Bool {
-        guard let dateString = point.next_review_date else { return false }
+        guard let dateString = point.nextReviewDate else { return false }
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
         guard let date = formatter.date(from: dateString) else { return false }
@@ -560,13 +560,13 @@ struct ModernScheduleCard: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(point.key_point_summary ?? "核心觀念")
-                    .font(.appSubheadline(for: point.key_point_summary ?? "核心觀念"))
+                Text(point.keyPointSummary ?? "核心觀念")
+                    .font(.appSubheadline(for: point.keyPointSummary ?? "核心觀念"))
                     .foregroundStyle(Color.modernTextPrimary)
                     .lineLimit(1)
                 
-                Text(point.correct_phrase)
-                    .font(.appCaption(for: point.correct_phrase))
+                Text(point.correctPhrase)
+                    .font(.appCaption(for: point.correctPhrase))
                     .foregroundStyle(Color.modernTextSecondary)
                     .lineLimit(1)
             }
@@ -574,7 +574,7 @@ struct ModernScheduleCard: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(formatDate(point.next_review_date ?? ""))
+                Text(formatDate(point.nextReviewDate ?? ""))
                     .font(.appCaption())
                     .foregroundStyle(isOverdue ? Color.modernError : .primary)
                 

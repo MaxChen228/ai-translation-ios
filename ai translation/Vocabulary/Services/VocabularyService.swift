@@ -10,17 +10,14 @@ class VocabularyService: ObservableObject {
     
     /// 獲取單字庫統計
     func getStatistics() async throws -> VocabularyStatistics {
-        let url = URL(string: "\(baseURL)/api/vocabulary/statistics")!
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("獲取統計資料失敗")
+        guard let url = URL(string: "\(baseURL)/api/vocabulary/statistics") else {
+            throw VocabularyError.networkError("無效的URL")
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode(VocabularyStatistics.self, from: data)
+        let (data, response) = try await NetworkManager.shared.performGETRequest(url: url)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
+        
+        return try NetworkManager.shared.safeDecodeJSON(data, as: VocabularyStatistics.self)
     }
     
     // MARK: - 單字管理
@@ -44,52 +41,47 @@ class VocabularyService: ObservableObject {
         
         components.queryItems = queryItems
         
-        let (data, response) = try await URLSession.shared.data(from: components.url!)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("獲取單字列表失敗")
+        guard let url = components.url else {
+            throw VocabularyError.networkError("無效的URL")
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode(WordListResponse.self, from: data)
+        let (data, response) = try await NetworkManager.shared.performGETRequest(url: url)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
+        
+        return try NetworkManager.shared.safeDecodeJSON(data, as: WordListResponse.self)
     }
     
     /// 獲取今日複習單字
     func getDailyReviewWords(limit: Int = 20) async throws -> ReviewWordsResponse {
-        let url = URL(string: "\(baseURL)/api/vocabulary/review/daily?limit=\(limit)")!
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("獲取今日複習單字失敗")
+        guard let url = URL(string: "\(baseURL)/api/vocabulary/review/daily?limit=\(limit)") else {
+            throw VocabularyError.networkError("無效的URL")
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode(ReviewWordsResponse.self, from: data)
+        let (data, response) = try await NetworkManager.shared.performGETRequest(url: url)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
+        
+        return try NetworkManager.shared.safeDecodeJSON(data, as: ReviewWordsResponse.self)
     }
     
     /// 獲取單字詳細資訊
     func getWordDetail(wordId: Int) async throws -> VocabularyWord {
-        let url = URL(string: "\(baseURL)/api/vocabulary/words/\(wordId)")!
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("獲取單字詳情失敗")
+        guard let url = URL(string: "\(baseURL)/api/vocabulary/words/\(wordId)") else {
+            throw VocabularyError.networkError("無效的URL")
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode(VocabularyWord.self, from: data)
+        let (data, response) = try await NetworkManager.shared.performGETRequest(url: url)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
+        
+        return try NetworkManager.shared.safeDecodeJSON(data, as: VocabularyWord.self)
     }
     
     // MARK: - 測驗相關
     
     /// 生成測驗
     func generateQuiz(type: PracticeType, wordCount: Int = 10, difficultyLevel: Int? = nil) async throws -> QuizResponse {
-        let url = URL(string: "\(baseURL)/api/vocabulary/quiz/generate")!
+        guard let url = URL(string: "\(baseURL)/api/vocabulary/quiz/generate") else {
+            throw VocabularyError.networkError("無效的URL")
+        }
         
         var requestBody: [String: Any] = [
             "quiz_type": type.rawValue,
@@ -100,42 +92,26 @@ class VocabularyService: ObservableObject {
             requestBody["difficulty_level"] = difficulty
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        let bodyData = try JSONSerialization.data(withJSONObject: requestBody)
+        let (data, response) = try await NetworkManager.shared.performPOSTRequest(url: url, body: bodyData)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("生成測驗失敗")
-        }
-        
-        let decoder = JSONDecoder()
-        return try decoder.decode(QuizResponse.self, from: data)
+        return try NetworkManager.shared.safeDecodeJSON(data, as: QuizResponse.self)
     }
     
     /// 提交複習結果
     func submitReview(submission: ReviewSubmission) async throws -> ReviewResult {
-        let url = URL(string: "\(baseURL)/api/vocabulary/review/submit")!
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let encoder = JSONEncoder()
-        request.httpBody = try encoder.encode(submission)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
-            throw VocabularyError.networkError("提交複習結果失敗")
+        guard let url = URL(string: "\(baseURL)/api/vocabulary/review/submit") else {
+            throw VocabularyError.networkError("無效的URL")
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode(ReviewResult.self, from: data)
+        let encoder = JSONEncoder()
+        let bodyData = try encoder.encode(submission)
+        
+        let (data, response) = try await NetworkManager.shared.performPOSTRequest(url: url, body: bodyData)
+        try NetworkManager.shared.validateHTTPResponse(response, data: data)
+        
+        return try NetworkManager.shared.safeDecodeJSON(data, as: ReviewResult.self)
     }
 }
 

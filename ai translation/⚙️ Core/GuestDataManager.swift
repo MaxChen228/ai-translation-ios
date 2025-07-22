@@ -2,6 +2,15 @@
 
 import Foundation
 
+// MARK: - Deprecated GuestUser for backward compatibility
+struct GuestUser: Codable {
+    var totalLearningTime: Int = 0
+    var knowledgePointsCount: Int = 0
+    var sessionsCompleted: Int = 0
+    
+    init() {}
+}
+
 class GuestDataManager: ObservableObject {
     static let shared = GuestDataManager()
     
@@ -14,6 +23,7 @@ class GuestDataManager: ObservableObject {
     
     private init() {
         self.guestUser = GuestDataManager.loadGuestUser()
+        migrateOldKnowledgePoints()
     }
     
     // MARK: - 訪客用戶資料管理
@@ -51,13 +61,45 @@ class GuestDataManager: ObservableObject {
     
     // MARK: - 訪客知識點管理（本地儲存）
     
+    private var localKnowledgePointIdCounter: Int {
+        get {
+            let counter = UserDefaults.standard.integer(forKey: "localKnowledgePointIdCounter")
+            // 如果尚未初始化，從 -1 開始（負數 ID）
+            return counter == 0 ? -1 : counter
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "localKnowledgePointIdCounter")
+        }
+    }
+    
     func saveGuestKnowledgePoint(_ knowledgePoint: [String: Any]) {
         var savedPoints = getGuestKnowledgePoints()
-        savedPoints.append(knowledgePoint)
+        
+        // 為本地知識點分配負數 ID
+        var modifiedPoint = knowledgePoint
+        
+        // 獲取當前計數器值並遞減
+        var currentCounter = localKnowledgePointIdCounter
+        if currentCounter > 0 {
+            currentCounter = -1 // 確保從負數開始
+        }
+        currentCounter -= 1
+        
+        modifiedPoint["localId"] = modifiedPoint["id"] // 保留原始 UUID
+        modifiedPoint["id"] = currentCounter // 使用負數 ID
+        modifiedPoint["isLocal"] = true
+        
+        // 更新計數器
+        localKnowledgePointIdCounter = currentCounter
+        
+        savedPoints.append(modifiedPoint)
         
         if let data = try? JSONSerialization.data(withJSONObject: savedPoints) {
             UserDefaults.standard.set(data, forKey: guestKnowledgePointsKey)
         }
+        
+        // 增加知識點計數
+        incrementKnowledgePoints()
     }
     
     func getGuestKnowledgePoints() -> [[String: Any]] {
@@ -153,6 +195,65 @@ class GuestDataManager: ObservableObject {
         if guestUser.knowledgePointsCount >= 5 { return true }
         
         return false
+    }
+    
+    // MARK: - 資料遷移
+    
+    private func migrateOldKnowledgePoints() {
+        var points = getGuestKnowledgePoints()
+        var needsMigration = false
+        
+        for i in 0..<points.count {
+            // 檢查是否有舊格式的字串 ID
+            if let stringId = points[i]["id"] as? String {
+                needsMigration = true
+                
+                // 獲取當前計數器值並遞減
+                var currentCounter = localKnowledgePointIdCounter
+                if currentCounter > 0 {
+                    currentCounter = -1 // 確保從負數開始
+                }
+                currentCounter -= 1
+                
+                // 更新為負數 ID
+                points[i]["localId"] = stringId // 保留原始 UUID
+                points[i]["id"] = currentCounter
+                points[i]["isLocal"] = true
+                
+                // 更新計數器
+                localKnowledgePointIdCounter = currentCounter
+            }
+            
+            // 檢查並遷移欄位內容（修正中文句子存在錯誤位置的問題）
+            if let context = points[i]["user_context_sentence"] as? String,
+               context.range(of: "[\u{4E00}-\u{9FFF}]", options: .regularExpression) != nil {
+                // user_context_sentence 包含中文，需要遷移
+                needsMigration = true
+                
+                // 交換欄位內容
+                let tempContext = points[i]["user_context_sentence"]
+                points[i]["user_context_sentence"] = points[i]["incorrect_phrase_in_context"]
+                points[i]["incorrect_phrase_in_context"] = nil // 暫時清空，因為沒有正確資料
+                
+                print("📝 遷移知識點：交換 user_context_sentence 和 incorrect_phrase_in_context")
+            }
+            
+            // 確保 key_point_summary 存在
+            if points[i]["key_point_summary"] == nil || (points[i]["key_point_summary"] as? String)?.isEmpty == true {
+                needsMigration = true
+                // 使用 subcategory 或固定文字作為預設值
+                points[i]["key_point_summary"] = points[i]["subcategory"] as? String ?? "需要更新"
+                print("📝 遷移知識點：添加預設 key_point_summary")
+            }
+        }
+        
+        // 如果有需要遷移的資料，儲存更新後的知識點
+        if needsMigration {
+            if let data = try? JSONSerialization.data(withJSONObject: points) {
+                UserDefaults.standard.set(data, forKey: guestKnowledgePointsKey)
+                print("✅ 已遷移並修正 \(points.count) 個本地知識點")
+            }
+        }
     }
 }
 

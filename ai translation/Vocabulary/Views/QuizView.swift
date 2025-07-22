@@ -103,7 +103,7 @@ struct QuizView: View {
                 
                 Spacer()
                 
-                Text("正確率: \(currentIndex > 0 ? Int(Double(correctAnswers) / Double(currentIndex) * 100) : 0)%")
+                Text("正確率: \(safeAccuracyPercentage)%")
                     .font(.appCaption(for: "正確率"))
                     .foregroundStyle(Color.modernAccent)
             }
@@ -292,8 +292,8 @@ struct QuizView: View {
                 .padding(ModernSpacing.md)
                 .modernInput(isFocused: false)
                 .disabled(isAnswered)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
             
             if !userInput.isEmpty && !isAnswered {
                 Text("你的答案：\(userInput)")
@@ -398,7 +398,7 @@ struct QuizView: View {
     private var studyCompleteView: some View {
         VStack(spacing: ModernSpacing.xxl) {
             Image(systemName: "star.circle.fill")
-                .font(.system(size: 64))
+                .font(.appLargeTitle())
                 .foregroundStyle(Color.modernSpecial)
             
             Text("測驗完成！")
@@ -406,7 +406,7 @@ struct QuizView: View {
                 .foregroundStyle(Color.modernTextPrimary)
             
             VStack(spacing: ModernSpacing.sm) {
-                Text("答對率: \(Int(Double(correctAnswers) / Double(quiz.questions.count) * 100))%")
+                Text("答對率: \(safeFinalAccuracyPercentage)%")
                     .font(.appTitle2(for: "答對率"))
                     .foregroundStyle(correctAnswers >= quiz.questions.count / 2 ? Color.modernSuccess : Color.modernWarning)
                 
@@ -595,5 +595,25 @@ struct QuizView: View {
             }
         }
         return isSelected ? Color.modernAccent : Color.modernBorder
+    }
+    
+    // MARK: - 安全計算方法
+    
+    private var safeAccuracyPercentage: Int {
+        guard currentIndex > 0 else { return 0 }
+        let accuracy = Double(correctAnswers) / Double(currentIndex) * 100
+        if accuracy.isNaN || accuracy.isInfinite {
+            return 0
+        }
+        return max(0, min(100, Int(accuracy.rounded())))
+    }
+    
+    private var safeFinalAccuracyPercentage: Int {
+        guard quiz.questions.count > 0 else { return 0 }
+        let accuracy = Double(correctAnswers) / Double(quiz.questions.count) * 100
+        if accuracy.isNaN || accuracy.isInfinite {
+            return 0
+        }
+        return max(0, min(100, Int(accuracy.rounded())))
     }
 }

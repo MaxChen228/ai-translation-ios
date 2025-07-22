@@ -12,13 +12,19 @@ struct AuthenticationContainerView: View {
             VStack {
                 if showingRegister {
                     RegisterView()
-                        .transition(.slide)
+                        .transition(.asymmetric(
+                            insertion: TransitionEffects.slideLeft,
+                            removal: TransitionEffects.slideRight
+                        ))
                 } else {
                     LoginView()
-                        .transition(.slide)
+                        .transition(.asymmetric(
+                            insertion: TransitionEffects.slideRight,
+                            removal: TransitionEffects.slideLeft
+                        ))
                 }
             }
-            .animation(.easeInOut, value: showingRegister)
+            .animation(AnimationCurves.gentleSpring, value: showingRegister)
         }
         .environmentObject(authManager)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowRegister"))) { _ in

@@ -25,21 +25,21 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
     private let cacheExpirationInterval: TimeInterval = 300 // 5分鐘
     
     // MARK: - Dependencies (支援依賴注入)
-    private let apiServiceType: KnowledgePointAPIServiceProtocol.Type
+    private let apiService: UnifiedAPIServiceProtocol
     private let cacheManager: CacheManagerProtocol
     
     // MARK: - Initialization
     private init(
-        apiService: KnowledgePointAPIServiceProtocol.Type = KnowledgePointAPIService.self,
+        apiService: UnifiedAPIServiceProtocol = UnifiedAPIService.shared,
         cacheManager: CacheManagerProtocol = CacheManager.shared
     ) {
-        self.apiServiceType = apiService
+        self.apiService = apiService
         self.cacheManager = cacheManager
     }
     
     /// 創建具有自訂依賴的實例（用於測試）
     static func create(
-        apiService: KnowledgePointAPIServiceProtocol.Type,
+        apiService: UnifiedAPIServiceProtocol,
         cacheManager: CacheManagerProtocol
     ) -> KnowledgePointRepository {
         return KnowledgePointRepository(apiService: apiService, cacheManager: cacheManager)
@@ -55,7 +55,8 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
         
         // 從 API 獲取數據
         do {
-            let points = try await apiServiceType.getGuestSampleKnowledgePoints()
+            let response = try await apiService.getDashboard()
+            let points = response.knowledgePoints
             
             // 更新快取
             updateCache(knowledgePoints: points)
@@ -84,7 +85,7 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
         
         // 從 API 獲取數據
         do {
-            let points = try await apiServiceType.fetchArchivedKnowledgePoints()
+            let points = try await apiService.fetchArchivedKnowledgePoints()
             
             // 更新快取
             updateCache(archivedPoints: points)
@@ -106,7 +107,7 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
     }
     
     func deleteKnowledgePoint(_ id: Int) async throws {
-        try await apiServiceType.deleteKnowledgePoint(id: id)
+        try await apiService.deleteKnowledgePoint(id: id)
         
         // 更新快取
         cachedKnowledgePoints.removeAll { $0.id == id }
@@ -116,7 +117,7 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
     }
     
     func archiveKnowledgePoint(_ id: Int) async throws {
-        try await apiServiceType.archiveKnowledgePoint(id: id)
+        try await apiService.archiveKnowledgePoint(id: id)
         
         // 更新快取：從活躍列表移動到歸檔列表
         if let index = cachedKnowledgePoints.firstIndex(where: { $0.id == id }) {
@@ -130,7 +131,7 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
     }
     
     func restoreKnowledgePoint(_ id: Int) async throws {
-        try await apiServiceType.unarchiveKnowledgePoint(id: id)
+        try await apiService.unarchiveKnowledgePoint(id: id)
         
         // 更新快取：從歸檔列表移動到活躍列表
         if let index = cachedArchivedPoints.firstIndex(where: { $0.id == id }) {
@@ -144,7 +145,7 @@ class KnowledgePointRepository: KnowledgePointRepositoryProtocol, ObservableObje
     }
     
     func updateMasteryLevel(pointId: Int, level: Double) async throws {
-        try await apiServiceType.updateKnowledgePoint(id: pointId, updates: ["mastery_level": level])
+        try await apiService.updateKnowledgePoint(id: pointId, updates: ["mastery_level": level])
         
         // 需要重新獲取知識點來更新快取，因為 KnowledgePoint 的屬性是不可變的
         do {

@@ -15,13 +15,22 @@ struct KnowledgePointDetailView: View {
     @State private var aiReviewResult: AIReviewResult?
     @State private var showAIReviewSheet = false
     
+    // Helix 相關知識點
+    @State private var relatedKnowledgePoints: [KnowledgePoint] = []
+    @State private var isLoadingRelatedPoints = false
+    
     // 本地狀態追蹤
     @State private var localIsArchived: Bool
+    
+    // 檢測是否為本地知識點
+    private var isLocalKnowledgePoint: Bool {
+        return point.aiReviewNotes == "本地儲存"
+    }
     
     init(point: KnowledgePoint) {
         self._point = State(initialValue: point)
         self._editablePoint = State(initialValue: EditableKnowledgePoint(from: point))
-        self._localIsArchived = State(initialValue: point.is_archived ?? false)
+        self._localIsArchived = State(initialValue: point.isArchived ?? false)
     }
     
     var body: some View {
@@ -29,6 +38,11 @@ struct KnowledgePointDetailView: View {
             VStack(spacing: 24) {
                 // 知識點卡片
                 knowledgePointCard
+                
+                // 相關知識點區塊
+                if !relatedKnowledgePoints.isEmpty || isLoadingRelatedPoints {
+                    relatedKnowledgePointsSection
+                }
                 
                 // 操作按鈕
                 actionButtonsSection
@@ -61,6 +75,9 @@ struct KnowledgePointDetailView: View {
             if !newValue {
                 editablePoint = EditableKnowledgePoint(from: point)
             }
+        }
+        .onAppear {
+            loadRelatedKnowledgePoints()
         }
     }
     
@@ -130,7 +147,7 @@ struct KnowledgePointDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    Text("\(Int(point.mastery_level * 100))%")
+                    Text("\(Int(point.masteryLevel * 100))%")
                         .font(.appTitle2())
                         .fontWeight(.bold)
                         .foregroundStyle(Color.modernAccent)
@@ -140,16 +157,16 @@ struct KnowledgePointDetailView: View {
                 
                 VStack(alignment: .trailing, spacing: 4) {
                     HStack(spacing: 8) {
-                        Text("錯誤 \(point.mistake_count) 次")
+                        Text("錯誤 \(point.mistakeCount) 次")
                             .font(.appCaption(for: "錯誤"))
                             .foregroundStyle(Color.modernError)
                         
-                        Text("正確 \(point.correct_count) 次")
+                        Text("正確 \(point.correctCount) 次")
                             .font(.appCaption(for: "正確"))
                             .foregroundStyle(Color.modernSuccess)
                     }
                     
-                    if let nextReviewDate = point.next_review_date {
+                    if let nextReviewDate = point.nextReviewDate {
                         Text("下次複習：\(nextReviewDate)")
                             .font(.appCaption(for: "下次複習"))
                             .foregroundStyle(.secondary)
@@ -181,9 +198,9 @@ struct KnowledgePointDetailView: View {
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 20) {
             // 用戶原始句子
-            if let userContextSentence = point.user_context_sentence {
+            if let userContextSentence = point.userContextSentence {
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("原始句子", systemImage: "quote.bubble.fill")
+                    Label("你的答案", systemImage: "quote.bubble.fill")
                         .font(.appHeadline(for: "原始句子"))
                         .foregroundStyle(Color.modernAccent)
                     
@@ -199,14 +216,14 @@ struct KnowledgePointDetailView: View {
             }
             
             // 錯誤片段
-            if let incorrectPhrase = point.incorrect_phrase_in_context {
+            if let incorrectPhrase = point.incorrectPhraseInContext {
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("錯誤片段", systemImage: "exclamationmark.triangle.fill")
+                    Label("錯誤部分", systemImage: "exclamationmark.triangle.fill")
                         .font(.appHeadline(for: "錯誤片段"))
                         .foregroundStyle(Color.modernError)
                     
                     if isEditing {
-                        TextField("錯誤片段", text: $editablePoint.incorrect_phrase)
+                        TextField("錯誤片段", text: $editablePoint.incorrectPhrase)
                             .textFieldStyle(.roundedBorder)
                             .font(.appBody())
                     } else {
@@ -236,12 +253,12 @@ struct KnowledgePointDetailView: View {
                     .foregroundColor(Color.modernAccent)
                 
                 if isEditing {
-                    TextField("核心知識點", text: $editablePoint.key_point_summary, axis: .vertical)
+                    TextField("核心知識點", text: $editablePoint.keyPointSummary, axis: .vertical)
                         .textFieldStyle(.roundedBorder)
                         .font(.appBody())
                         .lineLimit(2...4)
                 } else {
-                    if let keyPointSummary = point.key_point_summary, !keyPointSummary.isEmpty {
+                    if let keyPointSummary = point.keyPointSummary, !keyPointSummary.isEmpty {
                         Text(keyPointSummary)
                             .font(.appBody(for: keyPointSummary))
                             .fontWeight(.medium)
@@ -261,12 +278,12 @@ struct KnowledgePointDetailView: View {
                     .foregroundColor(Color.modernSuccess)
                 
                 if isEditing {
-                    TextField("正確用法", text: $editablePoint.correct_phrase)
+                    TextField("正確用法", text: $editablePoint.correctPhrase)
                         .textFieldStyle(.roundedBorder)
                         .font(.appBody())
                 } else {
-                    Text(point.correct_phrase)
-                        .font(.appBody(for: point.correct_phrase))
+                    Text(point.correctPhrase)
+                        .font(.appBody(for: point.correctPhrase))
                         .fontWeight(.bold)
                         .foregroundStyle(Color.modernSuccess)
                         .padding(ModernSpacing.md)
@@ -303,7 +320,7 @@ struct KnowledgePointDetailView: View {
             }
             
             // AI 審閱結果
-            if let aiReviewNotes = point.ai_review_notes, !aiReviewNotes.isEmpty {
+            if let aiReviewNotes = point.aiReviewNotes, !aiReviewNotes.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Label("AI 審閱建議", systemImage: "brain.head.profile")
@@ -312,7 +329,7 @@ struct KnowledgePointDetailView: View {
                         
                         Spacer()
                         
-                        if let lastReviewDate = point.last_ai_review_date {
+                        if let lastReviewDate = point.lastAiReviewDate {
                             Text(lastReviewDate)
                                 .font(.appCaption(for: lastReviewDate))
                                 .foregroundStyle(.secondary)
@@ -330,6 +347,93 @@ struct KnowledgePointDetailView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - 相關知識點區塊
+    
+    private var relatedKnowledgePointsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // 標題
+            HStack {
+                Label("相關知識點", systemImage: "link")
+                    .font(.appHeadline(for: "相關知識點"))
+                    .foregroundStyle(Color.modernAccent)
+                
+                Spacer()
+                
+                if isLoadingRelatedPoints {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                }
+            }
+            
+            // 相關知識點列表
+            if point.id < 0 || point.id > Int32.max {
+                // 本地知識點提示
+                HStack {
+                    Image(systemName: "icloud.slash")
+                        .foregroundStyle(Color.modernTextSecondary)
+                    Text("本地知識點暫不支援相關連結")
+                        .font(.appBody())
+                        .foregroundStyle(Color.modernTextSecondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(ModernSpacing.lg)
+                .background {
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
+                        .fill(Color.modernBackground)
+                }
+            } else if isLoadingRelatedPoints {
+                // 載入中的佔位符
+                VStack(spacing: 12) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        relatedPointPlaceholder
+                    }
+                }
+            } else if relatedKnowledgePoints.isEmpty {
+                // 無相關知識點
+                HStack {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(Color.modernTextSecondary)
+                    Text("暫無相關知識點")
+                        .font(.appBody())
+                        .foregroundStyle(Color.modernTextSecondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(ModernSpacing.lg)
+                .background {
+                    RoundedRectangle(cornerRadius: ModernRadius.md)
+                        .fill(Color.modernBackground)
+                }
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(relatedKnowledgePoints.prefix(5), id: \.id) { relatedPoint in
+                        RelatedKnowledgePointRow(point: relatedPoint)
+                    }
+                }
+            }
+        }
+        .padding(ModernSpacing.lg)
+        .background {
+            RoundedRectangle(cornerRadius: ModernRadius.lg)
+                .fill(Color.modernSurface)
+                .modernShadow()
+        }
+    }
+    
+    private var relatedPointPlaceholder: some View {
+        HStack {
+            RoundedRectangle(cornerRadius: ModernRadius.xs)
+                .fill(Color.modernTextTertiary.opacity(0.3))
+                .frame(width: 40, height: 8)
+            
+            RoundedRectangle(cornerRadius: ModernRadius.xs)
+                .fill(Color.modernTextTertiary.opacity(0.3))
+                .frame(height: 8)
+            
+            Spacer()
+        }
+        .padding(.vertical, ModernSpacing.sm)
     }
     
     // MARK: - 操作按鈕區域
@@ -378,7 +482,27 @@ struct KnowledgePointDetailView: View {
             } else {
                 // 檢視模式按鈕
                 VStack(spacing: 12) {
-                    // AI 重新審閱
+                    // 本地知識點標識
+                    if isLocalKnowledgePoint {
+                        HStack {
+                            Image(systemName: "internaldrive")
+                                .font(.appBody())
+                                .foregroundStyle(Color.modernWarning)
+                            Text("本地儲存的知識點")
+                                .font(.appBody(for: "本地儲存的知識點"))
+                                .foregroundStyle(Color.modernTextSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, ModernSpacing.sm)
+                        .background(Color.modernWarning.opacity(0.1))
+                        .cornerRadius(ModernRadius.sm)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: ModernRadius.sm)
+                                .stroke(Color.modernWarning.opacity(0.3), lineWidth: 1)
+                        }
+                    }
+                    
+                    // AI 重新審閱（本地知識點禁用）
                     Button(action: performAIReview) {
                         HStack {
                             if isAIReviewing {
@@ -389,49 +513,50 @@ struct KnowledgePointDetailView: View {
                             } else {
                                 Image(systemName: "brain.head.profile")
                                     .font(.appBody())
-                                Text("AI 重新審閱")
-                                    .font(.appBody(for: "AI 重新審閱"))
+                                Text(isLocalKnowledgePoint ? "需雲端同步後可用" : "AI 重新審閱")
+                                    .font(.appBody(for: isLocalKnowledgePoint ? "需雲端同步後可用" : "AI 重新審閱"))
                             }
                         }
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, ModernSpacing.sm + 2)
-                        .background(Color.modernSpecial)
-                        .foregroundStyle(.white)
+                        .background(isLocalKnowledgePoint ? Color.modernBorder : Color.modernSpecial)
+                        .foregroundStyle(isLocalKnowledgePoint ? Color.modernTextSecondary : .white)
                         .cornerRadius(ModernRadius.sm)
                     }
-                    .disabled(isAIReviewing)
+                    .disabled(isAIReviewing || isLocalKnowledgePoint)
                     
                     HStack(spacing: 16) {
-                        // 歸檔/取消歸檔
+                        // 歸檔/取消歸檔（本地知識點禁用）
                         Button(action: toggleArchiveStatus) {
                             HStack {
                                 Image(systemName: localIsArchived ? "tray.and.arrow.up" : "tray.and.arrow.down")
                                     .font(.appBody())
-                                Text(localIsArchived ? "取消歸檔" : "歸檔")
-                                    .font(.appBody(for: localIsArchived ? "取消歸檔" : "歸檔"))
+                                Text(isLocalKnowledgePoint ? "需雲端同步" : (localIsArchived ? "取消歸檔" : "歸檔"))
+                                    .font(.appBody(for: isLocalKnowledgePoint ? "需雲端同步" : (localIsArchived ? "取消歸檔" : "歸檔")))
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, ModernSpacing.sm + 2)
-                            .background(Color.modernAccentSoft)
-                            .foregroundStyle(Color.modernAccent)
+                            .background(isLocalKnowledgePoint ? Color.modernBorder : Color.modernAccentSoft)
+                            .foregroundStyle(isLocalKnowledgePoint ? Color.modernTextSecondary : Color.modernAccent)
                             .cornerRadius(ModernRadius.sm)
                             .overlay {
                                 RoundedRectangle(cornerRadius: ModernRadius.sm)
-                                    .stroke(Color.modernBorder, lineWidth: 1)
+                                    .stroke(isLocalKnowledgePoint ? Color.modernBorder : Color.modernBorder, lineWidth: 1)
                             }
                         }
+                        .disabled(isLocalKnowledgePoint)
                         
-                        // 刪除按鈕
+                        // 刪除按鈕（本地知識點可刪除但顯示不同文字）
                         Button(action: {
                             showingDeleteAlert = true
                         }) {
                             HStack {
                                 Image(systemName: "trash")
                                     .font(.appBody())
-                                Text("刪除")
-                                    .font(.appBody(for: "刪除"))
+                                Text(isLocalKnowledgePoint ? "從本地刪除" : "刪除")
+                                    .font(.appBody(for: isLocalKnowledgePoint ? "從本地刪除" : "刪除"))
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
@@ -505,10 +630,10 @@ struct KnowledgePointDetailView: View {
     private var hasChanges: Bool {
         return editablePoint.category != point.category ||
                editablePoint.subcategory != point.subcategory ||
-               editablePoint.key_point_summary != (point.key_point_summary ?? "") ||
-               editablePoint.correct_phrase != point.correct_phrase ||
+               editablePoint.keyPointSummary != (point.keyPointSummary ?? "") ||
+               editablePoint.correctPhrase != point.correctPhrase ||
                editablePoint.explanation != (point.explanation ?? "") ||
-               editablePoint.incorrect_phrase != (point.incorrect_phrase_in_context ?? "")
+               editablePoint.incorrectPhrase != (point.incorrectPhraseInContext ?? "")
     }
     
     // MARK: - 動作方法
@@ -543,7 +668,7 @@ struct KnowledgePointDetailView: View {
             isAIReviewing = true
             
             do {
-                let result = try await KnowledgePointAPIService.aiReviewKnowledgePoint(id: point.id)
+                let result = try await UnifiedAPIService.shared.aiReviewKnowledgePoint(id: point.id)
                 
                 await MainActor.run {
                     aiReviewResult = result
@@ -570,9 +695,9 @@ struct KnowledgePointDetailView: View {
             
             do {
                 if localIsArchived {
-                    try await KnowledgePointAPIService.archiveKnowledgePoint(id: point.id)
+                    try await UnifiedAPIService.shared.archiveKnowledgePoint(id: point.id)
                 } else {
-                    try await KnowledgePointAPIService.unarchiveKnowledgePoint(id: point.id)
+                    try await UnifiedAPIService.shared.unarchiveKnowledgePoint(id: point.id)
                 }
                 
                 await MainActor.run {
@@ -598,19 +723,86 @@ struct KnowledgePointDetailView: View {
     
     private func deleteKnowledgePoint() {
         Task {
+            if isLocalKnowledgePoint {
+                // 處理本地知識點刪除
+                await deleteLocalKnowledgePoint()
+            } else {
+                // 處理雲端知識點刪除
+                do {
+                    try await UnifiedAPIService.shared.deleteKnowledgePoint(id: point.id)
+                    
+                    await MainActor.run {
+                        dismiss()
+                    }
+                } catch {
+                    await MainActor.run {
+                        saveMessage = "刪除失敗：\(error.localizedDescription)"
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                            saveMessage = nil
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func deleteLocalKnowledgePoint() async {
+        // 刪除本地知識點的邏輯
+        let guestDataManager = GuestDataManager.shared
+        var localPoints = guestDataManager.getGuestKnowledgePoints()
+        
+        // 根據 UUID 字串 ID 找到並刪除對應的本地知識點
+        if let originalId = point.aiReviewNotes, originalId == "本地儲存" {
+            // 尋找匹配的本地知識點（通過內容匹配）
+            localPoints.removeAll { pointData in
+                if let category = pointData["category"] as? String,
+                   let correctPhrase = pointData["correct_phrase"] as? String {
+                    return category == point.category && correctPhrase == point.correctPhrase
+                }
+                return false
+            }
+            
+            // 更新本地儲存
+            if let data = try? JSONSerialization.data(withJSONObject: localPoints) {
+                UserDefaults.standard.set(data, forKey: "guest_knowledge_points")
+            }
+        }
+        
+        await MainActor.run {
+            saveMessage = "已從本地刪除"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                dismiss()
+            }
+        }
+    }
+    
+    // MARK: - Helix 相關方法
+    
+    private func loadRelatedKnowledgePoints() {
+        // 檢查是否為本地知識點（負數 ID 或超大數字）
+        if point.id < 0 || point.id > Int32.max {
+            print("⚠️ 本地知識點無法載入相關連結，ID: \(point.id)")
+            relatedKnowledgePoints = []
+            isLoadingRelatedPoints = false
+            return
+        }
+        
+        Task {
+            isLoadingRelatedPoints = true
+            
             do {
-                try await KnowledgePointAPIService.deleteKnowledgePoint(id: point.id)
+                let related = try await UnifiedAPIService.shared.getRelatedKnowledgePoints(id: point.id)
                 
                 await MainActor.run {
-                    dismiss()
+                    relatedKnowledgePoints = related
+                    isLoadingRelatedPoints = false
                 }
             } catch {
                 await MainActor.run {
-                    saveMessage = "刪除失敗：\(error.localizedDescription)"
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        saveMessage = nil
-                    }
+                    isLoadingRelatedPoints = false
+                    // 靜默失敗，不顯示錯誤訊息以保持簡約
                 }
             }
         }
@@ -622,28 +814,28 @@ struct KnowledgePointDetailView: View {
 struct EditableKnowledgePoint {
     var category: String
     var subcategory: String
-    var key_point_summary: String
-    var correct_phrase: String
+    var keyPointSummary: String
+    var correctPhrase: String
     var explanation: String
-    var incorrect_phrase: String
+    var incorrectPhrase: String
     
     init(from point: KnowledgePoint) {
         self.category = point.category
         self.subcategory = point.subcategory
-        self.key_point_summary = point.key_point_summary ?? ""
-        self.correct_phrase = point.correct_phrase
+        self.keyPointSummary = point.keyPointSummary ?? ""
+        self.correctPhrase = point.correctPhrase
         self.explanation = point.explanation ?? ""
-        self.incorrect_phrase = point.incorrect_phrase_in_context ?? ""
+        self.incorrectPhrase = point.incorrectPhraseInContext ?? ""
     }
     
     // 新增：直接初始化方法，用於 Preview 和測試
-    init(category: String, subcategory: String, key_point_summary: String, correct_phrase: String, explanation: String, incorrect_phrase: String = "") {
+    init(category: String, subcategory: String, keyPointSummary: String, correctPhrase: String, explanation: String, incorrectPhrase: String = "") {
         self.category = category
         self.subcategory = subcategory
-        self.key_point_summary = key_point_summary
-        self.correct_phrase = correct_phrase
+        self.keyPointSummary = keyPointSummary
+        self.correctPhrase = correctPhrase
         self.explanation = explanation
-        self.incorrect_phrase = incorrect_phrase
+        self.incorrectPhrase = incorrectPhrase
     }
 }
 
@@ -661,8 +853,8 @@ struct AIReviewResultView: View {
                             .font(.appTitle2(for: "整體評估"))
                             .fontWeight(.bold)
                         
-                        Text(reviewResult.overall_assessment)
-                            .font(.appBody(for: reviewResult.overall_assessment))
+                        Text(reviewResult.overallAssessment)
+                            .font(.appBody(for: reviewResult.overallAssessment))
                             .padding()
                             .background(Color.modernSurface)
                             .cornerRadius(ModernRadius.md)
@@ -674,19 +866,19 @@ struct AIReviewResultView: View {
                             .font(.appTitle2(for: "評分"))
                             .fontWeight(.bold)
                         
-                        ScoreRow(title: "準確性", score: reviewResult.accuracy_score)
-                        ScoreRow(title: "清晰度", score: reviewResult.clarity_score)
-                        ScoreRow(title: "教學效果", score: reviewResult.teaching_effectiveness)
+                        ScoreRow(title: "準確性", score: reviewResult.accuracyScore)
+                        ScoreRow(title: "清晰度", score: reviewResult.clarityScore)
+                        ScoreRow(title: "教學效果", score: reviewResult.teachingEffectiveness)
                     }
                     
                     // 改進建議
-                    if !reviewResult.improvement_suggestions.isEmpty {
+                    if !reviewResult.improvementSuggestions.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("改進建議")
                                 .font(.appTitle2(for: "改進建議"))
                                 .fontWeight(.bold)
                             
-                            ForEach(reviewResult.improvement_suggestions, id: \.self) { suggestion in
+                            ForEach(reviewResult.improvementSuggestions, id: \.self) { suggestion in
                                 HStack(alignment: .top) {
                                     Text("•")
                                         .font(.appBody())
@@ -698,13 +890,13 @@ struct AIReviewResultView: View {
                     }
                     
                     // 補充例句
-                    if !reviewResult.additional_examples.isEmpty {
+                    if !reviewResult.additionalExamples.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("補充例句")
                                 .font(.appTitle2(for: "補充例句"))
                                 .fontWeight(.bold)
                             
-                            ForEach(reviewResult.additional_examples, id: \.self) { example in
+                            ForEach(reviewResult.additionalExamples, id: \.self) { example in
                                 Text(example)
                                     .font(.appBody(for: example))
                                     .padding()
@@ -727,6 +919,80 @@ struct AIReviewResultView: View {
                     .fontWeight(.semibold)
                 }
             }
+        }
+    }
+}
+
+// MARK: - 相關知識點行組件
+
+struct RelatedKnowledgePointRow: View {
+    let point: KnowledgePoint
+    
+    var body: some View {
+        NavigationLink(destination: KnowledgePointDetailView(point: point)) {
+            HStack(spacing: 12) {
+                // 類型圖標
+                Image(systemName: categoryIcon)
+                    .font(.appCallout())
+                    .foregroundStyle(Color.modernAccent)
+                    .frame(width: 20)
+                
+                // 知識點內容
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(point.correctPhrase)
+                        .font(.appBody(for: point.correctPhrase))
+                        .fontWeight(.medium)
+                        .foregroundStyle(Color.modernTextPrimary)
+                        .multilineTextAlignment(.leading)
+                    
+                    if let summary = point.keyPointSummary, !summary.isEmpty {
+                        Text(summary)
+                            .font(.appCaption(for: summary))
+                            .foregroundStyle(Color.modernTextSecondary)
+                            .lineLimit(1)
+                    }
+                }
+                
+                Spacer()
+                
+                // 掌握度指示器
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(masteryColor)
+                        .frame(width: 6, height: 6)
+                    
+                    Text("\(Int(point.masteryLevel * 100))%")
+                        .font(.appCaption())
+                        .foregroundStyle(Color.modernTextSecondary)
+                }
+            }
+            .padding(.vertical, ModernSpacing.sm)
+            .padding(.horizontal, ModernSpacing.md)
+            .background {
+                RoundedRectangle(cornerRadius: ModernRadius.sm)
+                    .fill(Color.modernBackground.opacity(0.5))
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var categoryIcon: String {
+        switch point.category.lowercased() {
+        case "grammar": return "textformat.abc"
+        case "vocabulary": return "book.fill"
+        case "syntax": return "curlybraces"
+        case "idiom": return "quote.bubble.fill"
+        default: return "questionmark.circle"
+        }
+    }
+    
+    private var masteryColor: Color {
+        if point.masteryLevel < 0.3 {
+            return Color.modernError
+        } else if point.masteryLevel < 0.7 {
+            return Color.modernWarning
+        } else {
+            return Color.modernSuccess
         }
     }
 }
@@ -770,18 +1036,18 @@ struct ScoreRow: View {
         id: 1,
         category: "Grammar",
         subcategory: "Tense",
-        correct_phrase: "I have been studying",
+        correctPhrase: "I have been studying",
         explanation: "現在完成進行式用於表示從過去某時開始一直持續到現在的動作",
-        user_context_sentence: "I have been study English for two years.",
-        incorrect_phrase_in_context: "have been study",
-        key_point_summary: "現在完成進行式的構造：have/has + been + V-ing",
-        mastery_level: 0.7,
-        mistake_count: 3,
-        correct_count: 7,
-        next_review_date: "2024-01-20",
-        is_archived: false,
-        ai_review_notes: "這是一個常見的語法錯誤，需要加強練習",
-        last_ai_review_date: "2024-01-15"
+        userContextSentence: "I have been study English for two years.",
+        incorrectPhraseInContext: "have been study",
+        keyPointSummary: "現在完成進行式的構造：have/has + been + V-ing",
+        masteryLevel: 0.7,
+        mistakeCount: 3,
+        correctCount: 7,
+        nextReviewDate: "2024-01-20",
+        isArchived: false,
+        aiReviewNotes: "這是一個常見的語法錯誤，需要加強練習",
+        lastAiReviewDate: "2024-01-15"
     )
     
     NavigationView {

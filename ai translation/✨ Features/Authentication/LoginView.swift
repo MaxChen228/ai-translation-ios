@@ -8,6 +8,7 @@ struct LoginView: View {
     @State private var password = ""
     @State private var showPassword = false
     @State private var isShowingRegister = false
+    @FocusState private var focusField: LoginField?
     
     var body: some View {
         ScrollView {
@@ -15,7 +16,7 @@ struct LoginView: View {
                 // Logo 和標題區域
                 VStack(spacing: ModernSpacing.md) {
                     Image(systemName: "brain.head.profile")
-                        .font(.system(size: 60, weight: .light))
+                        .font(.appLargeTitle())
                         .foregroundStyle(Color.modernAccent)
                         .padding(.top, ModernSpacing.xl + 8)
                     
@@ -77,9 +78,9 @@ struct LoginView: View {
                 VStack(spacing: ModernSpacing.lg) {
                     // 訪客模式按鈕
                     Button(action: {
-                        print("🔴 點擊訪客模式按鈕")
-                        authManager.enterGuestMode()
-                        print("🔴 按鈕動作完成")
+                        Task {
+                            await authManager.registerAnonymously()
+                        }
                     }) {
                         HStack(spacing: ModernSpacing.sm) {
                             Image(systemName: "eye")
@@ -150,13 +151,14 @@ struct LoginView: View {
         }
         .background(Color.modernBackground)
         .onTapGesture {
-            hideKeyboard()
+            focusField = nil
         }
     }
     
-    private func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
+}
+
+enum LoginField: Hashable {
+    case email, password
 }
 
 #Preview {

@@ -5,11 +5,27 @@ import SwiftUI
 struct VocabularyAreaView: View {
     var body: some View {
         TabView {
+            // 內建單字庫
+            BuiltinVocabularyView()
+                .tabItem {
+                    Image(systemName: "books.vertical.fill")
+                    Text("內建單字")
+                        .font(.appCaption())
+                }
+            
+            // 多分類系統
+            MultiClassificationSystemView()
+                .tabItem {
+                    Image(systemName: "square.grid.3x3.fill")
+                    Text("分類系統")
+                        .font(.appCaption())
+                }
+            
             // 我的單字庫
-            VocabularyLibraryView()
+            VocabularyHomeView()
                 .tabItem {
                     Image(systemName: "book.closed.fill")
-                    Text("單字庫")
+                    Text("我的單字")
                         .font(.appCaption())
                 }
             
@@ -28,14 +44,6 @@ struct VocabularyAreaView: View {
                     Text("進度")
                         .font(.appCaption())
                 }
-            
-            // 單字設定
-            VocabularySettingsView()
-                .tabItem {
-                    Image(systemName: "gearshape.fill")
-                    Text("設定")
-                        .font(.appCaption())
-                }
         }
         .accentColor(Color.modernAccent)
     }
@@ -51,7 +59,7 @@ struct VocabularyLibraryView: View {
                     VStack(spacing: ModernSpacing.lg) {
                         // 佔位圖示
                         Image(systemName: "book.closed")
-                            .font(.system(size: 60, weight: .light))
+                            .font(.appLargeTitle())
                             .foregroundStyle(Color.modernAccent)
                             .padding(.top, ModernSpacing.xl)
                         
@@ -121,7 +129,7 @@ struct VocabularyReviewView: View {
                 VStack(spacing: ModernSpacing.xxl) {
                     VStack(spacing: ModernSpacing.lg) {
                         Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 60, weight: .light))
+                            .font(.appLargeTitle())
                             .foregroundStyle(Color.modernAccent)
                             .padding(.top, ModernSpacing.xl)
                         
@@ -172,7 +180,7 @@ struct VocabularyProgressView: View {
                 VStack(spacing: ModernSpacing.xxl) {
                     VStack(spacing: ModernSpacing.lg) {
                         Image(systemName: "chart.line.uptrend.xyaxis")
-                            .font(.system(size: 60, weight: .light))
+                            .font(.appLargeTitle())
                             .foregroundStyle(Color.modernAccent)
                             .padding(.top, ModernSpacing.xl)
                         
@@ -229,7 +237,7 @@ struct VocabularySettingsView: View {
                 VStack(spacing: ModernSpacing.xxl) {
                     VStack(spacing: ModernSpacing.lg) {
                         Image(systemName: "gearshape")
-                            .font(.system(size: 60, weight: .light))
+                            .font(.appLargeTitle())
                             .foregroundStyle(Color.modernAccent)
                             .padding(.top, ModernSpacing.xl)
                         

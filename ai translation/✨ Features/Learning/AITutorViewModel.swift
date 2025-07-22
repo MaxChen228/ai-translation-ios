@@ -17,6 +17,17 @@ class AITutorViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var tutorState: TutorState = .initial
     
+    // MARK: - 同步狀態
+    @Published var syncStatus: SyncStatus = .idle
+    @Published var syncedKnowledgePointsCount: Int = 0
+    
+    enum SyncStatus {
+        case idle
+        case syncing
+        case completed
+        case failed(Error)
+    }
+    
     // MARK: - Session Management
     @Published var sessionProgress: SessionProgress = SessionProgress()
     @Published var sessionStats: SessionStats = SessionStats()
@@ -41,12 +52,13 @@ class AITutorViewModel: ObservableObject {
     }
     
     // MARK: - Dependencies
-    private let apiService = KnowledgePointAPIService.self
-    private let sessionManager: SessionManager
+    private let apiService: UnifiedAPIServiceProtocol
+    private var sessionManager: SessionManager
     
     // MARK: - Initialization
-    init(sessionManager: SessionManager) {
+    init(sessionManager: SessionManager, apiService: UnifiedAPIServiceProtocol = UnifiedAPIService.shared) {
         self.sessionManager = sessionManager
+        self.apiService = apiService
     }
     
     // MARK: - Public Methods
@@ -58,7 +70,7 @@ class AITutorViewModel: ObservableObject {
         tutorState = .loading
         
         do {
-            let questionsResponse = try await apiService.getGuestSampleQuestions()
+            let questionsResponse = try await apiService.getSampleQuestions(count: 3)
             let questions = questionsResponse.questions
             currentQuestions = questions
             sessionManager.startNewSession(questions: questions)
@@ -88,7 +100,7 @@ class AITutorViewModel: ObservableObject {
         do {
             let questionDict: [String: Any] = [
                 "id": question.id.uuidString,
-                "new_sentence": question.new_sentence,
+                "new_sentence": question.newSentence,
                 "type": question.type
             ]
             let feedbackResponse = try await apiService.submitGuestAnswer(
@@ -125,7 +137,9 @@ class AITutorViewModel: ObservableObject {
             resetCurrentQuestion()
             tutorState = .active
         } else {
-            completeSession()
+            Task {
+                await completeSession()
+            }
         }
     }
     
@@ -139,10 +153,14 @@ class AITutorViewModel: ObservableObject {
     }
     
     /// 完成學習會話
-    func completeSession() {
+    func completeSession() async {
         sessionProgress.isCompleted = true
         sessionProgress.completedAt = Date()
         tutorState = .completed
+        
+        // 自動同步知識點到伺服器
+        await syncKnowledgePointsToServer()
+        
         showingResults = true
     }
     
@@ -200,7 +218,7 @@ class AITutorViewModel: ObservableObject {
     
     private func calculateScore(from feedback: FeedbackResponse) -> Double {
         // 根據錯誤數量和嚴重程度計算分數
-        let totalErrors = feedback.error_analysis.count
+        let totalErrors = feedback.errorAnalysis.count
         
         if totalErrors == 0 {
             return 1.0 // 完美分數
@@ -213,7 +231,7 @@ class AITutorViewModel: ObservableObject {
             "critical": 0.5
         ]
         
-        let totalDeduction = feedback.error_analysis.reduce(0.0) { total, error in
+        let totalDeduction = feedback.errorAnalysis.reduce(0.0) { total, error in
             total + (severityWeights[error.severity] ?? 0.2)
         }
         
@@ -333,5 +351,75 @@ extension AITutorViewModel {
         }
         
         sessionProgress.answeredQuestions = sessionStats.totalAnswered
+    }
+    
+    // MARK: - 知識點同步功能
+    
+    /// 同步知識點到伺服器
+    private func syncKnowledgePointsToServer() async {
+        let knowledgePointsData = sessionManager.extractKnowledgePointsForSync()
+        
+        guard !knowledgePointsData.isEmpty else {
+            print("📝 沒有需要同步的知識點")
+            syncStatus = .idle
+            return
+        }
+        
+        syncStatus = .syncing
+        var totalSaved = 0
+        
+        for (errors, questionData, userAnswer) in knowledgePointsData {
+            do {
+                let savedCount = try await apiService.finalizeKnowledgePoints(
+                    errors: errors,
+                    questionData: questionData,
+                    userAnswer: userAnswer
+                )
+                totalSaved += abs(savedCount) // 處理本地儲存的負數回傳
+                
+                if savedCount < 0 {
+                    print("💾 使用本地儲存模式")
+                } else {
+                    print("🎉 成功同步到伺服器")
+                }
+            } catch {
+                print("❌ 同步失敗: \(error.localizedDescription)")
+                syncStatus = .failed(error)
+                return
+            }
+        }
+        
+        syncedKnowledgePointsCount = totalSaved
+        syncStatus = .completed
+        
+        if totalSaved > 0 {
+            // 更新知識點快取
+            do {
+                _ = try await KnowledgePointRepository.shared.forceRefresh()
+            } catch {
+                print("更新知識點快取失敗: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /// 手動同步知識點
+    func manualSyncKnowledgePoints() async -> Bool {
+        await syncKnowledgePointsToServer()
+        return sessionManager.hasUnsyncedKnowledgePoints() == false
+    }
+    
+    /// 檢查是否有未同步的知識點
+    func hasUnsyncedKnowledgePoints() -> Bool {
+        return sessionManager.hasUnsyncedKnowledgePoints()
+    }
+    
+    /// 取得未同步知識點數量
+    func getUnsyncedKnowledgePointsCount() -> Int {
+        return sessionManager.getUnsyncedKnowledgePointsCount()
+    }
+    
+    /// 更新 SessionManager 引用（用於環境物件注入）
+    func updateSessionManager(_ sessionManager: SessionManager) {
+        self.sessionManager = sessionManager
     }
 }

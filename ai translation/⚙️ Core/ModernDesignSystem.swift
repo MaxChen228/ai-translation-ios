@@ -131,7 +131,7 @@ extension View {
     }
     
     // 現代輸入框樣式
-    func modernInput(isFocused: Bool = false) -> some View {
+    func modernInput(isFocused: Bool = false, hasError: Bool = false) -> some View {
         self
             .padding(ModernSpacing.md)
             .background {
@@ -140,8 +140,8 @@ extension View {
                     .overlay {
                         RoundedRectangle(cornerRadius: ModernRadius.sm)
                             .stroke(
-                                isFocused ? Color.modernAccent : Color.modernBorder,
-                                lineWidth: isFocused ? 1.5 : 1
+                                hasError ? Color.modernError : (isFocused ? Color.modernAccent : Color.modernBorder),
+                                lineWidth: isFocused || hasError ? 1.5 : 1
                             )
                     }
             }
@@ -182,13 +182,13 @@ enum ModernCardStyle {
 }
 
 enum ModernButtonStyle {
-    case primary, secondary, tertiary, special
+    case primary, secondary, tertiary, special, link
     
     var backgroundColor: Color {
         switch self {
         case .primary: return .modernAccent
         case .secondary: return .modernAccentSoft
-        case .tertiary: return .clear
+        case .tertiary, .link: return .clear
         case .special: return .modernSpecial
         }
     }
@@ -196,7 +196,7 @@ enum ModernButtonStyle {
     var textColor: Color {
         switch self {
         case .primary, .special: return .white
-        case .secondary: return .modernAccent
+        case .secondary, .link: return .modernAccent
         case .tertiary: return .modernTextSecondary
         }
     }

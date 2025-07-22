@@ -13,7 +13,7 @@ struct GuestFeatureLimitView: View {
             // 圖示和標題
             VStack(spacing: ModernSpacing.md) {
                 Image(systemName: featureIcon)
-                    .font(.system(size: 48))
+                    .font(.appLargeTitle())
                     .foregroundStyle(Color.modernAccent)
                 
                 Text("功能限制")
@@ -128,7 +128,7 @@ struct GuestModeIndicator: View {
     @State private var showingPrompt = false
     
     var body: some View {
-        if authManager.isGuest {
+        if authManager.currentUser?.isAnonymous == true {
             Button(action: {
                 showingPrompt = true
             }) {
@@ -172,7 +172,7 @@ struct GuestRegistrationPromptView: View {
                     // 慶祝圖示
                     VStack(spacing: ModernSpacing.md) {
                         Image(systemName: "star.circle.fill")
-                            .font(.system(size: 64))
+                            .font(.appLargeTitle())
                             .foregroundStyle(Color.modernSpecial)
                         
                         Text("太棒了！")

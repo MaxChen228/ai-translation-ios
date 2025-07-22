@@ -218,6 +218,21 @@ struct VocabularyHomeView: View {
                     .background(Color.modernSurface)
                     .cornerRadius(ModernRadius.md)
                 }
+                
+                NavigationLink(destination: BuiltinVocabularyView()) {
+                    VStack {
+                        Image(systemName: "books.vertical")
+                            .font(.appTitle2())
+                            .foregroundStyle(Color.modernSpecial)
+                        Text("內建單字庫")
+                            .font(.appCaption())
+                            .foregroundStyle(Color.modernTextSecondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 80)
+                    .background(Color.modernSurface)
+                    .cornerRadius(ModernRadius.md)
+                }
             }
         }
         .padding()
