@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-import AVFoundation
 
 struct MultiClassificationWordDetailView: View {
     let wordId: Int
     
     @StateObject private var service = MultiClassificationService()
+    @StateObject private var audioManager = AudioPlayerManager.shared
     @State private var wordDetail: MultiClassWordDetail?
     @State private var isLoading = true
-    @State private var audioPlayer: AVAudioPlayer?
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -25,7 +24,7 @@ struct MultiClassificationWordDetailView: View {
             } else if let detail = wordDetail {
                 VStack(alignment: .leading, spacing: 20) {
                     // 單字標題
-                    WordHeaderView(detail: detail, playAudio: playAudio)
+                    WordHeaderView(detail: detail)
                     
                     // 分類標籤
                     ClassificationTagsView(classifications: detail.classifications)
@@ -80,31 +79,12 @@ struct MultiClassificationWordDetailView: View {
         isLoading = false
     }
     
-    // MARK: - 播放音頻
-    
-    private func playAudio() {
-        guard let detail = wordDetail,
-              let enrichedInfo = detail.enrichedInfo,
-              let audioUrl = enrichedInfo.audioUrls.first,
-              let url = URL(string: audioUrl) else { return }
-        
-        Task {
-            do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                audioPlayer = try AVAudioPlayer(data: data)
-                audioPlayer?.play()
-            } catch {
-                print("音頻播放失敗: \(error)")
-            }
-        }
-    }
 }
 
 // MARK: - 單字標題視圖
 
 struct WordHeaderView: View {
     let detail: MultiClassWordDetail
-    let playAudio: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -115,12 +95,10 @@ struct WordHeaderView: View {
                 
                 Spacer()
                 
-                if detail.isEnriched {
-                    Button(action: playAudio) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.title2)
-                            .foregroundColor(.blue)
-                    }
+                if detail.isEnriched, 
+                   let enrichedInfo = detail.enrichedInfo,
+                   let audioUrl = enrichedInfo.audioUrls.first {
+                    AudioPlayerButton(audioUrl: audioUrl, word: detail.word)
                 }
             }
             

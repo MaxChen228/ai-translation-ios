@@ -5,19 +5,11 @@ import SwiftUI
 struct VocabularyAreaView: View {
     var body: some View {
         TabView {
-            // 內建單字庫
-            BuiltinVocabularyView()
-                .tabItem {
-                    Image(systemName: "books.vertical.fill")
-                    Text("內建單字")
-                        .font(.appCaption())
-                }
-            
-            // 多分類系統
+            // 多分類系統 (主要單字系統)
             MultiClassificationSystemView()
                 .tabItem {
                     Image(systemName: "square.grid.3x3.fill")
-                    Text("分類系統")
+                    Text("單字庫")
                         .font(.appCaption())
                 }
             

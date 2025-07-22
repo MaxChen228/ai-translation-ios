@@ -219,12 +219,12 @@ struct VocabularyHomeView: View {
                     .cornerRadius(ModernRadius.md)
                 }
                 
-                NavigationLink(destination: BuiltinVocabularyView()) {
+                NavigationLink(destination: MultiClassificationSystemView()) {
                     VStack {
-                        Image(systemName: "books.vertical")
+                        Image(systemName: "square.grid.3x3")
                             .font(.appTitle2())
                             .foregroundStyle(Color.modernSpecial)
-                        Text("內建單字庫")
+                        Text("分類單字庫")
                             .font(.appCaption())
                             .foregroundStyle(Color.modernTextSecondary)
                     }
