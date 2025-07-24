@@ -6,7 +6,7 @@
 
 ### Main/
 應用程式的主要入口點，包含：
-- `ai_translationApp.swift` - SwiftUI 應用程式主檔案
+- `LinkerApp.swift` - SwiftUI 應用程式主檔案
 
 ### Config/
 應用程式配置檔案：

@@ -1,0 +1,425 @@
+{
+  "" : {
+    "const-values" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master.swiftconstvalues",
+    "dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master.d",
+    "diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master.dia",
+    "emit-module-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master-emit-module.dia",
+    "swift-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Linker-master.swiftdeps"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Core/DI/VocabularyDIContainer.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDIContainer.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDIContainer.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDIContainer.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Core/Services/AnalyticsService.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnalyticsService.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnalyticsService.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnalyticsService.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Core/Services/NewAuthenticationManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewAuthenticationManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewAuthenticationManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewAuthenticationManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Data/Local/DefaultVocabularyLocalDataSource.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyLocalDataSource.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyLocalDataSource.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyLocalDataSource.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Data/Mappers/VocabularyDataMapper.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDataMapper.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDataMapper.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyDataMapper.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Data/Remote/DefaultVocabularyRemoteDataSource.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRemoteDataSource.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRemoteDataSource.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRemoteDataSource.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Data/Repositories/DefaultVocabularyRepository.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRepository.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRepository.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DefaultVocabularyRepository.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Domain/Models/NewVocabularyModels.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyModels.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyModels.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyModels.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Domain/Repositories/VocabularyRepository.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyRepository.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyRepository.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyRepository.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/ViewModels/ClassificationViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ClassificationViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ClassificationViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ClassificationViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/ViewModels/ReviewViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ReviewViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ReviewViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ReviewViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/ViewModels/VocabularyViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/ViewModels/WordDetailViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/WordDetailViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/WordDetailViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/WordDetailViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/Views/NewReviewCard.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewReviewCard.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewReviewCard.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewReviewCard.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/Views/NewStatisticsCard.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewStatisticsCard.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewStatisticsCard.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewStatisticsCard.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/Views/NewVocabularyCard.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyCard.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyCard.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyCard.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/Views/NewVocabularyHomeView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyHomeView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyHomeView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewVocabularyHomeView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary New/Presentation/Views/NewWordDetailSheet.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewWordDetailSheet.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewWordDetailSheet.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NewWordDetailSheet.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Models/MultiClassificationModels.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationModels.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationModels.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationModels.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Models/VocabularyModels.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyModels.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyModels.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyModels.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Services/MultiClassificationService.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationService.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationService.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationService.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Services/VocabularyService.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyService.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyService.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyService.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/FlashcardView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FlashcardView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FlashcardView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FlashcardView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/MultiClassificationCategoryView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationCategoryView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationCategoryView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationCategoryView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/MultiClassificationSystemView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationSystemView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationSystemView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationSystemView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/MultiClassificationWordDetailView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordDetailView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordDetailView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordDetailView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/MultiClassificationWordListView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordListView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordListView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MultiClassificationWordListView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/QuizView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/QuizView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/QuizView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/QuizView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/StudyModeSelectionView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudyModeSelectionView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudyModeSelectionView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudyModeSelectionView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/StudySummaryView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudySummaryView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudySummaryView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/StudySummaryView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/Vocabulary/Views/VocabularyHomeView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyHomeView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyHomeView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyHomeView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/APIConfig.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIConfig.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIConfig.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIConfig.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/APIEndpoint.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIEndpoint.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIEndpoint.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIEndpoint.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/APIHelper.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIHelper.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIHelper.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIHelper.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/APIModels.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIModels.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIModels.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/APIModels.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/AccessibilityExtensions.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AccessibilityExtensions.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AccessibilityExtensions.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AccessibilityExtensions.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/AppError.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppError.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppError.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppError.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/AppleSignInHelper.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppleSignInHelper.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppleSignInHelper.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppleSignInHelper.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/AudioPlayerManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AudioPlayerManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AudioPlayerManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AudioPlayerManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/AuthenticationManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/DataModelProtocols.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DataModelProtocols.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DataModelProtocols.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DataModelProtocols.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/FontExtensions.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FontExtensions.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FontExtensions.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/FontExtensions.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/GoogleSignInConfig.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInConfig.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInConfig.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInConfig.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/GoogleSignInHelper.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInHelper.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInHelper.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInHelper.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/GoogleSignInTestHelper.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInTestHelper.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInTestHelper.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GoogleSignInTestHelper.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/KnowledgePointRepository.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointRepository.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointRepository.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointRepository.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/Logger.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Logger.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Logger.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Logger.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/Models.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Models.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Models.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/Models.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/ModernAnimationSystem.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernAnimationSystem.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernAnimationSystem.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernAnimationSystem.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/ModernComponents.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernComponents.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernComponents.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernComponents.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/ModernDesignSystem.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernDesignSystem.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernDesignSystem.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernDesignSystem.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/ModernNavigationSystem.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernNavigationSystem.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernNavigationSystem.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ModernNavigationSystem.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/NetworkManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/NetworkServiceProtocol.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkServiceProtocol.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkServiceProtocol.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/NetworkServiceProtocol.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/SessionManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/SettingsManager.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsManager.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsManager.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsManager.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/TypeSafeAPIRequests.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/TypeSafeAPIRequests.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/TypeSafeAPIRequests.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/TypeSafeAPIRequests.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/⚙️ Core/UnifiedAPIService.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/UnifiedAPIService.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/UnifiedAPIService.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/UnifiedAPIService.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Authentication/AuthenticationComponents.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationComponents.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationComponents.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AuthenticationComponents.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Authentication/LoginView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LoginView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LoginView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LoginView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Authentication/RegisterView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/RegisterView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/RegisterView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/RegisterView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/AllKnowledgePointsListView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AllKnowledgePointsListView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AllKnowledgePointsListView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AllKnowledgePointsListView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/ArchivedPointsView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ArchivedPointsView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ArchivedPointsView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/ArchivedPointsView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/Components/DashboardStatsCard.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardStatsCard.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardStatsCard.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardStatsCard.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/Components/KnowledgePointGrid.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGrid.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGrid.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGrid.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/DashboardView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/DashboardViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DashboardViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/KnowledgePointDetailView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointDetailView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointDetailView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointDetailView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/KnowledgePointEditView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointEditView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointEditView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointEditView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/KnowledgePointGridView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGridView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGridView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/KnowledgePointGridView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Dashboard/MasteryBarView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MasteryBarView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MasteryBarView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/MasteryBarView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/AITutorView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/AITutorViewModel.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorViewModel.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorViewModel.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AITutorViewModel.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/AnswerView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnswerView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnswerView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AnswerView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/DailyDetailView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DailyDetailView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DailyDetailView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/DailyDetailView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/LearningCalendarView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningCalendarView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningCalendarView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningCalendarView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/SessionResultsView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionResultsView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionResultsView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SessionResultsView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/✨ Features/Learning/SettingsView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/SettingsView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/🏠 Areas/LearningAreaView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningAreaView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningAreaView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LearningAreaView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/🏠 Areas/VocabularyAreaView.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyAreaView.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyAreaView.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/VocabularyAreaView.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/📱 App/AppDelegate+GoogleSignIn.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppDelegate+GoogleSignIn.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppDelegate+GoogleSignIn.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/AppDelegate+GoogleSignIn.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/Linker/📱 App/LinkerApp.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LinkerApp.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LinkerApp.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/LinkerApp.o"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/Linker.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

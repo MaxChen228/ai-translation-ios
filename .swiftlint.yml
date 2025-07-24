@@ -1,0 +1,106 @@
+# SwiftLint 配置文件
+# 專業iOS開發代碼品質標準
+
+disabled_rules: # 禁用的規則
+  - trailing_whitespace
+  - todo # 允許TODO標記
+
+opt_in_rules: # 啟用的可選規則
+  - array_init
+  - closure_end_indentation
+  - closure_spacing
+  - conditional_returns_on_newline
+  - contains_over_first_not_nil
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - identical_operands
+  - joined_default_parameter
+  - let_var_whitespace
+  - literal_expression_end_indentation
+  - modifier_order
+  - multiline_arguments
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - single_test_class
+  - sorted_first_last
+  - switch_case_on_newline
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+
+included: # 包含的路徑
+  - Linker
+
+excluded: # 排除的路徑
+  - Carthage
+  - Pods
+  - .build
+  - DerivedData
+  - LinkerTests
+  - LinkerUITests
+
+# 規則配置
+analyzer_rules: # 啟用分析器規則
+  - explicit_self
+
+attributes:
+  always_on_same_line:
+    - "@IBSegueAction"
+    - "@IBAction"
+    - "@NSManaged"
+    - "@objc"
+
+force_cast: warning
+force_try: warning
+function_body_length:
+  warning: 60
+  error: 100
+
+legacy_hashing: error
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - "id"
+    - "URL"
+    - "URL"
+
+line_length:
+  warning: 120
+  error: 140
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_comments: true
+
+multiline_arguments:
+  first_argument_location: next_line
+  only_enforce_after_first_closure_on_first_line: true
+
+nesting:
+  type_level:
+    warning: 3
+    error: 6
+  statement_level:
+    warning: 5
+    error: 10
+
+number_separator:
+  minimum_length: 0
+
+reporter: "xcode" # 輸出格式：xcode, json, csv, checkstyle, codeclimate, junit, html, emoji, sonarqube, markdown, github-actions-logging
+
+trailing_comma:
+  mandatory_comma: true
+
+unused_optional_binding:
+  ignore_optional_try: true
+
+vertical_whitespace:
+  max_empty_lines: 1
+
+warning_threshold: 5

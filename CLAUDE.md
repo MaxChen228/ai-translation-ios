@@ -1,7 +1,7 @@
 # Claude Code 開發協作指南
 
 ## 專案概述
-這是一個 iOS AI 翻譯學習應用程式，使用 Swift 和 SwiftUI 開發。
+這是一個 iOS Linker應用程式，使用 Swift 和 SwiftUI 開發。
 
 ## 開發工作流程
 
@@ -14,8 +14,8 @@
 開發完成後，**必須**執行完整的建置測試：
 
 ```bash
-cd "/Users/chenliangyu/my_project/ai-translation-ios"
-xcodebuild -scheme "ai translation" -configuration Debug -destination "platform=iOS Simulator,name=iPhone 16" clean build
+cd "/Users/chenliangyu/my_project/core/Linker-ios"
+xcodebuild -scheme "Linker" -configuration Debug -destination "platform=iOS Simulator,name=iPhone 16" clean build
 ```
 
 ### 3. 品質確保
@@ -56,18 +56,23 @@ git push origin main
 
 ## 專案結構
 ```
-ai translation/
-├── ✨ Features/           # 功能模組
-│   ├── Dashboard/         # 儀表板
-│   ├── AITutor/          # AI 家教
-│   └── Vocabulary/       # 單字庫
-├── ⚙️ Core/              # 核心功能
-│   ├── API/              # API 服務
-│   ├── Models/           # 資料模型
-│   └── Managers/         # 管理類別
-└── 🎨 Design/            # 設計系統
-    ├── Components/       # UI 組件
-    └── Themes/          # 主題設定
+my_project/
+├── 🎯 core/                    # 核心產品代碼
+│   ├── Linker-ios/             # 主要iOS應用
+│   │   ├── ✨ Features/        # 功能模組
+│   │   │   ├── Dashboard/      # 儀表板
+│   │   │   ├── Learning/       # AI 學習
+│   │   │   └── Authentication/ # 認證系統
+│   │   ├── ⚙️ Core/           # 核心功能 (含Logger系統)
+│   │   ├── 🏠 Areas/          # 主要區域
+│   │   └── Vocabulary/        # 單字記憶庫
+│   └── backend/               # Flask後端API
+├── 🔧 tools/                  # 工具和整合
+│   ├── dictionary/            # 韋氏詞典整合
+│   ├── database/              # PostgreSQL向量擴展
+│   └── helix-engine/          # 記憶演算法引擎
+├── 🧪 research/               # 研究和實驗代碼
+└── 📚 docs/                   # 統一文檔
 ```
 
 ## 開發規範
@@ -104,7 +109,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## 測試指令快速參考
 ```bash
 # 完整建置測試
-xcodebuild -scheme "ai translation" -configuration Debug -destination "platform=iOS Simulator,name=iPhone 16" clean build
+cd "/Users/chenliangyu/my_project/core/Linker-ios"
+xcodebuild -scheme "Linker" -configuration Debug -destination "platform=iOS Simulator,name=iPhone 16" clean build
 
 # 檢查專案狀態
 git status

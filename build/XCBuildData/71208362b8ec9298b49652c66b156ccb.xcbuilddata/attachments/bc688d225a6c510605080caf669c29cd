@@ -1,0 +1,28 @@
+{
+  "" : {
+    "diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests-master.dia",
+    "emit-module-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests-master.swiftdeps"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/LinkerUITests/LinkerUITests.swift" : {
+    "const-values" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.swiftconstvalues",
+    "dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.d",
+    "diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.dia",
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.o",
+    "swift-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests.swiftdeps",
+    "swiftmodule" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITests~partial.swiftmodule"
+  },
+  "/Users/chenliangyu/my_project/core/Linker-ios/LinkerUITests/LinkerUITestsLaunchTests.swift" : {
+    "const-values" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.swiftconstvalues",
+    "dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.d",
+    "diagnostics" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.dia",
+    "index-unit-output-path" : "/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.o",
+    "llvm-bc" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.bc",
+    "object" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.o",
+    "swift-dependencies" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests.swiftdeps",
+    "swiftmodule" : "/Users/chenliangyu/my_project/core/Linker-ios/build/Linker.build/Debug-iphonesimulator/LinkerUITests.build/Objects-normal/arm64/LinkerUITestsLaunchTests~partial.swiftmodule"
+  }
+}
