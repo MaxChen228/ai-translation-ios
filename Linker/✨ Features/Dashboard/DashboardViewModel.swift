@@ -59,28 +59,28 @@ class DashboardViewModel: ObservableObject {
                 serverKnowledgePoints = try await activePoints
                 archivedPoints = try await archived
                 
-                print("✅ 成功從伺服器獲取 \(serverKnowledgePoints.count) 個知識點")
+                Logger.success("成功從伺服器獲取 \(serverKnowledgePoints.count) 個知識點", category: .api)
             } catch {
                 // 檢查是否為認證錯誤
                 if let apiError = error as? APIError,
                    case .serverError(let statusCode, _) = apiError,
                    statusCode == 401 {
                     // 401認證失敗：觸發重新登入，但不視為錯誤（這是正常的認證流程）
-                    print("🔐 認證失效，觸發重新登入")
+                    Logger.info("認證失效，觸發重新登入", category: .authentication)
                     Task {
                         await authManager.refreshTokenIfNeeded()
                     }
                 } else {
                     // 其他真正的錯誤：記錄並繼續載入本地資料
-                    print("⚠️ 網路錯誤，無法從伺服器獲取知識點: \(error.localizedDescription)")
-                    print("📡 繼續使用本地資料，不中斷用戶體驗")
+                    Logger.warning("網路錯誤，無法從伺服器獲取知識點: \(error.localizedDescription)", category: .network)
+                    Logger.info("繼續使用本地資料，不中斷用戶體驗", category: .general)
                 }
             }
         }
         
         // 2. 始終嘗試載入本地儲存的知識點
         localKnowledgePoints = loadLocalKnowledgePoints()
-        print("💾 本地儲存知識點: \(localKnowledgePoints.count) 個")
+        Logger.info("本地儲存知識點: \(localKnowledgePoints.count) 個", category: .database)
         
         // 3. 合併伺服器和本地知識點 - 不為未認證用戶提供示例數據
         let allKnowledgePoints = serverKnowledgePoints + localKnowledgePoints
@@ -92,11 +92,11 @@ class DashboardViewModel: ObservableObject {
         // 4. 如果完全沒有數據，顯示對應的狀態
         if allKnowledgePoints.isEmpty {
             if !authManager.isAuthenticated {
-                print("📋 未認證用戶，引導註冊以獲得完整功能")
+                Logger.info("未認證用戶，引導註冊以獲得完整功能", category: .authentication)
                 // 不顯示錯誤訊息，讓 EmptyStateView 引導用戶註冊
             } else {
                 // 已認證用戶但沒有知識點 - 這是正常的新用戶狀態
-                print("📋 已認證用戶暫無知識點，這是正常的新用戶狀態")
+                Logger.info("已認證用戶暫無知識點，這是正常的新用戶狀態", category: .general)
                 // 不設置錯誤訊息，讓用戶正常開始學習
             }
         }

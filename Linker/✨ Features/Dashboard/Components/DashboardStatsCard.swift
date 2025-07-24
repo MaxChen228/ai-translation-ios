@@ -55,42 +55,6 @@ struct DashboardStatsCard: View {
     }
 }
 
-struct StatCard: View {
-    let title: String
-    let value: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: ModernSpacing.md) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.appTitle3())
-                    .foregroundStyle(color)
-                    .accessibilityHidden(true)
-                
-                Spacer()
-            }
-            
-            VStack(alignment: .leading, spacing: ModernSpacing.xs) {
-                Text(value)
-                    .font(.appTitle(for: "統計數值"))
-                    .foregroundStyle(Color.modernTextPrimary)
-                    .fontWeight(.bold)
-                
-                Text(title)
-                    .font(.appCaption(for: "統計標題"))
-                    .foregroundStyle(Color.modernTextSecondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(ModernSpacing.lg)
-        .modernCard(.standard)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title)：\(value)")
-        .accessibilityAddTraits(.isStaticText)
-    }
-}
 
 // MARK: - 進度環形圖組件
 struct CircularProgressCard: View {

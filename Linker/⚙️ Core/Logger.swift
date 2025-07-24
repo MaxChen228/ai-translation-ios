@@ -117,7 +117,7 @@ extension Logger {
 }
 
 // MARK: - 日期格式化
-private extension DateFormatter {
+extension DateFormatter {
     static let logFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss.SSS"

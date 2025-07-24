@@ -130,7 +130,7 @@ struct AnswerView: View {
 
         } catch {
             self.errorMessage = "提交失敗，請檢查網路或稍後再試。\n(\(error.localizedDescription))"
-            print("提交答案時發生錯誤: \(error)")
+            Logger.error("提交答案時發生錯誤: \(error.localizedDescription)", category: .api)
         }
         
         isLoading = false
@@ -734,10 +734,10 @@ struct FeedbackCard: View {
             isSaving = true
             saveMessage = nil
             
-            print("💾 [AnswerView] 開始儲存\(editableErrors.count)個知識點")
-            print("🔍 [AnswerView] 當前認證狀態: \(isAuthenticated ? "已認證" : "未認證")")
+            Logger.info("開始儲存\(editableErrors.count)個知識點", category: .database)
+            Logger.info("當前認證狀態: \(isAuthenticated ? "已認證" : "未認證")", category: .authentication)
             if isAuthenticated {
-                print("👤 [AnswerView] 登入用戶: \(userEmail ?? "unknown")")
+                Logger.info("登入用戶: \(userEmail ?? "unknown")", category: .authentication)
             }
             
             let questionDataDict: [String: Any?] = [
@@ -751,7 +751,7 @@ struct FeedbackCard: View {
             do {
                 // Check for cancellation
                 guard !Task.isCancelled else {
-                    print("🚫 Save task was cancelled")
+                    Logger.info("儲存任務已取消", category: .general)
                     return
                 }
                 
@@ -765,7 +765,7 @@ struct FeedbackCard: View {
                 
                 // Check for cancellation again after async operation
                 guard !Task.isCancelled else {
-                    print("🚫 Save task was cancelled after API call")
+                    Logger.info("API 呼叫後儲存任務已取消", category: .api)
                     return
                 }
                 
@@ -775,12 +775,12 @@ struct FeedbackCard: View {
                         isLocalStorage = true
                         savedKnowledgePointsCount = abs(savedCount)
                         saveMessage = "已儲存至本地 \(abs(savedCount)) 個知識點"
-                        print("📱 [AnswerView] 知識點已儲存至本地，數量: \(abs(savedCount))")
+                        Logger.success("知識點已儲存至本地，數量: \(abs(savedCount))", category: .database)
                     } else {
                         isLocalStorage = false
                         savedKnowledgePointsCount = savedCount
                         saveMessage = "成功儲存 \(savedCount) 個知識點"
-                        print("☁️ [AnswerView] 知識點已儲存至雲端，數量: \(savedCount)")
+                        Logger.success("知識點已儲存至雲端，數量: \(savedCount)", category: .database)
                     }
                     
                     showSaveSuccessAlert = true
@@ -795,7 +795,7 @@ struct FeedbackCard: View {
                 }
                 
             } catch is CancellationError {
-                print("🚫 Save operation was cancelled")
+                Logger.info("儲存操作已取消", category: .general)
             } catch let apiError as APIError {
                 await MainActor.run {
                     switch apiError {
