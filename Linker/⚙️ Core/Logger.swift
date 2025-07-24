@@ -21,7 +21,6 @@ struct Logger {
         case authentication = "🔐 AUTH"
         case database = "🗄️ DATABASE"
         case ui = "🎨 UI"
-        case vocabulary = "📚 VOCAB"
         case learning = "🧠 LEARNING"
         case api = "🔌 API"
         case general = "📝 GENERAL"

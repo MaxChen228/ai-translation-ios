@@ -48,11 +48,6 @@ protocol UnifiedAPIServiceProtocol {
 }
 
 /// 統一的API服務實現
-/// 替代原來的：
-/// - KnowledgePointAPIService (轉發器)
-/// - AuthenticationAPIService
-/// - KnowledgePointCoreAPIService  
-/// - DashboardAPIService
 class UnifiedAPIService: UnifiedAPIServiceProtocol {
     
     static let shared = UnifiedAPIService()
@@ -355,10 +350,6 @@ extension UnifiedAPIService {
         return try await getRelatedKnowledgePoints(compositeId: nil, legacyId: id, includeDetails: includeDetails)
     }
     
-    // MARK: - 單字記憶庫 (暫時禁用，待後續實現)
-    
-    // 注意：單字記憶庫相關方法暫時移除，避免編譯錯誤
-    // 這些方法將在後續階段重新實現
 }
 
 // MARK: - 私有輔助方法

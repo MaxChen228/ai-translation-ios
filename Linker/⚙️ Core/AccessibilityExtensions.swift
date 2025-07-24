@@ -50,15 +50,6 @@ struct AccessibilityLabels {
         static let statisticsChart = "統計圖表"
     }
     
-    // MARK: - 單字庫相關
-    struct Vocabulary {
-        static let flashcard = "單字卡片"
-        static let pronunciationButton = "發音按鈕"
-        static let markKnownButton = "標記已知按鈕"
-        static let markUnknownButton = "標記未知按鈕"
-        static let studyModeButton = "學習模式按鈕"
-        static let quizModeButton = "測驗模式按鈕"
-    }
 }
 
 // MARK: - 無障礙提示常數
@@ -101,13 +92,6 @@ struct AccessibilityHints {
         static let updateGoal = "輕點以更新每日目標"
     }
     
-    // MARK: - 單字庫相關
-    struct Vocabulary {
-        static let flipCard = "輕點以翻轉單字卡片"
-        static let playPronunciation = "輕點以播放發音"
-        static let markKnown = "輕點以標記為已知單字"
-        static let markUnknown = "輕點以標記為未知單字"
-    }
 }
 
 // MARK: - View 擴展：無障礙功能
