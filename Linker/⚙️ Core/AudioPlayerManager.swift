@@ -1,5 +1,5 @@
 // AudioPlayerManager.swift - 統一音頻播放管理器
-// 為單字發音提供統一的音頻播放服務
+// 為應用程式提供統一的音頻播放服務
 
 import Foundation
 import AVFoundation
@@ -14,7 +14,7 @@ class AudioPlayerManager: ObservableObject {
     // MARK: - Published Properties
     @Published var isPlaying = false
     @Published var isLoading = false
-    @Published var currentWord: String?
+    @Published var currentIdentifier: String?
     @Published var errorMessage: String?
     
     // MARK: - Private Properties
@@ -29,16 +29,16 @@ class AudioPlayerManager: ObservableObject {
     
     // MARK: - Public Methods
     
-    /// 播放單字發音
+    /// 播放音頻
     /// - Parameters:
     ///   - audioUrl: 音頻URL字串
-    ///   - word: 要播放的單字（用於狀態追蹤）
-    func playAudio(from audioUrl: String, for word: String) {
+    ///   - identifier: 音頻識別碼（用於狀態追蹤）
+    func playAudio(from audioUrl: String, for identifier: String) {
         // 取消之前的播放任務
         currentTask?.cancel()
         
         currentTask = Task {
-            await performAudioPlayback(audioUrl: audioUrl, word: word)
+            await performAudioPlayback(audioUrl: audioUrl, identifier: identifier)
         }
     }
     
@@ -73,7 +73,7 @@ class AudioPlayerManager: ObservableObject {
         }
     }
     
-    private func performAudioPlayback(audioUrl: String, word: String) async {
+    private func performAudioPlayback(audioUrl: String, identifier: String) async {
         guard !Task.isCancelled else { return }
         
         // 重置錯誤狀態
@@ -81,13 +81,13 @@ class AudioPlayerManager: ObservableObject {
         
         // 驗證URL
         guard let url = URL(string: audioUrl), url.scheme != nil else {
-            await handlePlaybackError("無效的音頻URL", for: word)
+            await handlePlaybackError("無效的音頻URL", for: identifier)
             return
         }
         
         // 開始載入狀態
         isLoading = true
-        currentWord = word
+        currentIdentifier = identifier
         
         do {
             // 下載音頻資料
@@ -101,14 +101,14 @@ class AudioPlayerManager: ObservableObject {
             // 驗證HTTP回應
             if let httpResponse = response as? HTTPURLResponse {
                 guard httpResponse.statusCode == 200 else {
-                    await handlePlaybackError("音頻載入失敗 (HTTP \(httpResponse.statusCode))", for: word)
+                    await handlePlaybackError("音頻載入失敗 (HTTP \(httpResponse.statusCode))", for: identifier)
                     return
                 }
             }
             
             // 驗證音頻資料
             guard !data.isEmpty else {
-                await handlePlaybackError("音頻檔案為空", for: word)
+                await handlePlaybackError("音頻檔案為空", for: identifier)
                 return
             }
             
@@ -133,11 +133,11 @@ class AudioPlayerManager: ObservableObject {
             
             let success = player.play()
             if !success {
-                await handlePlaybackError("音頻播放啟動失敗", for: word)
+                await handlePlaybackError("音頻播放啟動失敗", for: identifier)
                 return
             }
             
-            Logger.info("開始播放: \(word)", category: .general)
+            Logger.info("開始播放: \(identifier)", category: .general)
             
         } catch {
             guard !Task.isCancelled else {
@@ -145,12 +145,12 @@ class AudioPlayerManager: ObservableObject {
                 return
             }
             
-            await handlePlaybackError("音頻載入錯誤: \(error.localizedDescription)", for: word)
+            await handlePlaybackError("音頻載入錯誤: \(error.localizedDescription)", for: identifier)
         }
     }
     
-    private func handlePlaybackError(_ message: String, for word: String) async {
-        Logger.error("音頻播放錯誤 (\(word)): \(message)", category: .general)
+    private func handlePlaybackError(_ message: String, for identifier: String) async {
+        Logger.error("音頻播放錯誤 (\(identifier)): \(message)", category: .general)
         errorMessage = message
         resetPlaybackState()
     }
@@ -158,19 +158,19 @@ class AudioPlayerManager: ObservableObject {
     private func resetPlaybackState() {
         isLoading = false
         isPlaying = false
-        currentWord = nil
+        currentIdentifier = nil
         audioPlayerDelegate = nil
     }
     
     /// 播放完成時呼叫
     fileprivate func didFinishPlaying() {
-        Logger.success("播放完成: \(currentWord ?? "未知")", category: .general)
+        Logger.success("播放完成: \(currentIdentifier ?? "未知")", category: .general)
         resetPlaybackState()
     }
     
     /// 播放中斷時呼叫
     fileprivate func playbackInterrupted() {
-        Logger.warning("播放中斷: \(currentWord ?? "未知")", category: .general)
+        Logger.warning("播放中斷: \(currentIdentifier ?? "未知")", category: .general)
         resetPlaybackState()
     }
 }
@@ -207,11 +207,11 @@ extension View {
     /// 為視圖提供音頻播放功能
     /// - Parameters:
     ///   - audioUrl: 音頻URL
-    ///   - word: 單字
+    ///   - identifier: 音頻識別碼
     /// - Returns: 更新後的視圖
-    func audioPlayback(for audioUrl: String, word: String) -> some View {
+    func audioPlayback(for audioUrl: String, identifier: String) -> some View {
         self.onTapGesture {
-            AudioPlayerManager.shared.playAudio(from: audioUrl, for: word)
+            AudioPlayerManager.shared.playAudio(from: audioUrl, for: identifier)
         }
     }
 }
@@ -220,23 +220,23 @@ extension View {
 
 struct AudioPlayerButton: View {
     let audioUrl: String
-    let word: String
+    let identifier: String
     
     @StateObject private var audioManager = AudioPlayerManager.shared
     
     var body: some View {
         Button(action: {
-            if audioManager.isPlaying && audioManager.currentWord == word {
+            if audioManager.isPlaying && audioManager.currentIdentifier == identifier {
                 audioManager.togglePlayback()
             } else {
-                audioManager.playAudio(from: audioUrl, for: word)
+                audioManager.playAudio(from: audioUrl, for: identifier)
             }
         }) {
             Group {
-                if audioManager.isLoading && audioManager.currentWord == word {
+                if audioManager.isLoading && audioManager.currentIdentifier == identifier {
                     ProgressView()
                         .scaleEffect(0.8)
-                } else if audioManager.isPlaying && audioManager.currentWord == word {
+                } else if audioManager.isPlaying && audioManager.currentIdentifier == identifier {
                     Image(systemName: "pause.circle.fill")
                 } else {
                     Image(systemName: "play.circle.fill")
